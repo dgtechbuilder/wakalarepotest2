@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f0a05">
+<meta name="description" content="Wakala Agent: a farm-agent game. Inspect farms, advise farmers, trade inputs, book training and grow your hub.">
+<title>Wakala Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one fixed 874×402 landscape game stage (the Figma frame), scaled to fit the window. */
+:root{
+  --orange:#ed8324; --orange-hi:#fbb440; --orange-line:#c88900;
+  --gold:#fbb440; --brown:#6b402b; --cream:#fdedd4; --cream-2:#f3dcbb;
+  --green:#567b00; --green-btn:#82ab22; --green-hi:#9cc43c; --red:#e5484d; --blue:#22ade2; --purple:#9b5de5;
+  --ink:#0f0a05; --white:#ffffff;
+  --ui:'Poppins', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:#0f0a05;color:var(--white);font-family:var(--ui);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;box-sizing:border-box}
+*{box-sizing:border-box}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+img{max-width:none;user-select:none;-webkit-user-drag:none}
+[hidden]{display:none!important}
+#app{position:relative;width:100%;height:100%}
+#stage{position:absolute;left:50%;top:50%;width:874px;height:402px;transform:translate(-50%,-50%) scale(var(--s,1));
+  border-radius:38px;overflow:hidden;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 6px #1b130a;
+  font-size:10px;line-height:normal;-webkit-font-smoothing:antialiased}
+#hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font:500 12px var(--ui);color:#cdb79a;pointer-events:none}
+.layer{position:absolute;inset:0}
+#bg{background-size:cover;background-position:center}
+#bg.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+.scrim-t{position:absolute;left:0;right:0;top:0;height:150px;background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,0));pointer-events:none}
+.scrim-b{position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,.5));pointer-events:none}
+#world,#view,#overlay{pointer-events:none}
+#world>*,#view>*,#overlay>*{pointer-events:auto}
+.abs{position:absolute}
+
+/* ---------- HUD ---------- */
+#hud{position:absolute;inset:0 0 auto 0;height:90px;pointer-events:none}
+#hud>*{pointer-events:auto}
+.agent{position:absolute;left:31px;top:22px;width:204px;height:57px;display:flex;align-items:center;gap:6px;background:rgba(0,0,0,.2);border-radius:16px;border:0;padding:0 0 0 2px;text-align:left}
+.avatar{width:53px;height:53px;border-radius:50%;background:#000;padding:4px;box-shadow:2px 0 3px rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.24);border:1px solid rgba(0,0,0,.1);flex:none}
+.avatar span{display:block;width:100%;height:100%;border-radius:50%;background:#f4efe8;overflow:hidden;position:relative}
+.avatar img{position:absolute;width:100%;left:0;top:0}
+.aname{font:700 14px var(--ui);color:#fff}
+.chip{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.4);border-radius:4px;padding:0 8px;font:700 12px var(--ui);color:var(--gold);backdrop-filter:blur(1px)}
+.chip img{width:14px;height:14px}
+.res{position:absolute;right:29px;top:22px;display:flex;gap:6px}
+.rpill{position:relative;width:80px;height:18px}
+.rpill .bar{position:absolute;left:0;top:1.3px;width:80px;height:15.4px;border-radius:8px;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;font:600 10px var(--ui);color:#fff;backdrop-filter:blur(1px)}
+.rpill .bar i{position:absolute;left:2px;top:50%;height:12px;border-radius:6px;transform:translateY(-50%);box-shadow:inset 0 4px 4px rgba(255,255,255,.25)}
+.rpill .bar b{position:relative;font-weight:600}
+.rpill img{position:absolute;left:60px;top:0;width:18px;height:18px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.25))}
+.rpill.bump .bar b{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.5);color:var(--gold)}}
+.sysbtns{position:absolute;right:29px;top:44px;display:flex;gap:4px}
+.sysbtns button{width:28px;height:28px;padding:2px;border:0;border-radius:4px;background:rgba(0,0,0,.4)}
+.sysbtns img{width:24px;height:24px;display:block}
+
+/* ---------- big corner buttons ---------- */
+.bigbtn{position:absolute;top:316px;display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:0;transition:opacity .2s}
+.bigbtn .o{background:rgba(0,0,0,.5);padding:1px;border-radius:12px;box-shadow:0 4px 4px rgba(0,0,0,.25)}
+.bigbtn .i{position:relative;width:54px;height:54px;border-radius:12px;border:1px solid rgba(255,255,255,.7);display:grid;place-items:center;overflow:hidden}
+.bigbtn .i::before{content:"";position:absolute;left:50%;top:2px;transform:translateX(-50%);width:48px;height:25px;border-radius:10px}
+.bigbtn img{position:relative;width:40px;height:40px}
+.bigbtn .lb{font:700 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;margin-top:1px}
+#btnMap{left:35px}#btnMap .i{background:var(--green-btn)}#btnMap .i::before{background:linear-gradient(var(--green-hi),rgba(156,196,60,0))}
+#btnTask{left:783px}#btnTask .i{background:#eda024}#btnTask .i::before{background:linear-gradient(var(--orange-hi),rgba(251,180,64,0))}
+.bigbtn.dim{opacity:.5}
+.bigbtn:hover:not(.dim) .i{filter:brightness(1.08)}
+
+/* ---------- nav ---------- */
+#nav{position:absolute;left:259px;top:329px;display:flex;gap:16px;align-items:flex-start}
+.nb{display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:0;min-width:42px}
+.nb .o,.nb .i,.bigbtn .o{display:block}
+.nb .o{background:#000;padding:1px;border-radius:9px;filter:drop-shadow(0 4px 2px rgba(0,0,0,.25))}
+.nb .i{position:relative;width:40px;height:40px;padding:4px;border-radius:8px;background:var(--orange);border:.5px solid rgba(255,255,255,.7);overflow:hidden}
+.nb .i::before{content:"";position:absolute;left:50%;top:1.5px;transform:translateX(-50%);width:36px;height:25px;border-radius:8px;background:linear-gradient(var(--orange-hi),rgba(251,180,64,0))}
+.nb img{position:relative;width:32px;height:32px;display:block;transition:transform .15s}
+.nb:hover img{transform:translateY(-1px) scale(1.05)}
+.nb>span:last-child{font:700 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;white-space:nowrap}
+.nb.on>span:last-child{color:var(--gold)}
+
+/* ---------- shared controls ---------- */
+.sq{position:absolute;width:43px;height:43px;padding:1px;border:0;background:#000;border-radius:9px;filter:drop-shadow(0 4px 2px rgba(0,0,0,.25))}
+.sq>span{position:relative;display:grid;place-items:center;width:41px;height:41px;border-radius:8px;background:var(--orange);border:.5px solid rgba(255,255,255,.7);overflow:hidden}
+.sq>span::before{content:"";position:absolute;left:50%;top:1.5px;transform:translateX(-50%);width:36px;height:25px;border-radius:8px;background:linear-gradient(var(--orange-hi),rgba(251,180,64,0))}
+.sq svg{position:relative}
+.sq:active>span{filter:brightness(.92)}
+.sq.off{opacity:.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;font:700 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;background:var(--orange);border:.4px solid var(--orange-line);border-radius:10px;padding:7px 18px;box-shadow:inset 0 -2px 2px rgba(0,0,0,.2),inset 0 2px 4px rgba(255,255,255,.5);white-space:nowrap}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(1px)}
+.btn.sm{font-size:10px;padding:3px 10px;border-radius:7px}
+.btn.wide{width:100%}
+.btn.soft{background:#f0d6b3;color:var(--brown);text-shadow:none;font-weight:600;border-color:rgba(107,64,43,.12);box-shadow:inset 0 2px 3px rgba(255,255,255,.5)}
+.btn.cream{background:#fdf1de;color:var(--brown);text-shadow:none;border-color:rgba(107,64,43,.15)}
+.btn.ghost{opacity:.5;pointer-events:none}
+.btn img{width:14px;height:14px}
+.panel{position:absolute;border:20px solid transparent;border-image:var(--frame) 28 fill / 20px stretch;filter:drop-shadow(0 6px 10px rgba(0,0,0,.35));animation:pop .22s ease-out}
+.panel.thin{border-width:14px;border-image-width:14px}
+.pin{position:relative;margin:-7px;background:var(--cream);border-radius:14px;padding:8px;color:var(--brown)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.panel,#bg.fade,.rpill.bump .bar b,.toast{animation:none!important}}
+.ttl{font:600 14px var(--ui);color:var(--brown);text-shadow:1px 1px 0 #fff;display:flex;align-items:center;justify-content:center;gap:8px}
+.ttl img{width:25px;height:25px}
+.box{background:rgba(107,64,43,.05);border-radius:8px;padding:8px}
+.lst{border:.5px solid rgba(107,64,43,.12);border-radius:8px}
+.t10{font:600 10px var(--ui)}.t8{font:500 8px var(--ui);opacity:.7}
+.mut{opacity:.7}
+.row{display:flex;align-items:center;gap:8px}
+.col{display:flex;flex-direction:column}
+.sp{flex:1;min-width:0}
+.tag{display:inline-block;font:600 8px var(--ui);padding:4px;border-radius:4px}
+.tag.ok{color:var(--green);background:rgba(86,123,0,.08)}
+.tag.no{color:var(--orange);background:rgba(237,131,36,.08)}
+.tag.hi{color:var(--red);background:rgba(229,72,77,.12)}
+.ico{width:14px;height:14px;vertical-align:-3px}
+.screen-title{position:absolute;left:0;right:0;text-align:center;font:700 16px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05,1px 2px 2px rgba(0,0,0,.7);pointer-events:none}
+.tabs{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.tabs button{display:flex;align-items:center;gap:6px;font:600 11px var(--ui);color:var(--brown);background:#d9c4a7;border:1.5px solid rgba(255,255,255,.6);border-radius:9px;padding:4px 12px;box-shadow:0 2px 3px rgba(0,0,0,.3)}
+.tabs button.on{background:#fff6e8}
+.tabs img{width:21px;height:21px}
+.dd{position:relative}
+.dd>button{width:100%;display:flex;align-items:center;gap:4px;border:.5px solid rgba(107,64,43,.18);background:#fbe7c9;border-radius:6px;padding:4px 8px;font:500 10px var(--ui);color:var(--brown);text-align:left}
+.dd>button .ph{opacity:.55}
+.dd>button .car{margin-left:auto;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--brown)}
+.dd.open>button .car{border-top:0;border-bottom:6px solid var(--brown)}
+.dd ul{position:absolute;left:0;right:0;top:calc(100% + 3px);margin:0;padding:4px;list-style:none;background:#fdf1de;border-radius:6px;box-shadow:0 6px 14px rgba(0,0,0,.25);z-index:30}
+.dd li button{width:100%;display:flex;align-items:center;gap:6px;border:0;background:none;padding:6px 6px;font:500 10px var(--ui);color:var(--brown);border-radius:4px;text-align:left}
+.dd li button:hover{background:rgba(237,131,36,.1)}
+.fld{width:100%;border:0;border-radius:6px;background:#efd9bb;padding:6px 8px;font:500 11px var(--ui);color:var(--brown)}
+.fld::placeholder{color:var(--brown);opacity:.5}
+.lbl{font:600 11px var(--ui);color:var(--brown);margin:0 0 4px}
+.price{display:inline-flex;align-items:center;gap:4px;font:600 10px var(--ui)}
+.price img{width:12px;height:12px}
+.toast{position:absolute;left:50%;top:92px;transform:translateX(-50%);background:rgba(20,12,4,.88);color:#fff;font:600 11px var(--ui);padding:8px 14px;border-radius:10px;border:1px solid rgba(251,180,64,.5);box-shadow:0 6px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:99;pointer-events:none;animation:toast 2.6s forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,-6px)}8%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+
+/* ---------- map ---------- */
+.flabel{position:absolute;display:flex;flex-direction:column;gap:3px;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);border:0;text-align:left}
+.flabel .a{font:600 11px var(--ui);color:#fff;display:flex;align-items:center;gap:4px}
+.flabel .b{font:500 9px var(--ui);color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px}
+.flabel img{width:14px;height:14px}
+.hot{position:absolute;border:0;background:transparent;border-radius:30px}
+.hot:hover{background:rgba(255,230,120,.08)}
+.tipb{position:absolute;display:flex;align-items:center;gap:4px;background:rgba(0,0,0,.35);border:0;border-radius:8px;padding:4px 8px;font:500 13px var(--ui);color:#fff;text-shadow:1px 1px 0 #000}
+.tipb img{width:20px;height:20px}
+.focus{position:absolute;box-shadow:0 0 0 2000px rgba(0,0,0,.38);background:rgba(255,240,170,.07);transition:all .25s ease;pointer-events:none!important}
+.carrow{position:absolute;width:26px;height:26px;pointer-events:none!important}
+.center-lbl{position:absolute;left:337px;width:200px;top:263px;text-align:center;pointer-events:none!important}
+.center-lbl b{display:block;font:700 15px var(--ui);color:#fff;text-shadow:1px 1px 0 #000}
+.center-lbl span{font:500 10px var(--ui);color:#fff;text-shadow:1px 1px 0 #000}
+.actbar{position:absolute;left:238px;top:317px;display:flex;gap:14px}
+.act{width:68px;height:69px;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.45);display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 0 6px;gap:2px;backdrop-filter:blur(2px)}
+.act img{width:32px;height:32px}
+.act span{font:600 11px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;line-height:1.05;text-align:center}
+.act:hover{background:rgba(0,0,0,.6)}
+
+/* ---------- side list (farms) ---------- */
+.side{position:absolute;width:64px;background:rgba(18,11,4,.78);border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:6px}
+.side .sq{position:relative}
+.fthumb{border:0;background:none;padding:2px;border-radius:6px;display:flex;flex-direction:column;align-items:center;gap:1px}
+.fthumb img{width:40px;height:22px;border-radius:3px;display:block}
+.fthumb span{font:600 8px var(--ui);color:#fff}
+.fthumb.on{background:rgba(251,180,64,.15);outline:1.5px solid var(--gold)}
+.fthumb.on span{color:var(--gold)}
+.shopside{position:absolute;left:133px;top:70px;width:91px;padding:8px 6px;background:rgba(18,11,4,.78);border-radius:12px 0 0 12px;display:flex;flex-direction:column;gap:6px}
+.shopside button{border:1px solid transparent;background:none;border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;font:600 8px var(--ui);color:#fff}
+.shopside button.on{border-color:var(--gold);background:rgba(251,180,64,.12)}
+.shopside img{height:30px}
+.shopside hr{width:70%;border:0;border-top:1px solid rgba(255,255,255,.12);margin:0 auto}
+
+/* ---------- guide + tip bubble ---------- */
+.guide{position:absolute;width:139px;height:217px;pointer-events:none!important}
+.bubble{position:absolute;background:#fdf1de;border-radius:18px;padding:12px 14px;color:var(--brown);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.bubble::before{content:"";position:absolute;left:-14px;top:22px;border:10px solid transparent;border-right:16px solid #fdf1de;border-left:0}
+.bubble b{font:600 10px var(--ui)}
+.bubble p{margin:2px 0 0;font:500 8.5px var(--ui);line-height:1.45}
+
+/* ---------- overlays ---------- */
+.dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
+.confetti{position:absolute;left:314px;top:0}
+@media (max-aspect-ratio:1/1){#hint{display:block}}
+@media (min-aspect-ratio:1/1){#hint{display:none}}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="stage">
+    <div id="bg" class="layer"></div>
+    <div class="scrim-t"></div><div class="scrim-b"></div>
+    <div id="world" class="layer"></div>
+    <button id="btnMap" class="bigbtn" data-act="go" data-v="map" aria-label="Map"><span class="o"><span class="i"><img data-src="ic-map" alt=""></span></span><span class="lb">Map</span></button>
+    <button id="btnTask" class="bigbtn" data-act="go" data-v="task" aria-label="Task"><span class="o"><span class="i"><img data-src="ic-task" alt=""></span></span><span class="lb">Task</span></button>
+    <nav id="nav" aria-label="Main"></nav>
+    <div id="hud">
+      <button class="agent" data-act="go" data-v="profile" aria-label="Agent profile">
+        <span class="avatar"><span><img data-src="avatar" alt=""></span></span>
+        <span class="col" style="gap:2px"><span class="aname">Wakala Agent</span><span><span class="chip"><img data-src="trophy" alt="">124</span></span></span>
+      </button>
+      <div class="res">
+        <div class="rpill" id="rCoins"><div class="bar"><i style="width:22px;background:#ca8b24"></i><b>5</b></div><img data-src="coin-sm" alt="Coins"></div>
+        <div class="rpill" id="rGems"><div class="bar"><i style="width:30px;background:#cb89e8"></i><b>8</b></div><img data-src="gem" alt="Gems"></div>
+        <div class="rpill" id="rWater"><div class="bar"><i style="width:52px;background:var(--blue)"></i><b>20</b></div><img data-src="water" alt="Water"></div>
+      </div>
+      <div class="sysbtns"><button data-act="toast" data-msg="No new messages" aria-label="Messages"><img data-src="mail" alt=""></button><button data-act="reset" aria-label="Settings: restart game"><img data-src="settings" alt=""></button></div>
+    </div>
+    <div id="view" class="layer"></div>
+    <div id="overlay" class="layer"></div>
+  </div>
+  <div id="hint">Turn your phone sideways for the full farm view</div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const A = n => (window.ASSETS && window.ASSETS[n]) || ('assets/' + n + (n.startsWith('bg-') ? '.jpg' : '.png'));
+const $ = s => document.querySelector(s);
+const stage = $('#stage');
+stage.style.setProperty('--frame', `url(${A('frame')})`);
+document.querySelectorAll('img[data-src]').forEach(i => i.src = A(i.dataset.src));
+const fmt = n => Math.round(n).toLocaleString('en-US');
+
+/* ---------- svg bits ---------- */
+const ARR = r => `<svg width="24" height="24" viewBox="0 0 24 24" style="transform:rotate(${r}deg)"><path d="M19 12H5M11 5.5 4.5 12l6.5 6.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const sq = (x, y, act, rot = 0, extra = '', label = 'Back') => `<button class="sq ${extra}" style="left:${x}px;top:${y}px" data-act="${act}" aria-label="${label}"><span>${ARR(rot)}</span></button>`;
+const backBtn = (x, y) => sq(x, y, 'back', 0, '', 'Back');
+const CHEV = `<svg width="10" height="10" viewBox="0 0 10 10"><path d="M3 1.5 7 5 3 8.5z" fill="#6b402b"/></svg>`;
+const PLUS = `<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
+const X = `<svg width="22" height="22" viewBox="0 0 22 22"><path d="M5 5l12 12M17 5 5 17" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
+const img = (n, w, h, st = '') => `<img src="${A(n)}" width="${w}" ${h ? `height="${h}"` : ''} style="${st}" alt="">`;
+const cost = (n, kind = 'gem') => `${img(kind === 'gem' ? 'gem' : 'coin-sm', 14, 14)}${n}`;
+
+/* ---------- data ---------- */
+const FARMS = [
+  {id:1, owner:'Mark', km:10, score:40, acres:'1 acre', lbl:[160,38], box:[105,0,370,142], crop:'Maize'},
+  {id:2, owner:'June', km:14, score:75, acres:'2 acres', lbl:[646,227], box:[598,200,874,382], crop:'Maize'},
+  {id:3, owner:'Brian', km:19, score:85, acres:'1.5 acres', lbl:[160,236], box:[99,196,377,362], crop:'Pumpkin'},
+  {id:4, owner:'Vincent', km:25, score:60, acres:'3 acres', lbl:[558,46], box:[565,0,775,122], crop:'Beans'},
+  {id:5, owner:'', km:31, score:0, acres:'2 acres', crop:'Maize'},
+];
+const fname = id => { const f = FARMS[id - 1]; return f.owner ? `Farm ${f.id}: ${f.owner}` : `Farm ${f.id}`; };
+const CATS = {
+  soil:    {name:'Soil Management & Quality', desc:'Check crop condition and growth', icon:'cat-soil', tint:'rgba(93,168,25,.1)', finding:'Plant Health'},
+  nutrient:{name:'Nutrient Supply', desc:'Check nutrients and fertilizer use.', icon:'cat-nutrient', tint:'rgba(202,147,36,.12)', finding:'Plant Health'},
+  water:   {name:'Water Control', desc:'Check water source and irrigation', icon:'cat-water', tint:'rgba(34,173,226,.1)', finding:'Water Quality'},
+  pest:    {name:'Pest and Disease Defense', desc:'Check for signs of pests or disease', icon:'cat-pest', tint:'rgba(188,136,247,.1)', finding:'Pest & Disease'},
+  weed:    {name:'Weed Suppression', desc:'Check weed growth and control.', icon:'cat-weed', tint:'rgba(245,131,16,.1)', finding:'Protection & Security'},
+};
+const CAT_ORDER = ['soil','nutrient','water','pest','weed'];
+const RATINGS = [['good','Good','In good condition.',88],['fair','Fair','Showing some problems.',55],['poor','Poor','In bad condition.',22]];
+const CROPS = ['potato','carrot','maize','pepper','tomato','broccoli','spinach','onion'];
+const CROP_NAMES = {potato:'Potato',carrot:'Carrot',maize:'Maize',pepper:'Pepper',tomato:'Tomato',broccoli:'Broccolli',spinach:'Spinach',onion:'Onions'};
+const INPUTS = [['fertilizer','Fertilizer',180],['herbicides','Herbicides',200],['fungicides','Fungicides',160],['nets','Nets',120],['water','Water',60],['insecticides','Insecticides',210]];
+const EQUIP = [['shear','Shear'],['hoe','Hoe'],['spade','Spade'],['cart','Cart'],['tractor','Tractor']];
+const TANKS = [['tank','Water tank'],['tank','Spray tank']];
+const LOANS = [['coins','Input loan',200],['loan-bag','Equipment loan',5000],['moneybag','Expansion loan',10000]];
+const TRAININGS = [['field','Field training','train-field'],['workshop','Workshop','train-workshop'],['advisory','Advisory visit','train-advisory']];
+const WAREHOUSES = [
+  {k:'small', name:'Small Warehouse', icon:'wh-small', cap:'+12,000', tag:'Too small'},
+  {k:'large', name:'Large Warehouse', icon:'wh-large', cap:'+12,000', tag:'Too large'},
+  {k:'xl', name:'XL Warehouse', icon:'wh-xl', cap:'+12,000', tag:'Recommended'},
+  {k:'cold', name:'Cold Storage', icon:'wh-cold', cap:'+12,000', tag:'Recommended'},
+];
+const TIPS = [
+  'Water your crops early in the morning to reduce evaporation and increase yield',
+  'Rotate maize with beans each season to put nitrogen back into the soil',
+  'Store dry maize below 13% moisture to keep weevils and mould away',
+  'Check under leaves twice a week. Pests hide there before they spread',
+];
+const ROUTE_STEPS = ['Load tracktor','Pickup plough','Service point','Drop off trailer','Deliver tractor'];
+
+/* ---------- state ---------- */
+const FRESH = () => ({
+  coins:5, gems:8, water:20, trophies:124, level:12, missions:128, active:12,
+  hub:0, sel:null, farmIdx:0, statFarm:0, cardMode:0,
+  taskFarm:1, checks:{soil:null,nutrient:null,water:'good',pest:null,weed:'good'}, rewarded:false,
+  recs:[{cat:'water',text:'Increase watering in the morning to maintain soil moisture.'},{cat:'pest',text:'Strengthen the north side fence to improve farm security.'},{cat:'pest',text:'Apply organic pesticide in the next 2-3 days.'}],
+  recsApplied:false,
+  bookings:{field:{farm:1, day:2}}, trainFarm:{}, trainIdx:0, calDay:2, tip:0,
+  storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
+  routeApplied:false, stepsOpen:true,
+});
+let S;
+try { S = Object.assign(FRESH(), JSON.parse(localStorage.getItem('wakala-save') || '{}')); } catch (e) { S = FRESH(); }
+const save = () => { try { localStorage.setItem('wakala-save', JSON.stringify(S)); } catch (e) {} };
+
+/* transient UI state */
+let view = 'home', hist = [], ui = {dd:null, inspectCat:null, pick:null, recEdit:null, recCat:'soil', recText:'', sellItem:null, sellFarm:null, overlay:null, calc:{type:null,tenure:12,farm:null}};
+
+/* ---------- helpers ---------- */
+function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
+function bump(id){ const el = $(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+function spend(kind, n){
+  if (S[kind] < n){ toast(`You need ${n} ${kind === 'gems' ? 'gems' : 'coins'} (you have ${S[kind]}). Complete a task to earn more.`); return false; }
+  S[kind] -= n; bump(kind === 'gems' ? '#rGems' : '#rCoins'); return true;
+}
+function earn(c, g, w){ S.coins += c; S.gems += g; S.water += w; ['#rCoins','#rGems','#rWater'].forEach(bump); }
+const doneCount = () => CAT_ORDER.filter(k => S.checks[k]).length;
+const progress = () => Math.min(100, 20 + doneCount() * 20);
+function health(){
+  const vals = CAT_ORDER.map(k => (RATINGS.find(r => r[0] === S.checks[k]) || RATINGS[0])[3]);
+  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+}
+const healthWord = h => h >= 70 ? 'Good' : h >= 45 ? 'Fair' : 'Poor';
+const ring = (pct, color, track, size, sw, inner) => {
+  const r = (size - sw) / 2, c = 2 * Math.PI * r;
+  return `<div style="position:relative;width:${size}px;height:${size}px;flex:none"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${track}" stroke-width="${sw}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c*pct/100} ${c}"/></svg><div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center">${inner}</div></div>`;
+};
+function dd(key, value, placeholder, options, iconName){
+  const open = ui.dd === key;
+  const opt = options.find(o => o[0] === value);
+  return `<div class="dd ${open ? 'open' : ''}"><button data-act="dd" data-k="${key}" aria-expanded="${open}">${iconName ? img(opt && opt[2] ? opt[2] : iconName, 14, 14) : ''}${opt ? `<span>${opt[1]}</span>` : `<span class="ph">${placeholder}</span>`}<i class="car"></i></button>${open ? `<ul>${options.map(o => `<li><button data-act="ddpick" data-k="${key}" data-val="${o[0]}">${iconName ? img(o[2] || iconName, 14, 14) : ''}${o[1]}</button></li>`).join('')}</ul>` : ''}</div>`;
+}
+const farmOpts = () => FARMS.slice(0, 4).map(f => [String(f.id), `Farm ${f.id} : ${f.owner}`, 'sprout']);
+const reward = (n = 400) => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}${n}</span><span class="price" style="font-size:11px">${img('gem',14,14)}${n}</span><span class="price" style="font-size:11px">${img('water',14,14)}${n}</span>`;
+
+/* ---------- view definitions ---------- */
+// cfg: bg, nav (active key or false), map/task dim flags, hud
+const CFG = {
+  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1},
+  analyze:{bg:'farm',nav:false,mapDim:1}, inspect:{bg:'farm',nav:false,mapDim:1}, result:{bg:'farm',nav:false,mapDim:1},
+  recs:{bg:'farm',nav:false,mapDim:1}, recform:{bg:'farm',nav:false,mapDim:1},
+  farms:{bg:'farm',nav:'farms',mapDim:1,taskDim:1}, crop:{bg:'farm',nav:false,mapDim:1,taskDim:1},
+  shop:{bg:'farm',nav:'shop',mapDim:1,taskDim:1}, sell:{bg:'farm',nav:'shop',mapDim:1,taskDim:1},
+  training:{bg:'farm',nav:'training',mapDim:1,taskDim:1}, calendar:{bg:'calendar',nav:'training',mapDim:1,taskDim:1},
+  storage:{bg:'farm',nav:'storage',mapDim:1,taskDim:1}, stats:{bg:'farm',nav:'stats',mapDim:1,taskDim:1},
+  profile:{bg:'farm',nav:'stats',mapDim:1,taskDim:1}, route:{bg:'route',nav:false,noHud:1},
+};
+const NAV = [['home','Home','nav-home'],['farms','Farms','nav-farms'],['shop','Shop','nav-shop'],['training','Training','nav-training'],['storage','Storage','nav-storage'],['stats','Stats','nav-stats']];
+
+const V = {};
+
+/* Home: the base map (switches to the hub art after storage upgrades) */
+V.home = () => {
+  if (S.hub > 0) return {world: `<button class="hot" style="left:240px;top:150px;width:390px;height:140px" data-act="toast" data-msg="Your hub grows each time you upgrade storage" aria-label="Hub"></button>`};
+  const hots = FARMS.slice(0, 4).map(f => `<button class="hot" style="left:${f.box[0]}px;top:${f.box[1]}px;width:${f.box[2]-f.box[0]}px;height:${f.box[3]-f.box[1]}px" data-act="pickFarm" data-farm="${f.id}" aria-label="Open ${fname(f.id)}"></button>`).join('');
+  return {world: hots + `<button class="tipb" style="left:292px;top:95px" data-act="pickFarm" data-farm="1">${img('bulb',20,20)}Needs fertilizer</button>`};
+};
+
+/* Map: farm labels, selection focus, farm actions */
+V.map = () => {
+  const sel = S.sel, f = FARMS[(sel || 1) - 1];
+  let w = '';
+  if (sel){
+    const b = f.box, pad = 0;
+    w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`;
+    const corner = (x, y, rot) => `<svg class="carrow" style="left:${x-13}px;top:${y-13}px;transform:rotate(${rot}deg)" viewBox="0 0 26 26"><path d="M4 4h13l-4 4 9 9-5 5-9-9-4 4z" fill="#f9b81b" stroke="#7a4a00" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+    w += corner(b[0]-12, b[1]+8, 0) + corner(b[2]+6, b[1]+8, 90) + corner(b[2]+6, b[3]+6, 180) + corner(b[0]-12, b[3]+6, 270);
+  }
+  w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="selFarm" data-farm="${x.id}" aria-label="Select ${fname(x.id)}"></button>`).join('');
+  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => `<button class="flabel" style="left:${x.lbl[0]}px;top:${x.lbl[1]}px" data-act="selFarm" data-farm="${x.id}"><span class="a">${img('sprout',14,14)}Farm ${x.id}: ${x.owner} - ${x.km} km</span><span class="b">${img('target',14,14)}Success score: ${x.score}/100</span></button>`).join('');
+  w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${f.acres}</span></div>`;
+  const acts = [['analyze','Analyze','act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
+  w += `<div class="actbar">${acts.map(a => `<button class="act" data-act="farmAct" data-a="${a[0]}">${img(a[2],32,32)}<span>${a[1]}</span></button>`).join('')}</div>`;
+  return {world: w};
+};
+
+/* Current task */
+V.task = () => {
+  const f = S.taskFarm, p = progress();
+  return {view: backBtn(163,55) + `<div class="panel" style="left:215px;top:47px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:12px">
+    <div class="ttl">${img('hdr-task',25,25)}Current Task</div>
+    <div class="box" style="padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;background:rgba(107,64,43,.06)">
+      <div class="row" style="align-items:flex-start;gap:16px">
+        <div class="col sp" style="gap:6px"><span><span class="tag hi">High Priority</span></span>
+          <span style="font:600 13px var(--ui)">Analyze Farm Health</span>
+          <span class="t10 row" style="gap:4px">${img('sprout',14,14)}${fname(f)}</span>
+          <span style="font:400 10px var(--ui);opacity:.7;line-height:1.5">Inspect crops and soil, then provide recommendations to improve yield.</span></div>
+        ${ring(p, '#ed8324', '#f6d3ac', 78, 7, `<b style="font:600 15px var(--ui);color:#6b402b">${p}%</b>`)}
+      </div>
+      <div class="box" style="background:rgba(107,64,43,.07);padding:6px 8px;display:flex;flex-direction:column;gap:6px">
+        <span class="t10 row" style="gap:4px;font-weight:500">${img('clock',14,14)}Due in 4h 30m</span>
+        <div class="row" style="border-top:1px solid rgba(107,64,43,.08);padding-top:6px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward</span><span class="sp"></span>${reward()}</div>
+      </div>
+    </div>
+    <button class="btn wide" data-act="go" data-v="analyze">${S.rewarded ? 'Start Task' : doneCount() ? 'Resume Task' : 'Start Task'}</button>
+  </div></div>`};
+};
+
+/* Analyze checklist */
+V.analyze = () => {
+  const rows = CAT_ORDER.map(k => { const c = CATS[k], st = S.checks[k];
+    return `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="inspect" data-cat="${k}">
+      <span style="width:29px;height:29px;border-radius:4px;background:${c.tint};display:grid;place-items:center;flex:none">${img(c.icon,18,18)}</span>
+      <span class="col sp" style="gap:2px"><span class="t10">${c.name}</span><span class="t8">${c.desc}</span></span>
+      <span class="tag ${st ? 'ok' : 'no'}">${st ? 'Completed' : 'Not Checked'}</span>${CHEV}</button>`; }).join('');
+  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:6px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:5px">
+    <div class="ttl" style="padding:2px 0">${img('hdr-analyze',25,25)}Analyze</div>
+    <div class="box row" style="padding:7px 8px;gap:8px">${img('farm1-thumb',30,30,'border-radius:2px')}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Complete the checklist below to analyze your farm health.</span></div></div>
+    <div class="lst" style="padding:8px 12px;display:flex;flex-direction:column;gap:12px">${rows}</div>
+    <div class="box row" style="background:rgba(0,0,0,.05)">${img('trophy',18,18)}<span style="font:500 10px var(--ui);opacity:.75;width:270px">Complete all checks to run the analysis and get insights + rewards.</span><span class="sp"></span><button class="btn" style="padding:8px 34px" data-act="makeAnalysis">Make Analysis</button></div>
+  </div></div>`};
+};
+
+/* Inspection for one category */
+V.inspect = () => {
+  const k = ui.inspectCat, c = CATS[k], pick = ui.pick ?? S.checks[k];
+  const opts = RATINGS.map(r => `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="rate" data-r="${r[0]}" aria-pressed="${pick === r[0]}">
+      <span class="col sp" style="gap:4px"><span style="font:600 12px var(--ui)">${r[1]}</span><span style="font:400 10px var(--ui);opacity:.7">${r[2]}</span></span>
+      <span style="width:19px;height:19px;border-radius:3px;display:grid;place-items:center;${pick === r[0] ? 'background:#ed8324;box-shadow:inset 0 2px 2px rgba(255,255,255,.4)' : 'background:#f3dfc4;border:1px solid rgba(107,64,43,.12)'}">${pick === r[0] ? '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.2 5 9l5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</span></button>`).join('');
+  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:30px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:10px">
+    <div class="ttl" style="padding:2px 0 0">Inspection Checklist</div>
+    <div class="box row" style="padding:8px">
+      <span style="width:32px;height:32px;border-radius:4px;background:${c.tint};display:grid;place-items:center">${img(c.icon,20,20)}</span>
+      <div class="col sp" style="gap:3px"><span style="font:600 11px var(--ui)">${c.name}</span><span style="font:400 10px var(--ui);opacity:.7">${c.desc}</span></div>
+      <span class="tag ${S.checks[k] ? 'ok' : 'no'}" style="font-size:10px">${S.checks[k] ? 'Completed' : 'Not Checked'}</span></div>
+    <div class="lst" style="padding:12px;display:flex;flex-direction:column;gap:16px">${opts}</div>
+    <button class="btn wide" data-act="inspectDone">Done</button>
+  </div></div>`};
+};
+
+/* Analysis result */
+V.result = () => {
+  const h = health(), word = healthWord(h);
+  const finding = {}; CAT_ORDER.forEach(k => { const f = CATS[k].finding, r = S.checks[k]; const rank = {good:0,fair:1,poor:2}[r] ?? 0; finding[f] = Math.max(finding[f] ?? 0, rank); });
+  const icons = {'Water Quality':'water','Plant Health':'leaf','Pest & Disease':'bug','Protection & Security':'lock'};
+  const lab = ['Good','Minor issues','Needs attention'];
+  const rows = Object.keys(icons).map(n => `<div class="row" style="font:600 10px var(--ui)">${img(icons[n],12,12)}<span class="sp">${n}</span><span style="font-weight:500;color:${finding[n] ? (finding[n] > 1 ? '#c0392b' : '#e5484d') : '#5f8a0b'};opacity:.85">${lab[finding[n]]}</span></div>`).join('');
+  return {view: backBtn(163,24) + `<div class="panel" style="left:218px;top:10px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:7px;padding:8px 12px">
+    <div class="ttl">Farm Analysis Result</div>
+    <div class="box row" style="gap:14px;padding:8px 10px">${ring(h, h >= 70 ? '#5f8a0b' : h >= 45 ? '#ed8324' : '#e5484d', '#e8dcc0', 64, 8, `<span><b style="font:600 13px var(--ui);color:#6b402b;display:block">${h}%</b><span style="font:500 8px var(--ui);color:#5f8a0b">${word}</span></span>`)}
+      <div class="col" style="gap:6px"><span class="t10 row" style="gap:6px">${img('leaf',16,16)}Farm Health</span><span style="font:400 10px var(--ui);opacity:.7;line-height:1.55">${h >= 70 ? 'Your farm is in good condition. A few areas need attention to improve even better' : h >= 45 ? 'Your farm is doing fair. Act on the issues below to lift its health.' : 'Your farm needs urgent help. Start with the issues marked below.'}</span></div></div>
+    <div class="box" style="background:rgba(107,64,43,.08);display:flex;flex-direction:column;gap:7px;padding:7px 12px"><div class="row t10" style="font-weight:500;padding-bottom:5px;border-bottom:1px solid rgba(107,64,43,.12)">${img('checklist',20,21)}Key Findings</div>${rows}</div>
+    <div class="box row" style="padding:7px 8px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward</span><span class="sp"></span>${reward()}</div>
+    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="recs">Recommendations</button><button class="btn sp" style="padding:7px" data-act="submitReport">Submit Report</button></div>
+  </div></div>`};
+};
+
+/* Recommendations list */
+V.recs = () => {
+  const rows = S.recs.length ? S.recs.map((r, i) => `<div class="row" style="gap:6px;padding:8px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(CATS[r.cat].icon,16,16,'align-self:flex-start')}<div class="col sp" style="gap:5px"><span style="font:600 10px var(--ui)">${CATS[r.cat].name}</span><span style="font:400 10px var(--ui);opacity:.75">${r.text}</span></div><button class="btn cream sm" style="font-size:11px;padding:3px 7px" data-act="editRec" data-i="${i}">Edit ${img('pencil',14,14)}</button></div>`).join('') : `<p style="margin:8px 0;font:500 10px var(--ui);opacity:.7">No recommendations yet. Add one for the farmer.</p>`;
+  return {view: backBtn(163,42) + `<div class="panel" style="left:210px;top:30px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
+    <div class="ttl">${img('bulb',20,20)}My Recommendations</div>
+    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Complete the checklist below to analyze your farm health.</span></div></div>
+    <div class="box" style="padding:2px 10px;max-height:178px;overflow:auto">${rows}</div>
+    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="newRec">Add New ${PLUS}</button><button class="btn sp" style="padding:7px" data-act="applyRecs">Apply ${cost(30)}</button></div>
+  </div></div>`};
+};
+
+/* Add / edit recommendation */
+V.recform = () => {
+  const cat = ui.recCat;
+  const opts = CAT_ORDER.map(k => [k, CATS[k].name, CATS[k].icon]);
+  return {view: backBtn(163,42) + `<div class="panel" style="left:218px;top:23px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
+    <div class="ttl">${img('bulb',20,20)}Submit Recommendations</div>
+    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Write what the farmer should do next.</span></div></div>
+    <p class="lbl" style="margin:4px 0 0">1. Choose Recommendation Type</p>
+    <div style="font-size:11px">${dd('rec', cat, 'Choose a type', opts, 'cat-soil').replace('class="dd', 'class="dd big')}</div>
+    <label class="lbl" for="recText" style="margin:2px 0 0">2. Recommendation</label>
+    <textarea id="recText" class="fld" rows="4" style="background:#fff8ee;border:1px solid rgba(237,131,36,.5);resize:none;font-size:10px;line-height:1.5" placeholder="Type what the farmer should be aware of or the recommendation">${ui.recText}</textarea>
+    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="saveRec" data-more="1">Add New ${PLUS}</button><button class="btn sp" style="padding:7px" data-act="saveRec">${ui.recEdit != null ? 'Save' : 'Apply'} ${ui.recEdit != null ? '' : cost(30)}</button></div>
+  </div></div>`};
+};
+
+/* Farms: Crops and Livestock */
+const farmSide = (x, top, key) => {
+  const cur = S[key];
+  return `<div class="side" style="left:${x}px;top:${top}px"><button class="sq ${cur === 0 ? 'off' : ''}" style="position:relative" data-act="farmStep" data-k="${key}" data-d="-1" aria-label="Previous farm"><span>${ARR(90)}</span></button>
+    ${FARMS.map((f, i) => `<button class="fthumb ${i === cur ? 'on' : ''}" data-act="farmSet" data-k="${key}" data-i="${i}">${img('farm-thumb-wide',40,22)}<span>Farm ${f.id}</span></button>`).join('')}
+    <button class="sq ${cur === 4 ? 'off' : ''}" style="position:relative" data-act="farmStep" data-k="${key}" data-d="1" aria-label="Next farm"><span>${ARR(-90)}</span></button></div>`;
+};
+V.farms = () => {
+  const f = FARMS[S.farmIdx];
+  const size = ['2.4 ha','3.1 ha','1.8 ha','4.0 ha','2.0 ha'][S.farmIdx];
+  const val = [400,520,310,660,280][S.farmIdx];
+  const card = S.cardMode === 0 ? `<div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+      ${img('farm-photo',308,60,'width:100%;height:60px;object-fit:cover;border-radius:4px')}
+      <span style="font:600 11px var(--ui);margin-top:4px">${f.owner ? f.owner + "'s Farm" : 'Wakala Farm'}</span>
+      <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${f.crop}</span>
+      <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A productive ${f.crop.toLowerCase()} farm dedicated to growing quality crops and increasing farmer income through efficient resource management.</span>
+      <button class="btn wide" data-act="viewFarmTask">View Farm Task</button></div>`
+    : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span><span class="tag ok" style="padding:2px 4px">Healthy</span></button>`).join('')}</div>`;
+  return {view: `<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
+    `<div class="panel thin" style="left:262px;top:48px;width:348px"><div class="pin" style="padding:6px"><div class="row" style="border:1px solid rgba(107,64,43,.15);border-radius:8px;padding:6px 8px;gap:0">
+      ${[['Farm size',size],['Crops grown',size],['Farm value',`${img('coin-sm',14,14)}${val}`]].map((x, i) => `<div class="col sp" style="gap:3px;${i ? 'border-left:1px solid rgba(107,64,43,.15);padding-left:12px' : ''};${i === 2 ? 'align-items:flex-end' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${x[0]}</span><span class="row" style="gap:4px;font:600 11px var(--ui)">${x[1]}</span></div>`).join('')}</div></div></div>
+    <div class="panel thin" style="left:265px;top:120px;width:345px">${card}</div>` + sq(210,199,'cardMode',0,'','Previous card') + sq(624,199,'cardMode',180,'','Next card')};
+};
+
+/* Crop health detail */
+V.crop = () => {
+  const c = ui.crop || 'maize';
+  const seed = CROPS.indexOf(c);
+  const vals = [80, 20, 80, 40, 80].map((v, i) => Math.max(15, Math.min(95, c === 'maize' ? v : v + ((seed * 13 + i * 7) % 3 - 1) * 10)));
+  const bars = CAT_ORDER.map((k, i) => { const v = vals[i], col = v >= 60 ? '#5f8a0b' : v >= 35 ? '#ed8324' : '#e5484d';
+    return `<div class="col" style="gap:7px"><span class="row" style="gap:6px;font:500 11px var(--ui)">${img(CATS[k].icon,16,16)}${CATS[k].name}</span><div class="row" style="gap:10px"><div class="sp" style="height:5px;border-radius:3px;background:#efdcc2"><div style="width:${v}%;height:100%;border-radius:3px;background:${col}"></div></div><span style="font:600 8px var(--ui);width:24px;text-align:right">${v}%</span></div></div>`; }).join('');
+  return {view: backBtn(204,35) + `<div class="panel" style="left:260px;top:30px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:9px;padding:8px 10px 10px">
+    <div class="box row" style="gap:14px;padding:6px 14px">${img('crop-' + c,59,44,'object-fit:contain')}<div class="col" style="gap:5px"><span style="font:600 13px var(--ui)">${CROP_NAMES[c]}</span><span><span class="tag ok">Healthy</span></span></div></div>${bars}</div></div>`};
+};
+
+/* Shop */
+const shopSide = () => `<div class="shopside">${[['market','Marketplace','marketplace'],['sell','Sell & Rent','cart'],['loans','Loans & Savings','coin']].map((t, i) => `${i ? '<hr>' : ''}<button class="${S.shopTab === t[0] ? 'on' : ''}" data-act="shopTab" data-t="${t[0]}">${t[0] === 'loans' ? `<span class="row" style="gap:0">${img('coin',21,21)}${img('coin',21,21,'margin-left:-12px')}${img('coin',21,21,'margin-left:-12px')}</span>` : img(t[2], t[0] === 'market' ? 40 : 34, null)}${t[1]}</button>`).join('')}</div>`;
+const banner = () => `<div style="position:relative;border-radius:6px;overflow:hidden">${img('banner',406,79,'width:100%;height:79px;object-fit:cover;display:block')}<div style="position:absolute;right:0;top:0;bottom:0;width:178px;background:rgba(92,52,30,.88);padding:10px 12px;color:#fff"><b style="font:600 11px var(--ui);display:block;line-height:1.4">Quality inputs for better harvest</b><span style="font:500 8px var(--ui);line-height:1.5;display:block;margin-top:2px">Sell your crops &amp; equipments now to earn more coins</span></div></div>`;
+V.shop = () => {
+  let v = shopSide();
+  if (S.shopTab === 'market'){
+    v += `<div class="panel" style="left:223px;top:34px;width:430px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:8px 10px 12px">${banner()}
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 4px">${INPUTS.map(x => `<div style="border:1px solid rgba(107,64,43,.18);border-radius:8px;background:#fff6e8;padding:6px;display:flex;flex-direction:column;align-items:center;gap:3px">${img('in-' + x[0],31,23,'object-fit:contain')}<span style="font:600 11px var(--ui)">${x[1]}</span><button class="btn sm wide" data-act="sellItem" data-kind="input" data-k="${x[0]}">Select</button></div>`).join('')}</div></div></div>`;
+  } else if (S.shopTab === 'sell'){
+    const items = S.sellTab === 'equip' ? EQUIP : TANKS;
+    v += `<div class="panel" style="left:237px;top:69px;width:446px"><div class="pin" style="display:flex;flex-direction:column;gap:10px;padding:8px 10px 12px">${banner()}
+      <div class="row" style="gap:8px">${[['equip','Equipment','eq-shovel'],['tank','Tank','eq-tank']].map(t => `<button data-act="sellTab" data-t="${t[0]}" class="row" style="gap:6px;border:1px solid ${S.sellTab === t[0] ? 'rgba(107,64,43,.35)' : 'transparent'};background:${S.sellTab === t[0] ? '#f3dcbb' : '#f6e6cf'};border-radius:10px;padding:5px 12px;font:600 11px var(--ui);color:var(--brown)">${img(t[2],15,23,'object-fit:contain')}${t[1]}</button>`).join('')}</div>
+      <div class="row" style="gap:8px;padding:0 12px">${items.map(x => `<div style="flex:1;border:1px solid rgba(107,64,43,.18);border-radius:8px;background:#fff6e8;padding:6px;display:flex;flex-direction:column;align-items:center;gap:3px">${img(x[0] === 'cart' ? 'cart' : 'eq-' + x[0],28,23,'object-fit:contain')}<span style="font:600 11px var(--ui)">${x[1]}</span><button class="btn sm wide" data-act="sellItem" data-kind="equip" data-k="${x[0]}" data-name="${x[1]}">${img('coin-sm',12,12)}10</button></div>`).join('')}</div></div></div>`;
+  } else {
+    v += `<div class="screen-title" style="top:20px">Loan &amp; Savings</div><div class="tabs" style="top:50px">${[['offers','Offers','coin'],['calc','Loan Calculator','calculator']].map(t => `<button class="${S.loanTab === t[0] ? 'on' : ''}" data-act="loanTab" data-t="${t[0]}">${img(t[2],21,21)}${t[1]}</button>`).join('')}</div>`;
+    if (S.loanTab === 'offers'){
+      v += sq(228,166,'toast',0,'','Previous offers').replace('data-act="toast"', 'data-act="toast" data-msg="These are all current offers"') + sq(818,166,'toast',180,'','More offers').replace('data-act="toast"', 'data-act="toast" data-msg="More offers unlock at level 15"');
+      v += LOANS.map((l, i) => `<div class="panel thin" style="left:${276 + i*181}px;top:112px;width:170px"><div class="pin" style="padding:12px 10px 10px;display:flex;flex-direction:column;gap:10px">
+        <div class="row" style="gap:10px;padding-left:4px">${l[0] === 'coins' ? `<span class="row" style="gap:0">${img('coin',21,21)}${img('coin',21,21,'margin-left:-14px')}${img('coin',21,21,'margin-left:-14px')}</span>` : img(l[0],26,26)}<div class="col" style="gap:4px"><span style="font:600 11px var(--ui)">${l[1]}</span><span class="price" style="font-size:8px"><span style="opacity:.7;font-weight:500">Up to</span>${img('coin-sm',12,12)}${fmt(l[2])}</span></div></div>
+        ${dd('loan' + i, S.loanFarm[i], 'Select farm', farmOpts(), 'sprout')}
+        <button class="btn wide" data-act="getLoan" data-i="${i}">Get now</button></div></div>`).join('');
+    } else {
+      const c = ui.calc;
+      v += `<div class="panel" style="left:235px;top:86px;width:437px"><div class="pin" style="padding:8px 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px">
+        <div><p class="lbl">Loan type</p>${dd('ctype', c.type, 'Select loan type', LOANS.map((l, i) => [String(i), l[1]]))}</div>
+        <div><label class="lbl" for="calcAmt" style="display:block">Loan amount</label><input id="calcAmt" class="fld" inputmode="numeric" placeholder="Enter amount" value="${c.amt || ''}"></div>
+        <div><p class="lbl">Tenure</p>${dd('ctenure', String(c.tenure), 'Tenure', [['3','3 months'],['6','6 months'],['12','12 months'],['24','24 months']])}</div>
+        <div><p class="lbl">Farm</p>${dd('cfarm', c.farm, 'Select farm', farmOpts())}</div>
+        <div style="grid-column:1/3"><label class="lbl" for="calcRate" style="display:block">Interest rate</label><input id="calcRate" class="fld" inputmode="decimal" placeholder="Add rate (% per year)" value="${c.rate || ''}"></div>
+        <div style="grid-column:1/3;display:flex;flex-direction:column;gap:8px" id="calcOut"></div>
+        <button class="btn wide" style="grid-column:1/3;padding:5px" data-act="quote">Get Quote</button></div></div>`;
+    }
+  }
+  return {view: v};
+};
+function calcOut(){
+  const c = ui.calc, amt = parseFloat(c.amt), rate = parseFloat(c.rate) || 0, t = c.tenure;
+  const total = amt > 0 ? amt * (1 + rate / 100 * t / 12) : 200, daily = amt > 0 ? total / (t * 30) : 10;
+  const el = $('#calcOut'); if (!el) return;
+  el.innerHTML = `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Estimated repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(total)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Daily repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${daily < 10 && amt > 0 ? daily.toFixed(2) : fmt(daily)}</span></div>`;
+}
+
+/* Sell form (marketplace and sell & rent) */
+V.sell = () => {
+  const it = ui.sellItem;
+  const icon = it.kind === 'input' ? 'in-' + it.k : (it.k === 'cart' ? 'cart' : 'eq-' + it.k);
+  return {view: backBtn(163,20) + `<div class="panel" style="left:215px;top:13px;width:440px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
+    <div class="box col" style="align-items:center;gap:6px;padding:10px;background:rgba(107,64,43,.07)">${img(icon,26,30,'object-fit:contain')}<span style="font:600 11px var(--ui)">${it.name}</span></div>
+    <p class="lbl" style="margin:2px 0 -2px">Farm</p>${dd('sellFarm', ui.sellFarm, 'Select Farm', FARMS.slice(0,3).map(f => [String(f.id), `Farm ${f.id}`])).replace('<ul>', '<ul class="fl">')}
+    <label class="lbl" for="sellPrice" style="margin:4px 0 -2px">Price</label><input id="sellPrice" class="fld" inputmode="numeric" placeholder="Input price" value="${it.price || ''}">
+    <div id="sellOut" class="col" style="gap:8px;margin-top:2px"></div>
+    <button class="btn wide" style="padding:5px" data-act="completeSale">Complete</button></div></div>`};
+};
+function sellOut(){
+  const it = ui.sellItem, p = parseFloat(it.price) || it.base, com = Math.round(p * .05);
+  const el = $('#sellOut'); if (!el) return;
+  el.innerHTML = `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Sale price</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(p)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Commission earned</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(com)}</span></div>`;
+}
+
+/* Training */
+const tipBubble = (x, y, w, title, text, btn) => `<div class="bubble" style="left:${x}px;top:${y}px;width:${w}px"><div class="row" style="align-items:flex-start;gap:6px">${img(title === 'Daily Tip' ? 'sprout' : 'wh-tip', 27, title === 'Daily Tip' ? 27 : 18)}<div class="col"><b>${title}</b><p>${text}</p></div></div><div style="text-align:center;margin-top:8px">${btn}</div></div>`;
+const trainTabs = top => `<div class="tabs" style="top:${top}px">${[['training','Training','nav-training'],['calendar','Calendar','calendar']].map(t => `<button class="${view === t[0] ? 'on' : ''}" data-act="goReplace" data-v="${t[0]}">${img(t[2],21,21)}${t[1]}</button>`).join('')}</div>`;
+V.training = () => {
+  const cards = TRAININGS.map((t, i) => { const b = S.bookings[t[0]];
+    return `<div class="panel thin" style="left:${160 + i*191}px;top:100px;width:170px"><div class="pin" style="padding:8px;display:flex;flex-direction:column;gap:6px">
+      <div style="height:66px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(t[2], i === 2 ? 67 : 67, null, 'max-height:60px;width:auto')}</div>
+      <span style="font:500 11px var(--ui)">${t[1]}</span><span class="row" style="gap:4px;font:500 8px var(--ui)">${img('clock',14,14)}2-4hrs</span>
+      ${dd('train' + i, b ? String(b.farm) : S.trainFarm[i], 'Select farm', farmOpts(), 'sprout')}
+      ${b ? `<button class="btn wide ghost" style="padding:5px" tabindex="-1">Booked</button>` : `<button class="btn wide" style="padding:5px" data-act="book" data-i="${i}">${cost(60)}</button>`}</div></div>`; }).join('');
+  return {view: `<img class="guide" src="${A('guide')}" style="left:578px;top:4px" alt="">` + `<div class="screen-title" style="top:27px">Bookings, Training &amp; Advisory</div>` + trainTabs(57) + cards +
+    sq(107,184,'toast',0,'','Previous').replace('data-act="toast"', 'data-act="toast" data-msg="All sessions for this week are shown"') + sq(726,184,'toast',180,'','Next').replace('data-act="toast"', 'data-act="toast" data-msg="New sessions are added every Monday"') +
+    tipBubble(712, 24, 158, 'Daily Tip', TIPS[S.tip % TIPS.length], `<button class="btn sm" style="padding:3px 22px;font-size:11px" data-act="nextTip">Next</button>`)};
+};
+V.calendar = () => {
+  // June 2026 starts on a Monday
+  const days = 30, events = {};
+  Object.entries(S.bookings).forEach(([k, b]) => { (events[b.day] = events[b.day] || []).push({type:'blue', key:k, farm:b.farm}); });
+  (events[9] = events[9] || []).push({type:'green', label:'Harvest'}); (events[18] = events[18] || []).push({type:'red', label:'Emergency'});
+  const cells = [];
+  for (let d = 1; d <= 35; d++){
+    const real = d <= days, n = real ? d : d - days, ev = real ? events[d] : null, on = real && d === S.calDay;
+    cells.push(`<button data-act="calDay" data-d="${real ? d : ''}" ${real ? '' : 'disabled'} style="border:0;background:${on ? '#1e8fc4' : 'transparent'};color:${on ? '#fff' : real ? 'var(--brown)' : 'rgba(107,64,43,.3)'};border-radius:50%;width:22px;height:22px;margin:auto;font:500 10px var(--ui);position:relative;padding:0">${String(n).padStart(2,'0')}${ev && !on ? `<i style="position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);display:flex;gap:2px">${ev.map(e => `<b style="width:4px;height:4px;border-radius:50%;background:${e.type === 'blue' ? '#1e8fc4' : e.type === 'green' ? '#5f8a0b' : '#e5484d'}"></b>`).join('')}</i>` : ''}</button>`);
+  }
+  const ev = (events[S.calDay] || [])[0];
+  const tr = ev && ev.key ? TRAININGS.find(t => t[0] === ev.key) : null;
+  const detail = tr ? `<div style="height:60px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(tr[2],67,null,'max-height:56px;width:auto')}</div><span style="font:500 11px var(--ui);text-align:center">${tr[1]}</span>
+      ${[['Time',`${img('clock',14,14)}2-4hrs`],['Farm',`${img('sprout',14,14)}Farm ${ev.farm} : ${FARMS[ev.farm-1].owner}`],['Cost',`${img('gem',14,14)}60`]].map((r, i) => `<div class="col" style="gap:3px;${i ? 'border-top:1px solid rgba(107,64,43,.12);padding-top:5px' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${r[0]}</span><span class="row" style="gap:4px;font:500 10px var(--ui)">${r[1]}</span></div>`).join('')}`
+    : `<div style="height:60px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(ev ? (ev.type === 'green' ? 'crop-maize' : 'cat-pest') : 'calendar', 36, null)}</div><span style="font:500 11px var(--ui);text-align:center">${ev ? ev.label : 'Nothing booked'}</span><span style="font:400 9px var(--ui);opacity:.7;line-height:1.5;text-align:center">${ev ? (ev.type === 'green' ? 'Harvest window opens for maize farms.' : 'Report any emergency on your farms.') : 'Book a training on the Training tab and it will show here.'}</span>`;
+  return {view: `<img class="guide" src="${A('guide')}" style="left:567px;top:2px" alt="">` + `<div class="screen-title" style="top:17px">Bookings, Training &amp; Advisory</div>` + trainTabs(47) +
+    `<div class="panel thin" style="left:170px;top:80px;width:114px"><div class="pin" style="padding:6px;display:flex;flex-direction:column;gap:6px;min-height:228px">${detail}</div></div>
+     <div class="panel thin" style="left:290px;top:80px;width:286px"><div class="pin" style="padding:8px 12px">
+       <div style="font:600 11px var(--ui);margin:0 0 6px 8px">June</div>
+       <div style="display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;text-align:center">${['m','t','w','t','f','s','s'].map(d => `<span style="font:400 10px var(--ui);opacity:.8">${d}</span>`).join('')}${cells.join('')}</div>
+       <div class="row" style="justify-content:center;gap:12px;margin-top:8px;font:500 9px var(--ui)">${[['#1e8fc4','Field training'],['#5f8a0b','Harvest'],['#e5484d','Emergency']].map(l => `<span class="row" style="gap:3px"><i style="width:5px;height:5px;border-radius:50%;background:${l[0]}"></i>${l[1]}</span>`).join('')}</div></div></div>` +
+    tipBubble(690, 30, 170, 'Daily Tip', TIPS[S.tip % TIPS.length], `<button class="btn sm" style="padding:3px 22px;font-size:11px" data-act="nextTip">Next</button>`)};
+};
+
+/* Storage */
+V.storage = () => {
+  const mine = S.storage === 'medium' ? {name:'Medium Warehouse', icon:'wh-medium', cap:'+6,000'} : WAREHOUSES.find(w => w.k === S.storage);
+  return {view: `<img class="guide" src="${A('guide')}" style="left:578px;top:34px" alt="">` +
+    `<div class="panel thin" style="left:296px;top:15px;width:284px"><div class="pin" style="padding:6px 10px 10px;display:flex;flex-direction:column;gap:8px">
+      <span style="font:500 8px var(--ui);opacity:.7;text-align:center">My Storage</span>
+      <div class="row" style="gap:12px;padding:0 6px"><span style="width:43px;height:43px;border-radius:4px;background:#fff6e8;display:grid;place-items:center">${img(mine.icon,27,null)}</span><div class="col" style="gap:6px"><span style="font:600 11px var(--ui)">${mine.name}</span><span class="row" style="gap:6px;font:500 8px var(--ui)"><span class="mut">${mine.cap} kg capacity</span>${img('distance',14,14)}50km</span></div></div>
+      <button class="btn wide" style="padding:5px" data-act="upgrade">Upgrade ${cost(30)}</button></div></div>` +
+    WAREHOUSES.map((w, i) => `<div class="panel thin" style="left:${148 + i*147}px;top:148px;width:134px"><div class="pin" style="padding:6px 8px 8px;display:flex;flex-direction:column;gap:5px;position:relative">
+      <span style="position:absolute;right:4px;top:5px;font:500 7px var(--ui);background:#f3dcbb;border-radius:3px;padding:2px 3px;opacity:.85">${w.tag}</span>
+      <span style="height:32px;display:flex;align-items:flex-end;padding-left:14px">${img(w.icon, w.k === 'xl' ? 38 : 24, null)}</span>
+      <span style="font:500 11px var(--ui);line-height:1.5;padding-left:14px;height:34px">${w.name.replace(' ', '<br>')}</span>
+      <span style="font:500 8px var(--ui);opacity:.7;padding-left:14px">${w.cap} kg capacity</span>
+      <span class="row" style="gap:4px;font:500 8px var(--ui);padding-left:14px">${img('distance',14,14)}50km</span>
+      <button class="btn" style="margin:2px 14px 0;padding:5px" data-act="pickStorage" data-k="${w.k}">${S.storage === w.k ? 'Selected' : 'Select'}</button></div></div>`).join('') +
+    sq(100,214,'toast',0,'','Previous').replace('data-act="toast"', 'data-act="toast" data-msg="These are all storage options near you"') + sq(732,214,'toast',180,'','Next').replace('data-act="toast"', 'data-act="toast" data-msg="More storage unlocks at level 15"') +
+    tipBubble(700, 64, 170, 'Increase storage capacity', 'Your maize stock is high. Upgrade to avoid losses &amp; sell later at better prices', `<button class="btn sm" style="padding:4px 12px;font-size:12px" data-act="upgrade">Upgrade ${cost(30)}</button>`)};
+};
+
+/* Stats */
+const levelCard = (x, y, w) => `<div class="panel thin" style="left:${x}px;top:${y}px;width:${w}px"><button class="pin" style="width:calc(100% + 14px);border:0;display:flex;flex-direction:column;gap:4px;padding:6px 10px 10px;text-align:left" data-act="go" data-v="profile">
+  <span style="font:500 8px var(--ui);opacity:.7;align-self:center">Level ${S.level}</span>
+  <span class="row" style="gap:12px;padding:0 14px"><span style="width:43px;height:43px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',35,null)}</span><span class="col" style="gap:6px"><span style="font:600 11px var(--ui)">Wakala Agent</span><span class="row" style="gap:12px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.trophies}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins - 5 + 120000)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems - 8 + 20000)}</span></span></span></span></button></div>`;
+V.stats = () => {
+  const f = FARMS[S.statFarm], k = S.statFarm;
+  const nums = [[350000,250000,179000,350000],[280000,190000,90000,210000],[150000,320000,60000,120000],[420000,280000,200000,300000],[90000,40000,0,80000]][k];
+  const line = (icon, lab, val) => `<span class="row" style="gap:6px;font:500 8px var(--ui)">${img(icon,14,14)}<span class="mut">${lab}</span>${val}</span>`;
+  return {view: farmSide(106, 46, 'statFarm') + levelCard(295, 76, 283) +
+    `<div class="panel" style="left:177px;top:166px;width:515px"><div class="pin" style="padding:10px 12px;display:flex;gap:14px;align-items:center">
+      ${img('farm-thumb',39,39,'align-self:flex-start;margin-top:4px')}
+      <div class="col" style="gap:7px;min-width:126px"><span style="font:600 11px var(--ui)">${f.owner ? f.owner + 's Farm' : 'Farm ' + f.id}</span>
+        ${line('sprout','Inputs',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[0])}</span>`)}${line('eq-tractor','Equipment',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[1])}</span>`)}${line('crop-maize','Crop',`<b style="font-weight:600">${f.crop}</b>`)}</div>
+      <div class="col" style="gap:9px;border-left:1px solid rgba(107,64,43,.15);padding-left:16px;align-self:stretch;justify-content:center">${line('moneybag','Loans',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[2])}</span>`)}${line('wh-medium','Storage',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[3])}</span>`)}</div>
+      <span class="sp"></span>
+      <div style="background:#fff;border-radius:8px;padding:8px 10px;width:130px"><div style="font:500 10px var(--ui);padding-bottom:5px;border-bottom:1px solid rgba(107,64,43,.12);margin-bottom:6px">Achievements</div>
+        ${[['trophy','Best maize farm'],['sprout','Most effective water user'],['eq-tractor','Top machine user']].map(a => `<div class="row" style="gap:4px;font:500 7.5px var(--ui);margin-top:5px">${img(a[0],12,12)}<span class="mut">${a[1]}</span></div>`).join('')}</div>
+    </div></div>`};
+};
+
+/* Agent profile */
+V.profile = () => ({view: `<div class="panel thin" style="left:291px;top:34px;width:288px"><div class="pin" style="padding:6px 10px 10px">
+    <div style="font:500 8px var(--ui);opacity:.7;text-align:center;margin-bottom:6px">Wakala Agent Profile</div>
+    <div class="row" style="gap:12px;padding:0 14px"><span style="width:66px;height:77px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',49,61)}</span>
+    <div class="col" style="gap:5px"><span style="font:600 11px var(--ui)">Brian</span><span style="font:400 10px var(--ui);opacity:.6">ID: WA4567890</span><span class="row" style="gap:5px;font:500 10px var(--ui)"><svg width="14" height="10" viewBox="0 0 14 10"><rect width="14" height="10" fill="#000"/><rect y="3.2" width="14" height="3.6" fill="#b30000"/><rect y="2.8" width="14" height=".5" fill="#fff"/><rect y="6.7" width="14" height=".5" fill="#fff"/><ellipse cx="7" cy="5" rx="1.8" ry="4" fill="#b30000" stroke="#fff" stroke-width=".4"/></svg>Kenya</span>
+      <span class="row" style="gap:10px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.trophies}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins - 5 + 120000)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems - 8 + 20000)}</span></span></div></div></div></div>
+  <div class="panel" style="left:146px;top:162px;width:576px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
+    <div class="row" style="justify-content:center;gap:6px;font:600 10px var(--ui)">${img('target',14,14)}Mission Stats</div>
+    <div class="row" style="gap:8px">${[['stat-clipboard',S.missions,'Total Missions<br>Completed'],['stat-target',S.active,'Active Missions'],['stat-shield','92%','Success Rate']].map(s => `<div class="sp row" style="gap:12px;border:1px solid rgba(107,64,43,.12);border-radius:8px;padding:12px;background:rgba(255,255,255,.25)">${img(s[0],39,39)}<div class="col" style="gap:4px"><span style="font:500 15px var(--ui)">${s[1]}</span><span style="font:400 9px var(--ui);opacity:.75;line-height:1.5">${s[2]}</span></div></div>`).join('')}</div>
+    <div style="align-self:center;font:500 9px var(--ui);background:rgba(107,64,43,.08);border-radius:4px;padding:3px 8px">${img('bulb',10,10,'vertical-align:-1px')} Great work! Keep completing missions to level up and unlock greater works.</div>
+  </div></div>`});
+
+/* Smart route */
+V.route = () => {
+  const steps = S.stepsOpen ? `<div class="panel thin" style="left:692px;top:75px;width:165px"><div class="pin" style="padding:8px 10px 12px"><div class="row" style="margin-bottom:8px"><span class="sp" style="font:600 11px var(--ui)">Route steps</span><button aria-label="Close steps" data-act="closeSteps" style="border:0;background:none;padding:2px"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#6b402b" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+      <ol style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:12px;font:500 10px var(--ui);opacity:.85">${ROUTE_STEPS.map(s => `<li>${s}</li>`).join('')}</ol></div></div>` : `<button class="btn cream sm" style="position:absolute;left:760px;top:80px" data-act="openSteps">Route steps</button>`;
+  return {view: backBtn(39,33) +
+    `<svg class="abs" style="left:0;top:0;pointer-events:none" width="874" height="402"><path d="M418 182 L442 222 L470 244 L478 272 L462 300 L452 326 L548 346 L604 318" fill="none" stroke="#c8f7a0" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round" opacity=".9">${matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : '<animate attributeName="stroke-dashoffset" from="26" to="0" dur="1.2s" repeatCount="indefinite"/>'}</path></svg>
+     <div class="abs" style="left:385px;top:33px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.35);font:500 13px var(--ui);color:#fff;text-shadow:1px 1px 0 #000">Schedule</div>
+     <div class="abs" style="left:633px;top:236px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.35);font:500 13px var(--ui);color:#fff;text-shadow:1px 1px 0 #000">Farm 5</div>
+     <div class="panel thin" style="left:33px;top:79px;width:227px"><div class="pin" style="padding:8px;display:flex;flex-direction:column;gap:8px">
+      <span style="font:600 11px var(--ui)">Recommended Route</span><span style="font:400 8px var(--ui);opacity:.75;line-height:1.5">Move tractor from ${fname(S.sel || 1).replace(/:.*/, '').toLowerCase()} to farm 5 via optimal route</span>
+      <div style="display:grid;place-items:center;height:57px">${img('tractor',53,53)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['Fuel cost','fuel','18 L'],['Distance','distance','35 km'],['Est. time','clock','2h'],['Est. savings','coin-sm','400']].map(s => `<div style="border:1px solid rgba(107,64,43,.15);border-radius:4px;padding:4px 6px"><div style="font:500 8px var(--ui);opacity:.7">${s[0]}</div><div class="row" style="gap:4px;font:600 11px var(--ui);margin-top:2px">${img(s[1],14,14)}${s[2]}</div></div>`).join('')}</div>
+      <button class="btn wide" style="padding:5px" data-act="applyRoute">${S.routeApplied ? 'Route scheduled' : `Apply 40 ${img('gem',14,14)}`}</button></div></div>` + steps};
+};
+
+/* Task complete overlay */
+function completeOverlay(){
+  return `<div class="dimmer"></div>${img('confetti',246,74,'position:absolute;left:314px;top:0')}${img('trophy-farm',216,144,'position:absolute;left:329px;top:28px')}
+  <button class="sq" style="left:622px;top:49px" data-act="claim" aria-label="Close"><span>${X}</span></button>
+  <div class="abs" style="left:237px;width:400px;top:180px;text-align:center"><div style="font:700 18px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05">Task Complete!</div>
+   <p style="margin:8px auto 0;width:300px;font:400 10px var(--ui);line-height:1.6;color:#fff">Great work Agent. You have successfully completed your task and helped the farm grow.</p></div>
+  <div class="abs" style="left:290px;top:255px;width:294px;height:73px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px">
+    <span style="font:500 10px var(--ui);color:#d9cbb8">Reward</span>
+    <div class="row" style="gap:12px">${[['coin-sm','rgba(202,147,36,.35)'],['gem','rgba(155,93,229,.35)'],['water','rgba(34,173,226,.3)']].map(r => `<span class="row" style="gap:4px;background:${r[1]};padding:7px 14px;border-radius:6px;font:600 11px var(--ui);color:#fff">${img(r[0],14,14)}+ 400</span>`).join('')}</div></div>
+  <button class="btn cream" style="position:absolute;left:286px;top:339px;width:145px;padding:7px" data-act="claim">Awesome!</button>
+  <button class="btn" style="position:absolute;left:442px;top:339px;width:145px;padding:7px" data-act="claim">Save Rewards</button>`;
+}
+
+/* ---------- render ---------- */
+let lastBg = '';
+function render(){
+  const cfg = CFG[view] || {};
+  let bg = cfg.bg || 'home';
+  if (view === 'home' && S.hub > 0) bg = 'hub' + S.hub;
+  if (bg !== lastBg){ const el = $('#bg'); el.style.backgroundImage = `url(${A('bg-' + bg)})`; el.classList.remove('fade'); void el.offsetWidth; el.classList.add('fade'); lastBg = bg; }
+  $('#hud').hidden = !!cfg.noHud;
+  $('#btnMap').hidden = $('#btnTask').hidden = !!cfg.noHud;
+  $('#btnMap').classList.toggle('dim', !!cfg.mapDim);
+  $('#btnTask').classList.toggle('dim', !!cfg.taskDim);
+  $('#nav').hidden = !cfg.nav || !!ui.overlay;
+  $('#nav').innerHTML = NAV.map(n => `<button class="nb ${cfg.nav === n[0] ? 'on' : ''}" data-act="nav" data-v="${n[0]}"><span class="o"><span class="i"><img src="${A(n[2])}" alt=""></span></span><span>${n[1]}</span></button>`).join('');
+  [['#rCoins',S.coins],['#rGems',S.gems],['#rWater',S.water]].forEach(([id, v]) => $(id + ' b').textContent = fmt(v));
+  const out = V[view]();
+  $('#world').innerHTML = out.world || '';
+  $('#view').innerHTML = out.view || '';
+  $('#overlay').innerHTML = ui.overlay === 'complete' ? completeOverlay() : '';
+  if (view === 'shop' && S.shopTab === 'loans' && S.loanTab === 'calc') calcOut();
+  if (view === 'sell') sellOut();
+  save();
+}
+function go(v, replace){
+  if (v === view) return render();
+  if (!replace) hist.push(view);
+  if (hist.length > 30) hist.shift();
+  view = v; ui.dd = null; render();
+}
+function back(){ ui.dd = null; ui.pick = null; view = hist.pop() || 'home'; render(); }
+
+/* ---------- actions ---------- */
+const ACT = {
+  go: d => go(d.v),
+  goReplace: d => go(d.v, true),
+  back: () => back(),
+  nav: d => { hist = []; go(d.v === 'shop' ? 'shop' : d.v, true); },
+  toast: d => toast(d.msg),
+  reset: () => { if (ui.confirmReset){ S = FRESH(); hist = []; view = 'home'; ui.confirmReset = false; render(); toast('New game started'); } else { ui.confirmReset = true; toast('Tap settings again to restart the game'); setTimeout(() => ui.confirmReset = false, 3000); } },
+  pickFarm: d => { S.sel = +d.farm; go('map'); },
+  selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
+  farmAct: d => {
+    const id = S.sel || 1;
+    if (d.a === 'analyze'){ if (S.taskFarm !== id){ S.taskFarm = id; S.checks = {soil:null,nutrient:null,water:null,pest:null,weed:null}; S.rewarded = false; S.recsApplied = false; } go('analyze'); }
+    if (d.a === 'route') go('route');
+    if (d.a === 'calendar') go('calendar');
+    if (d.a === 'quote'){ S.shopTab = 'loans'; S.loanTab = 'calc'; ui.calc.farm = String(Math.min(id, 4)); go('shop'); }
+    if (d.a === 'info'){ S.farmIdx = id - 1; S.cardMode = 0; go('farms'); }
+  },
+  inspect: d => { ui.inspectCat = d.cat; ui.pick = null; go('inspect'); },
+  rate: d => { ui.pick = d.r; render(); },
+  inspectDone: () => { const p = ui.pick ?? S.checks[ui.inspectCat]; if (!p){ toast('Choose Good, Fair or Poor first'); return; } S.checks[ui.inspectCat] = p; ui.pick = null; toast(`${CATS[ui.inspectCat].name} checked`); back(); },
+  makeAnalysis: () => { const left = 5 - doneCount(); if (left){ toast(`Check ${left} more area${left > 1 ? 's' : ''} to run the analysis`); return; } go('result'); },
+  submitReport: () => { if (S.rewarded){ toast('Report already submitted'); return; } ui.overlay = 'complete'; render(); },
+  claim: () => {
+    if (!S.rewarded){ earn(400, 400, 400); S.rewarded = true; S.missions++; S.trophies += 6; S.taskFarm = S.taskFarm % 4 + 1; S.checks = {soil:null,nutrient:null,water:null,pest:null,weed:null}; S.recs = []; S.recsApplied = false; S.rewarded = false; }
+    ui.overlay = null; hist = []; view = 'home'; render(); toast(`Rewards saved. Next task: ${fname(S.taskFarm)}`);
+  },
+  newRec: () => { ui.recEdit = null; ui.recCat = 'soil'; ui.recText = ''; go('recform'); },
+  editRec: d => { const r = S.recs[+d.i]; ui.recEdit = +d.i; ui.recCat = r.cat; ui.recText = r.text; go('recform'); },
+  saveRec: d => {
+    const t = ($('#recText').value || '').trim();
+    if (!t){ toast('Write the recommendation first'); return; }
+    if (ui.recEdit != null){ S.recs[ui.recEdit] = {cat:ui.recCat, text:t}; toast('Recommendation updated'); back(); return; }
+    if (!d.more && !spend('gems', 30)) return;
+    S.recs.push({cat:ui.recCat, text:t}); ui.recText = '';
+    if (d.more){ toast('Added. Write the next one'); render(); } else { S.recsApplied = true; toast(`Recommendation sent to ${fname(S.taskFarm)}`); back(); }
+  },
+  applyRecs: () => { if (!S.recs.length){ toast('Add a recommendation first'); return; } if (S.recsApplied){ toast('Already sent to the farmer'); return; } if (!spend('gems', 30)) return; S.recsApplied = true; toast(`${S.recs.length} recommendations sent to ${fname(S.taskFarm)}`); back(); },
+  dd: d => { ui.dd = ui.dd === d.k ? null : d.k; render(); },
+  ddpick: d => {
+    const k = d.k, v = d.val; ui.dd = null;
+    if (k === 'rec') ui.recCat = v, ui.recText = ($('#recText') || {}).value || ui.recText;
+    else if (k.startsWith('loan')) S.loanFarm[k.slice(4)] = v;
+    else if (k.startsWith('train')) S.trainFarm[k.slice(5)] = v;
+    else if (k === 'ctype') ui.calc.type = v;
+    else if (k === 'ctenure') ui.calc.tenure = +v;
+    else if (k === 'cfarm') ui.calc.farm = v;
+    else if (k === 'sellFarm') ui.sellFarm = v;
+    render();
+  },
+  farmStep: d => { const k = d.k; S[k] = Math.max(0, Math.min(4, S[k] + +d.d)); render(); },
+  farmSet: d => { S[d.k] = +d.i; render(); },
+  cardMode: () => { S.cardMode = 1 - S.cardMode; render(); },
+  viewFarmTask: () => go('task'),
+  crop: d => { ui.crop = d.c; go('crop'); },
+  shopTab: d => { S.shopTab = d.t; ui.dd = null; render(); },
+  sellTab: d => { S.sellTab = d.t; render(); },
+  loanTab: d => { S.loanTab = d.t; ui.dd = null; render(); },
+  sellItem: d => {
+    const inp = INPUTS.find(x => x[0] === d.k);
+    ui.sellItem = d.kind === 'input' ? {kind:'input', k:d.k, name:inp[1], base:inp[2]} : {kind:'equip', k:d.k, name:d.name || d.k, base:200};
+    ui.sellFarm = null; go('sell');
+  },
+  completeSale: () => {
+    if (!ui.sellFarm){ toast('Select a farm for this sale'); return; }
+    const it = ui.sellItem, p = parseFloat(it.price) || it.base, com = Math.round(p * .05);
+    S.coins += com; bump('#rCoins'); toast(`${it.name} sold to Farm ${ui.sellFarm}. You earned ${com} coins`); back();
+  },
+  getLoan: d => { const i = +d.i, f = S.loanFarm[i]; if (!f){ toast('Select a farm for this loan'); return; } const l = LOANS[i]; S.coins += l[2]; bump('#rCoins'); toast(`${l[1]} of ${fmt(l[2])} coins approved for Farm ${f}`); render(); },
+  quote: () => { const c = ui.calc; if (!c.type || !(parseFloat(c.amt) > 0)){ toast('Choose a loan type and enter an amount'); return; } const total = parseFloat(c.amt) * (1 + (parseFloat(c.rate) || 0) / 100 * c.tenure / 12); toast(`${LOANS[+c.type][1]}: repay ${fmt(total)} coins over ${c.tenure} months`); },
+  book: d => {
+    const i = +d.i, f = S.trainFarm[i]; if (!f){ toast('Select a farm for this session'); return; }
+    if (!spend('gems', 60)) return;
+    const used = Object.values(S.bookings).map(b => b.day); let day = 4; while (used.includes(day)) day += 3;
+    S.bookings[TRAININGS[i][0]] = {farm:+f, day}; S.calDay = day; toast(`${TRAININGS[i][1]} booked for June ${day}`); render();
+  },
+  calDay: d => { if (d.d){ S.calDay = +d.d; render(); } },
+  nextTip: () => { S.tip++; render(); },
+  pickStorage: d => { S.storage = d.k; toast(`${WAREHOUSES.find(w => w.k === d.k).name} selected`); render(); },
+  upgrade: () => {
+    if (S.hub >= 3){ toast('Your storage is fully upgraded'); return; }
+    if (!spend('gems', 30)) return;
+    S.hub++; if (S.storage === 'medium') S.storage = 'xl'; toast(`Storage upgraded. Your hub has grown on Home (stage ${S.hub})`); render();
+  },
+  applyRoute: () => { if (S.routeApplied){ toast('Route already scheduled'); return; } if (!spend('gems', 40)) return; S.routeApplied = true; toast('Tractor route scheduled. Saves about 400 coins'); render(); },
+  closeSteps: () => { S.stepsOpen = false; render(); },
+  openSteps: () => { S.stepsOpen = true; render(); },
+};
+
+stage.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]');
+  if (!t){ if (ui.dd){ ui.dd = null; render(); } return; }
+  const d = t.dataset;
+  if (ui.dd && d.act !== 'dd' && d.act !== 'ddpick') ui.dd = null;
+  (ACT[d.act] || (() => {}))(d);
+});
+stage.addEventListener('input', e => {
+  const id = e.target.id;
+  if (id === 'calcAmt'){ ui.calc.amt = e.target.value.replace(/[^\d.]/g, ''); calcOut(); }
+  if (id === 'calcRate'){ ui.calc.rate = e.target.value.replace(/[^\d.]/g, ''); calcOut(); }
+  if (id === 'sellPrice'){ ui.sellItem.price = e.target.value.replace(/[^\d.]/g, ''); sellOut(); }
+  if (id === 'recText') ui.recText = e.target.value;
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ if (ui.overlay){ ACT.claim(); } else if (ui.dd){ ui.dd = null; render(); } else if (view !== 'home') back(); } });
+
+/* ---------- fit stage to window ---------- */
+function fit(){
+  const app = $('#app'), w = app.clientWidth, h = app.clientHeight;
+  const portrait = h > w;
+  stage.style.setProperty('--s', Math.min(w / 874, (portrait ? h - 40 : h) / 402));
+}
+addEventListener('resize', fit); fit();
+
+/* allow deep links like #shop or #training */
+const start = (location.hash || '').slice(1);
+if (CFG[start] && !['inspect','sell','crop','recform'].includes(start)) view = start;
+render();
+})();
+</script>
+
+</body>
+</html>
