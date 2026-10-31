@@ -28,7 +28,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 img{max-width:none;user-select:none;-webkit-user-drag:none}
 [hidden]{display:none!important}
 #app{position:relative;width:100%;height:100%}
-#stage{position:absolute;left:50%;top:50%;width:874px;height:402px;transform:translate(-50%,-50%) scale(var(--s,1));
+#stage{position:absolute;left:50%;top:50%;width:874px;height:402px;transform:translate(-50%,-50%) rotate(var(--rot,0deg)) scale(var(--s,1));
   border-radius:38px;overflow:hidden;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 0 6px #1b130a;
   font-size:10px;line-height:normal;-webkit-font-smoothing:antialiased}
 #hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;font:500 12px var(--ui);color:#cdb79a;pointer-events:none}
@@ -124,7 +124,8 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .tag.hi{color:var(--red);background:rgba(229,72,77,.12)}
 .ico{width:14px;height:14px;vertical-align:-3px}
 .screen-title{position:absolute;left:0;right:0;text-align:center;font:700 16px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05,1px 2px 2px rgba(0,0,0,.7);pointer-events:none}
-.tabs{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.tabs{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:6px;pointer-events:none!important}
+.tabs button{pointer-events:auto}
 .tabs button{display:flex;align-items:center;gap:6px;font:600 11px var(--ui);color:var(--brown);background:#d9c4a7;border:1.5px solid rgba(255,255,255,.6);border-radius:9px;padding:4px 12px;box-shadow:0 2px 3px rgba(0,0,0,.3)}
 .tabs button.on{background:#fff6e8}
 .tabs img{width:21px;height:21px}
@@ -141,8 +142,8 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .lbl{font:600 11px var(--ui);color:var(--brown);margin:0 0 4px}
 .price{display:inline-flex;align-items:center;gap:4px;font:600 10px var(--ui)}
 .price img{width:12px;height:12px}
-.toast{position:absolute;left:50%;top:92px;transform:translateX(-50%);background:rgba(20,12,4,.88);color:#fff;font:600 11px var(--ui);padding:8px 14px;border-radius:10px;border:1px solid rgba(251,180,64,.5);box-shadow:0 6px 16px rgba(0,0,0,.4);white-space:nowrap;z-index:99;pointer-events:none;animation:toast 2.6s forwards}
-@keyframes toast{0%{opacity:0;transform:translate(-50%,-6px)}8%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.toast{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);max-width:520px;white-space:normal;text-align:center;background:rgba(20,12,4,.88);color:#fff;font:600 11px var(--ui);padding:8px 14px;border-radius:10px;border:1px solid rgba(251,180,64,.5);box-shadow:0 6px 16px rgba(0,0,0,.4);z-index:99;pointer-events:none;animation:toast 2.6s forwards}
+@keyframes toast{0%{opacity:0;transform:translate(-50%,6px)}8%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
 
 /* ---------- map ---------- */
 .flabel{position:absolute;display:flex;flex-direction:column;gap:3px;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);border:0;text-align:left}
@@ -185,6 +186,28 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .bubble b{font:600 10px var(--ui)}
 .bubble p{margin:2px 0 0;font:500 8.5px var(--ui);line-height:1.45}
 
+/* ---------- guidance ---------- */
+.nextchip{position:absolute;left:437px;top:16px;transform:translateX(-50%);display:flex;align-items:center;gap:8px;max-width:330px;padding:5px 12px 5px 8px;border-radius:12px;border:1.5px solid rgba(255,255,255,.75);background:linear-gradient(#f39a3a,#ed8324);box-shadow:0 3px 0 #a9530f,0 6px 12px rgba(0,0,0,.35);color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.45);animation:pulse 2.4s ease-in-out infinite}
+.nextchip b{font:700 11px var(--ui);white-space:nowrap}
+.nextchip span span{font:500 8.5px var(--ui);opacity:.95;white-space:nowrap}
+.nextchip:active{transform:translateX(-50%) translateY(2px);box-shadow:0 1px 0 #a9530f}
+@keyframes pulse{50%{box-shadow:0 3px 0 #a9530f,0 6px 12px rgba(0,0,0,.35),0 0 0 5px rgba(251,180,64,.35)}}
+.pinTag{font:600 7.5px var(--ui);font-style:normal;background:var(--orange);border-radius:4px;padding:1px 4px;margin-left:4px}
+.seen{background:#fff6e8;border:1px solid rgba(107,64,43,.14);border-left:3px solid var(--orange);border-radius:6px;padding:7px 10px}
+.seen span{display:block;font:600 8.5px var(--ui);letter-spacing:.05em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+.seen p{margin:0;font:500 11px var(--ui);line-height:1.5}
+.empty{display:flex;align-items:center;gap:10px;padding:12px 4px;font:400 10px var(--ui);line-height:1.5}
+.empty b{font-weight:600}
+.notice{display:flex;align-items:center;gap:8px;background:rgba(229,72,77,.08);border:1px solid rgba(229,72,77,.25);border-radius:8px;padding:6px 8px;font:500 9.5px var(--ui);line-height:1.45}
+.notice span{flex:1}
+.err{font:500 9.5px var(--ui);color:#c0392b;background:rgba(229,72,77,.08);border-radius:5px;padding:4px 8px}
+.caption{position:absolute;left:258px;width:540px;margin:0;text-align:center;font:500 10px var(--ui);color:#fff;text-shadow:1px 1px 0 #000}
+.btn.ghost-soft{opacity:.65}
+.ip{margin:6px 0 0;font:400 10.5px var(--ui);line-height:1.6;color:var(--brown)}
+.isteps{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:7px;font:400 10.5px var(--ui);line-height:1.5;color:var(--brown)}
+.isteps b{font-weight:600}
+@media (prefers-reduced-motion:reduce){.nextchip{animation:none}}
+
 /* ---------- overlays ---------- */
 .dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
 .confetti{position:absolute;left:314px;top:0}
@@ -205,19 +228,18 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
     <div id="hud">
       <button class="agent" data-act="go" data-v="profile" aria-label="Agent profile">
         <span class="avatar"><span><img data-src="avatar" alt=""></span></span>
-        <span class="col" style="gap:2px"><span class="aname">Wakala Agent</span><span><span class="chip"><img data-src="trophy" alt="">124</span></span></span>
+        <span class="col" style="gap:2px"><span class="aname" id="aname">Wakala Agent</span><span><span class="chip" title="Correct ratings"><img data-src="trophy" alt=""><span id="trophies">0</span></span></span></span>
       </button>
       <div class="res">
         <div class="rpill" id="rCoins"><div class="bar"><i style="width:22px;background:#ca8b24"></i><b>5</b></div><img data-src="coin-sm" alt="Coins"></div>
         <div class="rpill" id="rGems"><div class="bar"><i style="width:30px;background:#cb89e8"></i><b>8</b></div><img data-src="gem" alt="Gems"></div>
         <div class="rpill" id="rWater"><div class="bar"><i style="width:52px;background:var(--blue)"></i><b>20</b></div><img data-src="water" alt="Water"></div>
       </div>
-      <div class="sysbtns"><button data-act="toast" data-msg="No new messages" aria-label="Messages"><img data-src="mail" alt=""></button><button data-act="reset" aria-label="Settings: restart game"><img data-src="settings" alt=""></button></div>
+      <div class="sysbtns"><button data-act="go" data-v="activity" aria-label="Activity"><img data-src="mail" alt=""></button><button data-act="go" data-v="settings" aria-label="Settings"><img data-src="settings" alt=""></button></div>
     </div>
     <div id="view" class="layer"></div>
     <div id="overlay" class="layer"></div>
   </div>
-  <div id="hint">Turn your phone sideways for the full farm view</div>
 </div>
 
 <script>
@@ -241,29 +263,41 @@ const img = (n, w, h, st = '') => `<img src="${A(n)}" width="${w}" ${h ? `height
 const cost = (n, kind = 'gem') => `${img(kind === 'gem' ? 'gem' : 'coin-sm', 14, 14)}${n}`;
 
 /* ---------- data ---------- */
+// Each farm has real (hidden) conditions, 0-100 per area. Inspections are graded against them,
+// advice raises them, and the success score on the map is their average.
 const FARMS = [
-  {id:1, owner:'Mark', km:10, score:40, acres:'1 acre', lbl:[160,38], box:[105,0,370,142], crop:'Maize'},
-  {id:2, owner:'June', km:14, score:75, acres:'2 acres', lbl:[646,227], box:[598,200,874,382], crop:'Maize'},
-  {id:3, owner:'Brian', km:19, score:85, acres:'1.5 acres', lbl:[160,236], box:[99,196,377,362], crop:'Pumpkin'},
-  {id:4, owner:'Vincent', km:25, score:60, acres:'3 acres', lbl:[558,46], box:[565,0,775,122], crop:'Beans'},
-  {id:5, owner:'', km:31, score:0, acres:'2 acres', crop:'Maize'},
+  {id:1, owner:'Mark', km:10, acres:'1 acre', lbl:[160,38], box:[105,0,370,142], hub:[60,20,360,180], tip:[292,95], crop:'Maize', cond:{soil:75,nutrient:20,water:70,pest:25,weed:10}},
+  {id:2, owner:'June', km:14, acres:'2 acres', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], tip:[650,188], crop:'Maize', cond:{soil:85,nutrient:70,water:40,pest:90,weed:90}},
+  {id:3, owner:'Brian', km:19, acres:'1.5 acres', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], tip:[205,172], crop:'Pumpkin', cond:{soil:90,nutrient:85,water:60,pest:95,weed:95}},
+  {id:4, owner:'Vincent', km:25, acres:'3 acres', lbl:[558,46], box:[565,0,775,122], hub:[540,20,815,165], tip:[560,128], crop:'Beans', cond:{soil:50,nutrient:40,water:80,pest:60,weed:70}},
+  {id:5, owner:'', km:31, acres:'2 acres', crop:'Maize'},
 ];
 const fname = id => { const f = FARMS[id - 1]; return f.owner ? `Farm ${f.id}: ${f.owner}` : `Farm ${f.id}`; };
 const CATS = {
-  soil:    {name:'Soil Management & Quality', desc:'Check crop condition and growth', icon:'cat-soil', tint:'rgba(93,168,25,.1)', finding:'Plant Health'},
-  nutrient:{name:'Nutrient Supply', desc:'Check nutrients and fertilizer use.', icon:'cat-nutrient', tint:'rgba(202,147,36,.12)', finding:'Plant Health'},
-  water:   {name:'Water Control', desc:'Check water source and irrigation', icon:'cat-water', tint:'rgba(34,173,226,.1)', finding:'Water Quality'},
-  pest:    {name:'Pest and Disease Defense', desc:'Check for signs of pests or disease', icon:'cat-pest', tint:'rgba(188,136,247,.1)', finding:'Pest & Disease'},
-  weed:    {name:'Weed Suppression', desc:'Check weed growth and control.', icon:'cat-weed', tint:'rgba(245,131,16,.1)', finding:'Protection & Security'},
+  soil:    {name:'Soil Management & Quality', short:'Soil', desc:'Check crop condition and growth', icon:'cat-soil', tint:'rgba(93,168,25,.1)', tip:'Soil looks tired'},
+  nutrient:{name:'Nutrient Supply', short:'Nutrients', desc:'Check nutrients and fertilizer use.', icon:'cat-nutrient', tint:'rgba(202,147,36,.12)', tip:'Needs fertilizer'},
+  water:   {name:'Water Control', short:'Water', desc:'Check water source and irrigation', icon:'cat-water', tint:'rgba(34,173,226,.1)', tip:'Crops look thirsty'},
+  pest:    {name:'Pest and Disease Defense', short:'Pests', desc:'Check for signs of pests or disease', icon:'cat-pest', tint:'rgba(188,136,247,.1)', tip:'Pests spotted'},
+  weed:    {name:'Weed Suppression', short:'Weeds', desc:'Check weed growth and control.', icon:'cat-weed', tint:'rgba(245,131,16,.1)', tip:'Weeds spreading'},
 };
 const CAT_ORDER = ['soil','nutrient','water','pest','weed'];
-const RATINGS = [['good','Good','In good condition.',88],['fair','Fair','Showing some problems.',55],['poor','Poor','In bad condition.',22]];
+const RATINGS = [['good','Good','In good condition.'],['fair','Fair','Showing some problems.'],['poor','Poor','In bad condition.']];
+// What the agent sees in the field for each area at each real condition.
+const NOTES = {
+  soil:{good:'Dark, crumbly soil. Roots spread freely and earthworms are easy to find.', fair:'The topsoil crusts after rain in a few rows and some patches feel compacted.', poor:'Hard, pale topsoil. Water pools after rain and the roots are stunted.'},
+  nutrient:{good:'Leaves are deep green from top to bottom. Fertilizer went on this season.', fair:'Lower leaves are turning pale. The farmer skipped the last top-dressing.', poor:'Older leaves are yellow from the tip down in a V shape. No fertilizer for two seasons.'},
+  water:{good:'Furrows are still damp in the morning and the water tank is full.', fair:'The topsoil is dry by midday and the water tank is half empty.', poor:'Leaves curl and roll by mid-morning. The water tank is empty.'},
+  pest:{good:'No holes or droppings on the leaves. The traps caught only a few insects.', fair:'Ragged holes on some leaves and a few stalk borers in one corner.', poor:'Armyworm droppings in many plants and leaves eaten down to the veins.'},
+  weed:{good:'Rows are clean and mulch covers the ground between plants.', fair:'Knee-high weeds along the edges are starting to spread into the rows.', poor:'Weeds are taller than the crop and choking whole rows.'},
+};
 const CROPS = ['potato','carrot','maize','pepper','tomato','broccoli','spinach','onion'];
 const CROP_NAMES = {potato:'Potato',carrot:'Carrot',maize:'Maize',pepper:'Pepper',tomato:'Tomato',broccoli:'Broccolli',spinach:'Spinach',onion:'Onions'};
-const INPUTS = [['fertilizer','Fertilizer',180],['herbicides','Herbicides',200],['fungicides','Fungicides',160],['nets','Nets',120],['water','Water',60],['insecticides','Insecticides',210]];
+// [key, name, fair price, area it helps]
+const INPUTS = [['fertilizer','Fertilizer',180,'nutrient'],['herbicides','Herbicides',200,'weed'],['fungicides','Fungicides',160,'pest'],['nets','Nets',120,'pest'],['water','Water',60,'water'],['insecticides','Insecticides',210,'pest']];
 const EQUIP = [['shear','Shear'],['hoe','Hoe'],['spade','Spade'],['cart','Cart'],['tractor','Tractor']];
 const TANKS = [['tank','Water tank'],['tank','Spray tank']];
-const LOANS = [['coins','Input loan',200],['loan-bag','Equipment loan',5000],['moneybag','Expansion loan',10000]];
+// [icon, name, max amount, agent referral fee, effect on the farm]
+const LOANS = [['coins','Input loan',200,20,{nutrient:15}],['loan-bag','Equipment loan',5000,60,{soil:10,weed:10}],['moneybag','Expansion loan',10000,120,{}]];
 const TRAININGS = [['field','Field training','train-field'],['workshop','Workshop','train-workshop'],['advisory','Advisory visit','train-advisory']];
 const WAREHOUSES = [
   {k:'small', name:'Small Warehouse', icon:'wh-small', cap:'+12,000', tag:'Too small'},
@@ -277,41 +311,61 @@ const TIPS = [
   'Store dry maize below 13% moisture to keep weevils and mould away',
   'Check under leaves twice a week. Pests hide there before they spread',
 ];
-const ROUTE_STEPS = ['Load tracktor','Pickup plough','Service point','Drop off trailer','Deliver tractor'];
+const ROUTE_STEPS = ['Load tractor','Pickup plough','Service point','Drop off trailer','Deliver tractor'];
+const GOAL = 80;
 
 /* ---------- state ---------- */
+const NO_CHECKS = () => ({soil:null,nutrient:null,water:null,pest:null,weed:null});
 const FRESH = () => ({
-  coins:5, gems:8, water:20, trophies:124, level:12, missions:128, active:12,
+  coins:100, gems:40, water:20, missions:0, ratedTotal:0, ratedRight:0,
+  name:'', onboarded:false, log:[], won:false,
+  farms:Object.fromEntries(FARMS.slice(0, 4).map(f => [f.id, {cond:{...f.cond}, known:null, visits:0}])),
   hub:0, sel:null, farmIdx:0, statFarm:0, cardMode:0,
-  taskFarm:1, checks:{soil:null,nutrient:null,water:'good',pest:null,weed:'good'}, rewarded:false,
-  recs:[{cat:'water',text:'Increase watering in the morning to maintain soil moisture.'},{cat:'pest',text:'Strengthen the north side fence to improve farm security.'},{cat:'pest',text:'Apply organic pesticide in the next 2-3 days.'}],
-  recsApplied:false,
-  bookings:{field:{farm:1, day:2}}, trainFarm:{}, trainIdx:0, calDay:2, tip:0,
+  taskFarm:1, taskTruth:{...FARMS[0].cond}, checks:NO_CHECKS(), rewarded:false,
+  recs:[], recsApplied:false, recsPaid:false,
+  bookings:{}, trainFarm:{}, calDay:2, tip:0, loans:{}, sales:{},
   storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
   routeApplied:false, stepsOpen:true,
 });
+const SAVE_KEY = 'wakala-save-v2';
 let S;
-try { S = Object.assign(FRESH(), JSON.parse(localStorage.getItem('wakala-save') || '{}')); } catch (e) { S = FRESH(); }
-const save = () => { try { localStorage.setItem('wakala-save', JSON.stringify(S)); } catch (e) {} };
+try { S = Object.assign(FRESH(), JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { S = FRESH(); }
+const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} };
 
 /* transient UI state */
-let view = 'home', hist = [], ui = {dd:null, inspectCat:null, pick:null, recEdit:null, recCat:'soil', recText:'', sellItem:null, sellFarm:null, overlay:null, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {dd:null, inspectCat:null, pick:null, recEdit:null, recCat:'soil', recText:'', sellItem:null, sellFarm:null, overlay:null, introStep:0, submitWarn:false, confirmReset:false, last:null, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
-function toast(msg){ const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
+function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
 function bump(id){ const el = $(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
 function spend(kind, n){
-  if (S[kind] < n){ toast(`You need ${n} ${kind === 'gems' ? 'gems' : 'coins'} (you have ${S[kind]}). Complete a task to earn more.`); return false; }
+  if (S[kind] < n){ toast(`You need ${n} ${kind === 'gems' ? 'gems' : 'coins'} (you have ${S[kind]}). Finish a farm visit to earn more.`); return false; }
   S[kind] -= n; bump(kind === 'gems' ? '#rGems' : '#rCoins'); return true;
 }
 function earn(c, g, w){ S.coins += c; S.gems += g; S.water += w; ['#rCoins','#rGems','#rWater'].forEach(bump); }
+function logAdd(icon, text){ S.log.unshift({i:icon, t:text, at:Date.now()}); S.log.length = Math.min(S.log.length, 40); }
+const agentName = () => S.name || 'Wakala Agent';
+const level = () => 1 + Math.floor(S.missions / 2);
+const rateOf = v => v >= 70 ? 'good' : v >= 45 ? 'fair' : 'poor';
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '-';
+const rateCol = r => r === 'good' ? '#5f8a0b' : r === 'fair' ? '#d9730d' : '#d93a3f';
+const avg = o => Math.round(CAT_ORDER.reduce((a, k) => a + o[k], 0) / CAT_ORDER.length);
+const score = id => avg(S.farms[id].cond);
+const owner = id => FARMS[id - 1].owner;
 const doneCount = () => CAT_ORDER.filter(k => S.checks[k]).length;
-const progress = () => Math.min(100, 20 + doneCount() * 20);
-function health(){
-  const vals = CAT_ORDER.map(k => (RATINGS.find(r => r[0] === S.checks[k]) || RATINGS[0])[3]);
-  return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+const correctCount = () => CAT_ORDER.filter(k => S.checks[k] === rateOf(S.taskTruth[k])).length;
+const weakAreas = () => CAT_ORDER.filter(k => rateOf(S.taskTruth[k]) !== 'good');
+const recCats = () => [...new Set(S.recs.map(r => r.cat))];
+const uncovered = () => weakAreas().filter(k => !recCats().includes(k));
+const rewardFor = n => ({c:80 * n, g:12 * n, w:8 * n});
+const progress = () => Math.min(100, doneCount() * 16 + (S.recsApplied || (doneCount() === 5 && !weakAreas().length) ? 20 : 0));
+const hasProgress = () => doneCount() > 0 || S.recs.length > 0;
+const thriving = () => [1,2,3,4].filter(id => score(id) >= GOAL).length;
+function startTask(id){
+  S.taskFarm = id; S.taskTruth = {...S.farms[id].cond}; S.checks = NO_CHECKS();
+  S.recs = []; S.recsApplied = false; S.recsPaid = false; S.rewarded = false; ui.submitWarn = false;
 }
-const healthWord = h => h >= 70 ? 'Good' : h >= 45 ? 'Fair' : 'Poor';
+function boost(id, k, n){ const c = S.farms[id].cond; c[k] = Math.min(95, c[k] + n); }
 const ring = (pct, color, track, size, sw, inner) => {
   const r = (size - sw) / 2, c = 2 * Math.PI * r;
   return `<div style="position:relative;width:${size}px;height:${size}px;flex:none"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${track}" stroke-width="${sw}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c*pct/100} ${c}"/></svg><div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center">${inner}</div></div>`;
@@ -319,10 +373,23 @@ const ring = (pct, color, track, size, sw, inner) => {
 function dd(key, value, placeholder, options, iconName){
   const open = ui.dd === key;
   const opt = options.find(o => o[0] === value);
-  return `<div class="dd ${open ? 'open' : ''}"><button data-act="dd" data-k="${key}" aria-expanded="${open}">${iconName ? img(opt && opt[2] ? opt[2] : iconName, 14, 14) : ''}${opt ? `<span>${opt[1]}</span>` : `<span class="ph">${placeholder}</span>`}<i class="car"></i></button>${open ? `<ul>${options.map(o => `<li><button data-act="ddpick" data-k="${key}" data-val="${o[0]}">${iconName ? img(o[2] || iconName, 14, 14) : ''}${o[1]}</button></li>`).join('')}</ul>` : ''}</div>`;
+  return `<div class="dd ${open ? 'open' : ''}"><button data-act="dd" data-k="${key}" aria-expanded="${open}">${iconName ? img(opt && opt[2] ? opt[2] : iconName, 14, 14) : ''}${opt ? `<span>${opt[1]}</span>` : `<span class="ph">${placeholder}</span>`}<i class="car"></i></button>${open ? `<ul>${options.map(o => `<li><button data-act="ddpick" data-k="${key}" data-val="${o[0]}">${iconName ? img(o[2] || iconName, 14, 14) : ''}${o[3] || o[1]}</button></li>`).join('')}</ul>` : ''}</div>`;
 }
 const farmOpts = () => FARMS.slice(0, 4).map(f => [String(f.id), `Farm ${f.id} : ${f.owner}`, 'sprout']);
-const reward = (n = 400) => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}${n}</span><span class="price" style="font-size:11px">${img('gem',14,14)}${n}</span><span class="price" style="font-size:11px">${img('water',14,14)}${n}</span>`;
+const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}${r.w}</span>`;
+const CHECK = `<svg width="10" height="10" viewBox="0 0 12 12" aria-label="correct"><path d="M2 6.2 5 9l5-6" fill="none" stroke="#5f8a0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CROSS = `<svg width="10" height="10" viewBox="0 0 12 12" aria-label="wrong"><path d="M3 3l6 6M9 3 3 9" stroke="#d93a3f" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+
+/* Next-step chip: always tells the player what to do and takes them there. */
+function nextStep(){
+  const n = doneCount(), o = owner(S.taskFarm), weak = weakAreas();
+  if (n === 0) return ['task', `Next: visit ${fname(S.taskFarm)}`];
+  if (n < 5) return ['analyze', `Next: inspect ${o}'s farm · ${n}/5 areas rated`];
+  if (weak.length && !S.recsApplied) return ['recs', `Next: advise ${o} on ${weak.length} weak area${weak.length > 1 ? 's' : ''}`];
+  return ['result', `Next: submit ${o}'s report`];
+}
+const nextChip = () => { const [v, t] = nextStep();
+  return `<button class="nextchip" data-act="next" data-v="${v}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>${t}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`; };
 
 /* ---------- view definitions ---------- */
 // cfg: bg, nav (active key or false), map/task dim flags, hud
@@ -335,55 +402,63 @@ const CFG = {
   training:{bg:'farm',nav:'training',mapDim:1,taskDim:1}, calendar:{bg:'calendar',nav:'training',mapDim:1,taskDim:1},
   storage:{bg:'farm',nav:'storage',mapDim:1,taskDim:1}, stats:{bg:'farm',nav:'stats',mapDim:1,taskDim:1},
   profile:{bg:'farm',nav:'stats',mapDim:1,taskDim:1}, route:{bg:'route',nav:false,noHud:1},
+  settings:{bg:'farm',nav:false,mapDim:1,taskDim:1}, activity:{bg:'farm',nav:false,mapDim:1,taskDim:1},
 };
 const NAV = [['home','Home','nav-home'],['farms','Farms','nav-farms'],['shop','Shop','nav-shop'],['training','Training','nav-training'],['storage','Storage','nav-storage'],['stats','Stats','nav-stats']];
 
 const V = {};
 
-/* Home: the base map (switches to the hub art after storage upgrades) */
+/* Home: the farm map (switches to the hub art after storage upgrades) */
 V.home = () => {
-  if (S.hub > 0) return {world: `<button class="hot" style="left:240px;top:150px;width:390px;height:140px" data-act="toast" data-msg="Your hub grows each time you upgrade storage" aria-label="Hub"></button>`};
-  const hots = FARMS.slice(0, 4).map(f => `<button class="hot" style="left:${f.box[0]}px;top:${f.box[1]}px;width:${f.box[2]-f.box[0]}px;height:${f.box[3]-f.box[1]}px" data-act="pickFarm" data-farm="${f.id}" aria-label="Open ${fname(f.id)}"></button>`).join('');
-  return {world: hots + `<button class="tipb" style="left:292px;top:95px" data-act="pickFarm" data-farm="1">${img('bulb',20,20)}Needs fertilizer</button>`};
+  const boxKey = S.hub > 0 ? 'hub' : 'box';
+  let w = FARMS.slice(0, 4).map(f => { const b = f[boxKey]; return `<button class="hot" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px" data-act="pickFarm" data-farm="${f.id}" aria-label="Open ${fname(f.id)}"></button>`; }).join('');
+  if (S.hub > 0) w += `<button class="hot" style="left:250px;top:160px;width:370px;height:120px" data-act="nav" data-v="storage" aria-label="Your hub: open storage"></button>`;
+  else {
+    const f = FARMS[S.taskFarm - 1], weakest = CAT_ORDER.slice().sort((a, b) => S.taskTruth[a] - S.taskTruth[b])[0];
+    if (rateOf(S.taskTruth[weakest]) !== 'good' && !S.rewarded) w += `<button class="tipb" style="left:${f.tip[0]}px;top:${f.tip[1]}px" data-act="pickFarm" data-farm="${f.id}">${img('bulb',20,20)}${CATS[weakest].tip}</button>`;
+  }
+  return {world: w + nextChip()};
 };
 
 /* Map: farm labels, selection focus, farm actions */
 V.map = () => {
-  const sel = S.sel, f = FARMS[(sel || 1) - 1];
+  const sel = S.sel, f = FARMS[(sel || S.taskFarm) - 1];
   let w = '';
   if (sel){
-    const b = f.box, pad = 0;
+    const b = f.box;
     w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`;
     const corner = (x, y, rot) => `<svg class="carrow" style="left:${x-13}px;top:${y-13}px;transform:rotate(${rot}deg)" viewBox="0 0 26 26"><path d="M4 4h13l-4 4 9 9-5 5-9-9-4 4z" fill="#f9b81b" stroke="#7a4a00" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
     w += corner(b[0]-12, b[1]+8, 0) + corner(b[2]+6, b[1]+8, 90) + corner(b[2]+6, b[3]+6, 180) + corner(b[0]-12, b[3]+6, 270);
   }
   w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="selFarm" data-farm="${x.id}" aria-label="Select ${fname(x.id)}"></button>`).join('');
-  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => `<button class="flabel" style="left:${x.lbl[0]}px;top:${x.lbl[1]}px" data-act="selFarm" data-farm="${x.id}"><span class="a">${img('sprout',14,14)}Farm ${x.id}: ${x.owner} - ${x.km} km</span><span class="b">${img('target',14,14)}Success score: ${x.score}/100</span></button>`).join('');
-  w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${f.acres}</span></div>`;
-  const acts = [['analyze','Analyze','act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
+  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => { const s = score(x.id);
+    return `<button class="flabel" style="left:${x.lbl[0]}px;top:${x.lbl[1]}px" data-act="selFarm" data-farm="${x.id}"><span class="a">${img('sprout',14,14)}Farm ${x.id}: ${x.owner} - ${x.km} km${x.id === S.taskFarm ? '<i class="pinTag">Your visit</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b></span></button>`; }).join('');
+  w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${sel ? f.acres + ' · tap an action below' : 'Tap a farm to select it'}</span></div>`;
+  const acts = [['analyze', f.id === S.taskFarm ? 'Inspect' : 'Visit', 'act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
   w += `<div class="actbar">${acts.map(a => `<button class="act" data-act="farmAct" data-a="${a[0]}">${img(a[2],32,32)}<span>${a[1]}</span></button>`).join('')}</div>`;
-  return {world: w};
+  return {world: w + nextChip()};
 };
 
 /* Current task */
 V.task = () => {
-  const f = S.taskFarm, p = progress();
+  const f = S.taskFarm, p = progress(), s = score(f), n = doneCount();
+  const pri = s < 50 ? ['hi','High priority'] : s < GOAL ? ['no','Needs support'] : ['ok','Routine check'];
   return {view: backBtn(163,55) + `<div class="panel" style="left:215px;top:47px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:12px">
     <div class="ttl">${img('hdr-task',25,25)}Current Task</div>
     <div class="box" style="padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;background:rgba(107,64,43,.06)">
       <div class="row" style="align-items:flex-start;gap:16px">
-        <div class="col sp" style="gap:6px"><span><span class="tag hi">High Priority</span></span>
+        <div class="col sp" style="gap:6px"><span><span class="tag ${pri[0]}">${pri[1]}</span></span>
           <span style="font:600 13px var(--ui)">Analyze Farm Health</span>
           <span class="t10 row" style="gap:4px">${img('sprout',14,14)}${fname(f)}</span>
-          <span style="font:400 10px var(--ui);opacity:.7;line-height:1.5">Inspect crops and soil, then provide recommendations to improve yield.</span></div>
-        ${ring(p, '#ed8324', '#f6d3ac', 78, 7, `<b style="font:600 15px var(--ui);color:#6b402b">${p}%</b>`)}
+          <span style="font:400 10px var(--ui);opacity:.75;line-height:1.5">Inspect all five areas and rate what you see. Then advise ${owner(f)} on anything that isn't good.</span></div>
+        ${ring(p, '#ed8324', '#f6d3ac', 78, 7, `<span><b style="font:600 15px var(--ui);color:#6b402b;display:block">${p}%</b><span style="font:500 7px var(--ui);color:#6b402b;opacity:.7">done</span></span>`)}
       </div>
       <div class="box" style="background:rgba(107,64,43,.07);padding:6px 8px;display:flex;flex-direction:column;gap:6px">
-        <span class="t10 row" style="gap:4px;font-weight:500">${img('clock',14,14)}Due in 4h 30m</span>
-        <div class="row" style="border-top:1px solid rgba(107,64,43,.08);padding-top:6px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward</span><span class="sp"></span>${reward()}</div>
+        <span class="t10 row" style="gap:4px;font-weight:500">${img('target',14,14)}Success score now: <b>${s}/100</b></span>
+        <div class="row" style="border-top:1px solid rgba(107,64,43,.08);padding-top:6px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward, up to</span><span class="sp"></span>${rewardRow(rewardFor(5))}</div>
       </div>
     </div>
-    <button class="btn wide" data-act="go" data-v="analyze">${S.rewarded ? 'Start Task' : doneCount() ? 'Resume Task' : 'Start Task'}</button>
+    <button class="btn wide" data-act="go" data-v="${n === 5 ? 'result' : 'analyze'}">${n === 5 ? 'See results' : n ? 'Continue visit' : 'Start visit'}</button>
   </div></div>`};
 };
 
@@ -393,74 +468,92 @@ V.analyze = () => {
     return `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="inspect" data-cat="${k}">
       <span style="width:29px;height:29px;border-radius:4px;background:${c.tint};display:grid;place-items:center;flex:none">${img(c.icon,18,18)}</span>
       <span class="col sp" style="gap:2px"><span class="t10">${c.name}</span><span class="t8">${c.desc}</span></span>
-      <span class="tag ${st ? 'ok' : 'no'}">${st ? 'Completed' : 'Not Checked'}</span>${CHEV}</button>`; }).join('');
+      <span class="tag ${st ? 'ok' : 'no'}">${st ? 'Rated ' + cap(st) : 'Not Checked'}</span>${CHEV}</button>`; }).join('');
+  const done = doneCount() === 5;
   return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:6px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:5px">
     <div class="ttl" style="padding:2px 0">${img('hdr-analyze',25,25)}Analyze</div>
-    <div class="box row" style="padding:7px 8px;gap:8px">${img('farm1-thumb',30,30,'border-radius:2px')}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Complete the checklist below to analyze your farm health.</span></div></div>
+    <div class="box row" style="padding:7px 8px;gap:8px">${img('farm1-thumb',30,30,'border-radius:2px')}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Tap each area, read what you see in the field, and rate it.</span></div></div>
     <div class="lst" style="padding:8px 12px;display:flex;flex-direction:column;gap:12px">${rows}</div>
-    <div class="box row" style="background:rgba(0,0,0,.05)">${img('trophy',18,18)}<span style="font:500 10px var(--ui);opacity:.75;width:270px">Complete all checks to run the analysis and get insights + rewards.</span><span class="sp"></span><button class="btn" style="padding:8px 34px" data-act="makeAnalysis">Make Analysis</button></div>
+    <div class="box row" style="background:rgba(0,0,0,.05)">${img('trophy',18,18)}<span style="font:500 10px var(--ui);opacity:.75;width:270px">${done ? 'All areas rated. See how accurate you were and what the farm needs.' : `Rate all five areas to see the farm's health and your reward. ${doneCount()}/5 done.`}</span><span class="sp"></span><button class="btn ${done ? '' : 'ghost-soft'}" style="padding:8px 34px" data-act="makeAnalysis">${done ? 'See results' : 'Make Analysis'}</button></div>
   </div></div>`};
 };
 
-/* Inspection for one category */
+/* Inspection for one category: shows what the agent sees, then a rating */
 V.inspect = () => {
   const k = ui.inspectCat, c = CATS[k], pick = ui.pick ?? S.checks[k];
   const opts = RATINGS.map(r => `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="rate" data-r="${r[0]}" aria-pressed="${pick === r[0]}">
-      <span class="col sp" style="gap:4px"><span style="font:600 12px var(--ui)">${r[1]}</span><span style="font:400 10px var(--ui);opacity:.7">${r[2]}</span></span>
+      <span class="col sp" style="gap:3px"><span style="font:600 12px var(--ui)">${r[1]}</span><span style="font:400 10px var(--ui);opacity:.7">${r[2]}</span></span>
       <span style="width:19px;height:19px;border-radius:3px;display:grid;place-items:center;${pick === r[0] ? 'background:#ed8324;box-shadow:inset 0 2px 2px rgba(255,255,255,.4)' : 'background:#f3dfc4;border:1px solid rgba(107,64,43,.12)'}">${pick === r[0] ? '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.2 5 9l5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</span></button>`).join('');
-  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:30px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:10px">
+  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:14px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
     <div class="ttl" style="padding:2px 0 0">Inspection Checklist</div>
-    <div class="box row" style="padding:8px">
+    <div class="box row" style="padding:7px 8px">
       <span style="width:32px;height:32px;border-radius:4px;background:${c.tint};display:grid;place-items:center">${img(c.icon,20,20)}</span>
       <div class="col sp" style="gap:3px"><span style="font:600 11px var(--ui)">${c.name}</span><span style="font:400 10px var(--ui);opacity:.7">${c.desc}</span></div>
-      <span class="tag ${S.checks[k] ? 'ok' : 'no'}" style="font-size:10px">${S.checks[k] ? 'Completed' : 'Not Checked'}</span></div>
-    <div class="lst" style="padding:12px;display:flex;flex-direction:column;gap:16px">${opts}</div>
-    <button class="btn wide" data-act="inspectDone">Done</button>
+      <span class="tag ${S.checks[k] ? 'ok' : 'no'}" style="font-size:10px">${S.checks[k] ? 'Rated ' + cap(S.checks[k]) : 'Not Checked'}</span></div>
+    <div class="seen"><span>What you see on ${owner(S.taskFarm)}'s farm</span><p>${NOTES[k][rateOf(S.taskTruth[k])]}</p></div>
+    <div class="lst" style="padding:10px 12px;display:flex;flex-direction:column;gap:10px">${opts}</div>
+    <button class="btn wide" data-act="inspectDone">Save rating</button>
   </div></div>`};
 };
 
-/* Analysis result */
+/* Analysis result: real farm health, your ratings vs actual, reward, advice status */
 V.result = () => {
-  const h = health(), word = healthWord(h);
-  const finding = {}; CAT_ORDER.forEach(k => { const f = CATS[k].finding, r = S.checks[k]; const rank = {good:0,fair:1,poor:2}[r] ?? 0; finding[f] = Math.max(finding[f] ?? 0, rank); });
-  const icons = {'Water Quality':'water','Plant Health':'leaf','Pest & Disease':'bug','Protection & Security':'lock'};
-  const lab = ['Good','Minor issues','Needs attention'];
-  const rows = Object.keys(icons).map(n => `<div class="row" style="font:600 10px var(--ui)">${img(icons[n],12,12)}<span class="sp">${n}</span><span style="font-weight:500;color:${finding[n] ? (finding[n] > 1 ? '#c0392b' : '#e5484d') : '#5f8a0b'};opacity:.85">${lab[finding[n]]}</span></div>`).join('');
-  return {view: backBtn(163,24) + `<div class="panel" style="left:218px;top:10px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:7px;padding:8px 12px">
+  const T = S.taskTruth, h = avg(T), word = cap(rateOf(h)), n = correctCount(), weak = weakAreas(), o = owner(S.taskFarm);
+  const covered = weak.filter(k => recCats().includes(k)).length;
+  const rows = CAT_ORDER.map(k => { const you = S.checks[k], act = rateOf(T[k]), ok = you === act;
+    return `<div class="row" style="font:500 9.5px var(--ui);gap:6px">${img(CATS[k].icon,13,13)}<span class="sp" style="font-weight:600">${CATS[k].name}</span><span style="width:62px;opacity:.75">You: ${cap(you)}</span><span style="width:70px;color:${rateCol(act)};font-weight:600">Actual: ${cap(act)}</span>${ok ? CHECK : CROSS}</div>`; }).join('');
+  const msg = weak.length ? `${weak.map(k => CATS[k].short).join(', ')} ${weak.length > 1 ? 'need' : 'needs'} your advice. Recommendations raise ${o}'s success score.` : `Everything is in good shape. Submit the report to log the visit.`;
+  const buttons = ui.submitWarn
+    ? `<div class="notice"><span>${S.recsApplied ? `Your advice skips ${uncovered().map(k => CATS[k].short).join(', ')}.` : `You haven't sent ${o} any advice.`} The farm only improves in areas you advise on.</span><button class="btn soft" style="padding:5px 10px;font-size:11px" data-act="go" data-v="recs">Add advice</button><button class="btn" style="padding:5px 10px;font-size:11px" data-act="submitReport" data-force="1">Submit anyway</button></div>`
+    : `<div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="recs">Recommendations${weak.length ? ` ${S.recsApplied ? '· sent' : `${covered}/${weak.length}`}` : ''}</button><button class="btn sp" style="padding:7px" data-act="submitReport">Submit Report</button></div>`;
+  return {view: backBtn(163,24) + `<div class="panel" style="left:218px;top:6px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:6px;padding:7px 12px 9px">
     <div class="ttl">Farm Analysis Result</div>
-    <div class="box row" style="gap:14px;padding:8px 10px">${ring(h, h >= 70 ? '#5f8a0b' : h >= 45 ? '#ed8324' : '#e5484d', '#e8dcc0', 64, 8, `<span><b style="font:600 13px var(--ui);color:#6b402b;display:block">${h}%</b><span style="font:500 8px var(--ui);color:#5f8a0b">${word}</span></span>`)}
-      <div class="col" style="gap:6px"><span class="t10 row" style="gap:6px">${img('leaf',16,16)}Farm Health</span><span style="font:400 10px var(--ui);opacity:.7;line-height:1.55">${h >= 70 ? 'Your farm is in good condition. A few areas need attention to improve even better' : h >= 45 ? 'Your farm is doing fair. Act on the issues below to lift its health.' : 'Your farm needs urgent help. Start with the issues marked below.'}</span></div></div>
-    <div class="box" style="background:rgba(107,64,43,.08);display:flex;flex-direction:column;gap:7px;padding:7px 12px"><div class="row t10" style="font-weight:500;padding-bottom:5px;border-bottom:1px solid rgba(107,64,43,.12)">${img('checklist',20,21)}Key Findings</div>${rows}</div>
-    <div class="box row" style="padding:7px 8px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward</span><span class="sp"></span>${reward()}</div>
-    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="recs">Recommendations</button><button class="btn sp" style="padding:7px" data-act="submitReport">Submit Report</button></div>
+    <div class="box row" style="gap:12px;padding:6px 10px">${ring(h, rateCol(rateOf(h)), '#e8dcc0', 58, 7, `<span><b style="font:600 12px var(--ui);color:#6b402b;display:block">${h}%</b><span style="font:500 7.5px var(--ui);color:${rateCol(rateOf(h))}">${word}</span></span>`)}
+      <div class="col" style="gap:4px"><span class="t10 row" style="gap:6px">${img('leaf',14,14)}${o}'s farm health</span><span style="font:400 9.5px var(--ui);opacity:.75;line-height:1.5">${msg}</span></div></div>
+    <div class="box" style="background:rgba(107,64,43,.08);display:flex;flex-direction:column;gap:5px;padding:6px 12px"><div class="row t10" style="font-weight:500;padding-bottom:4px;border-bottom:1px solid rgba(107,64,43,.12)">${img('checklist',18,19)}<span class="sp">Your ratings vs the farm</span><b style="color:${n >= 4 ? '#5f8a0b' : n >= 2 ? '#d9730d' : '#d93a3f'}">${n}/5 correct</b></div>${rows}</div>
+    <div class="box row" style="padding:5px 8px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Your reward</span><span class="sp"></span>${rewardRow(rewardFor(n))}</div>
+    ${buttons}
   </div></div>`};
 };
 
 /* Recommendations list */
 V.recs = () => {
-  const rows = S.recs.length ? S.recs.map((r, i) => `<div class="row" style="gap:6px;padding:8px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(CATS[r.cat].icon,16,16,'align-self:flex-start')}<div class="col sp" style="gap:5px"><span style="font:600 10px var(--ui)">${CATS[r.cat].name}</span><span style="font:400 10px var(--ui);opacity:.75">${r.text}</span></div><button class="btn cream sm" style="font-size:11px;padding:3px 7px" data-act="editRec" data-i="${i}">Edit ${img('pencil',14,14)}</button></div>`).join('') : `<p style="margin:8px 0;font:500 10px var(--ui);opacity:.7">No recommendations yet. Add one for the farmer.</p>`;
+  const weak = weakAreas(), have = recCats(), o = owner(S.taskFarm);
+  const need = weak.length ? `<div class="row" style="flex-wrap:wrap;gap:4px"><span style="font:500 9.5px var(--ui);opacity:.75">Advise ${o} on:</span>${weak.map(k => `<span class="tag ${have.includes(k) ? 'ok' : 'no'}" style="font-size:9px">${have.includes(k) ? '✓ ' : ''}${CATS[k].name}</span>`).join('')}</div>` : `<span style="font:400 10px var(--ui);opacity:.7">This farm is healthy. Advice is optional.</span>`;
+  const rows = S.recs.length ? S.recs.map((r, i) => `<div class="row" style="gap:6px;padding:8px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(CATS[r.cat].icon,16,16,'align-self:flex-start')}<div class="col sp" style="gap:5px"><span style="font:600 10px var(--ui)">${CATS[r.cat].name}</span><span style="font:400 10px var(--ui);opacity:.75">${esc(r.text)}</span></div><button class="btn cream sm" style="font-size:11px;padding:3px 7px" data-act="editRec" data-i="${i}">Edit ${img('pencil',14,14)}</button></div>`).join('')
+    : `<div class="empty">${img('bulb',22,22)}<span><b>No advice yet.</b> Write one recommendation for each area marked above, then send them to ${o}.</span></div>`;
+  const sendLbl = S.recsApplied ? 'Sent to farmer' : S.recsPaid ? 'Send update' : `Send to farmer ${cost(30)}`;
   return {view: backBtn(163,42) + `<div class="panel" style="left:210px;top:30px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
     <div class="ttl">${img('bulb',20,20)}My Recommendations</div>
-    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Complete the checklist below to analyze your farm health.</span></div></div>
-    <div class="box" style="padding:2px 10px;max-height:178px;overflow:auto">${rows}</div>
-    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="newRec">Add New ${PLUS}</button><button class="btn sp" style="padding:7px" data-act="applyRecs">Apply ${cost(30)}</button></div>
+    <div class="box row" style="padding:7px 8px;align-items:flex-start">${img('farm1-thumb',30,30)}<div class="col sp" style="gap:4px"><span class="t10">${fname(S.taskFarm)}</span>${need}</div></div>
+    <div class="box" style="padding:2px 10px;max-height:150px;overflow:auto">${rows}</div>
+    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="newRec">Add New ${PLUS}</button><button class="btn sp ${S.recsApplied ? 'ghost' : ''}" style="padding:7px" data-act="applyRecs">${sendLbl}</button></div>
   </div></div>`};
 };
 
 /* Add / edit recommendation */
 V.recform = () => {
-  const cat = ui.recCat;
-  const opts = CAT_ORDER.map(k => [k, CATS[k].name, CATS[k].icon]);
+  const cat = ui.recCat, weak = weakAreas(), have = recCats(), o = owner(S.taskFarm);
+  const opts = CAT_ORDER.map(k => [k, CATS[k].name, CATS[k].icon, CATS[k].name + (weak.includes(k) && !have.includes(k) ? ' · needs advice' : '')]);
+  const editing = ui.recEdit != null;
   return {view: backBtn(163,42) + `<div class="panel" style="left:218px;top:23px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
-    <div class="ttl">${img('bulb',20,20)}Submit Recommendations</div>
-    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Write what the farmer should do next.</span></div></div>
+    <div class="ttl">${img('bulb',20,20)}${editing ? 'Edit Recommendation' : 'Write a Recommendation'}</div>
+    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Say what ${o} should do, and by when.</span></div></div>
     <p class="lbl" style="margin:4px 0 0">1. Choose Recommendation Type</p>
-    <div style="font-size:11px">${dd('rec', cat, 'Choose a type', opts, 'cat-soil').replace('class="dd', 'class="dd big')}</div>
+    <div style="font-size:11px">${dd('rec', cat, 'Choose a type', opts, 'cat-soil')}</div>
     <label class="lbl" for="recText" style="margin:2px 0 0">2. Recommendation</label>
-    <textarea id="recText" class="fld" rows="4" style="background:#fff8ee;border:1px solid rgba(237,131,36,.5);resize:none;font-size:10px;line-height:1.5" placeholder="Type what the farmer should be aware of or the recommendation">${ui.recText}</textarea>
-    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="saveRec" data-more="1">Add New ${PLUS}</button><button class="btn sp" style="padding:7px" data-act="saveRec">${ui.recEdit != null ? 'Save' : 'Apply'} ${ui.recEdit != null ? '' : cost(30)}</button></div>
+    <textarea id="recText" class="fld" rows="4" maxlength="160" style="background:#fff8ee;border:1px solid rgba(237,131,36,.5);resize:none;font-size:10px;line-height:1.5" placeholder="${esc(EXAMPLES[cat])}">${esc(ui.recText)}</textarea>
+    <div class="row" style="gap:10px">${editing ? `<button class="btn soft sp" style="padding:7px;font-size:12px" data-act="delRec">Delete</button>` : `<button class="btn soft sp" style="padding:7px;font-size:12px" data-act="saveRec" data-more="1">Save and add another ${PLUS}</button>`}<button class="btn sp" style="padding:7px" data-act="saveRec">Save</button></div>
   </div></div>`};
 };
+const EXAMPLES = {
+  soil:'For example: Plough in last season\'s stalks and add manure before the next planting.',
+  nutrient:'For example: Top-dress with CAN fertilizer this week, one bottle cap per plant.',
+  water:'For example: Water early in the morning and fix the leaking tank before Friday.',
+  pest:'For example: Spray for fall armyworm within 3 days and check the funnels again next week.',
+  weed:'For example: Weed the rows within a week and mulch between plants to stop regrowth.',
+};
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* Farms: Crops and Livestock */
 const farmSide = (x, top, key) => {
@@ -470,7 +563,8 @@ const farmSide = (x, top, key) => {
     <button class="sq ${cur === 4 ? 'off' : ''}" style="position:relative" data-act="farmStep" data-k="${key}" data-d="1" aria-label="Next farm"><span>${ARR(-90)}</span></button></div>`;
 };
 V.farms = () => {
-  const f = FARMS[S.farmIdx];
+  const f = FARMS[S.farmIdx], fs = S.farms[f.id];
+  const cropTag = () => !fs || !fs.known ? '<span class="tag no" style="padding:2px 4px">Not inspected</span>' : (r => `<span class="tag ${r === 'good' ? 'ok' : r === 'fair' ? 'no' : 'hi'}" style="padding:2px 4px">${r === 'good' ? 'Healthy' : r === 'fair' ? 'At risk' : 'Struggling'}</span>`)(rateOf(avg(fs.known)));
   const size = ['2.4 ha','3.1 ha','1.8 ha','4.0 ha','2.0 ha'][S.farmIdx];
   const val = [400,520,310,660,280][S.farmIdx];
   const card = S.cardMode === 0 ? `<div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
@@ -478,23 +572,27 @@ V.farms = () => {
       <span style="font:600 11px var(--ui);margin-top:4px">${f.owner ? f.owner + "'s Farm" : 'Wakala Farm'}</span>
       <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${f.crop}</span>
       <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A productive ${f.crop.toLowerCase()} farm dedicated to growing quality crops and increasing farmer income through efficient resource management.</span>
-      <button class="btn wide" data-act="viewFarmTask">View Farm Task</button></div>`
-    : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span><span class="tag ok" style="padding:2px 4px">Healthy</span></button>`).join('')}</div>`;
+      ${f.owner ? `<button class="btn wide" data-act="visitFarm" data-farm="${f.id}">${f.id === S.taskFarm ? 'View farm task' : 'Visit this farm'}</button>` : `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>`}</div>`
+    : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span>${cropTag()}</button>`).join('')}</div>`;
   return {view: `<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
     `<div class="panel thin" style="left:262px;top:48px;width:348px"><div class="pin" style="padding:6px"><div class="row" style="border:1px solid rgba(107,64,43,.15);border-radius:8px;padding:6px 8px;gap:0">
-      ${[['Farm size',size],['Crops grown',size],['Farm value',`${img('coin-sm',14,14)}${val}`]].map((x, i) => `<div class="col sp" style="gap:3px;${i ? 'border-left:1px solid rgba(107,64,43,.15);padding-left:12px' : ''};${i === 2 ? 'align-items:flex-end' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${x[0]}</span><span class="row" style="gap:4px;font:600 11px var(--ui)">${x[1]}</span></div>`).join('')}</div></div></div>
+      ${[['Farm size',size],['Crops grown',size],[fs ? 'Success score' : 'Farm value', fs ? `${img('target',14,14)}${score(f.id)}/100` : `${img('coin-sm',14,14)}${val}`]].map((x, i) => `<div class="col sp" style="gap:3px;${i ? 'border-left:1px solid rgba(107,64,43,.15);padding-left:12px' : ''};${i === 2 ? 'align-items:flex-end' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${x[0]}</span><span class="row" style="gap:4px;font:600 11px var(--ui)">${x[1]}</span></div>`).join('')}</div></div></div>
     <div class="panel thin" style="left:265px;top:120px;width:345px">${card}</div>` + sq(210,199,'cardMode',0,'','Previous card') + sq(624,199,'cardMode',180,'','Next card')};
 };
 
-/* Crop health detail */
+/* Crop health detail: shows the farm's data from its last inspection */
 V.crop = () => {
-  const c = ui.crop || 'maize';
-  const seed = CROPS.indexOf(c);
-  const vals = [80, 20, 80, 40, 80].map((v, i) => Math.max(15, Math.min(95, c === 'maize' ? v : v + ((seed * 13 + i * 7) % 3 - 1) * 10)));
-  const bars = CAT_ORDER.map((k, i) => { const v = vals[i], col = v >= 60 ? '#5f8a0b' : v >= 35 ? '#ed8324' : '#e5484d';
+  const c = ui.crop || 'maize', id = S.farmIdx + 1, fs = S.farms[id], known = fs && fs.known;
+  const head = (tag) => `<div class="box row" style="gap:14px;padding:6px 14px">${img('crop-' + c,59,44,'object-fit:contain')}<div class="col" style="gap:5px"><span style="font:600 13px var(--ui)">${CROP_NAMES[c]}</span><span>${tag}</span></div><span class="sp"></span><span style="font:500 9px var(--ui);opacity:.7;text-align:right">${fname(id)}${known ? `<br>From your last visit` : ''}</span></div>`;
+  if (!known) return {view: backBtn(204,35) + `<div class="panel" style="left:260px;top:60px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:8px 10px 12px">
+    ${head('<span class="tag no">Not inspected</span>')}
+    <div class="empty" style="padding:10px 6px">${img('checklist',22,23)}<span>${FARMS[id - 1].owner ? `<b>No crop data yet.</b> Inspect ${fname(id)} to see how each area is doing.` : `<b>No farmer on this plot yet.</b> Crop data appears once a farmer joins and you visit.`}</span></div>
+    ${FARMS[id - 1].owner ? `<button class="btn wide" data-act="visitFarm" data-farm="${id}">${id === S.taskFarm ? 'Go to this visit' : 'Visit this farm'}</button>` : ''}</div></div>`};
+  const bars = CAT_ORDER.map(k => { const v = known[k], col = rateCol(rateOf(v));
     return `<div class="col" style="gap:7px"><span class="row" style="gap:6px;font:500 11px var(--ui)">${img(CATS[k].icon,16,16)}${CATS[k].name}</span><div class="row" style="gap:10px"><div class="sp" style="height:5px;border-radius:3px;background:#efdcc2"><div style="width:${v}%;height:100%;border-radius:3px;background:${col}"></div></div><span style="font:600 8px var(--ui);width:24px;text-align:right">${v}%</span></div></div>`; }).join('');
+  const h = rateOf(avg(known));
   return {view: backBtn(204,35) + `<div class="panel" style="left:260px;top:30px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:9px;padding:8px 10px 10px">
-    <div class="box row" style="gap:14px;padding:6px 14px">${img('crop-' + c,59,44,'object-fit:contain')}<div class="col" style="gap:5px"><span style="font:600 13px var(--ui)">${CROP_NAMES[c]}</span><span><span class="tag ok">Healthy</span></span></div></div>${bars}</div></div>`};
+    ${head(`<span class="tag ${h === 'good' ? 'ok' : h === 'fair' ? 'no' : 'hi'}">${h === 'good' ? 'Healthy' : h === 'fair' ? 'At risk' : 'Struggling'}</span>`)}${bars}</div></div>`};
 };
 
 /* Shop */
@@ -513,11 +611,11 @@ V.shop = () => {
   } else {
     v += `<div class="screen-title" style="top:20px">Loan &amp; Savings</div><div class="tabs" style="top:50px">${[['offers','Offers','coin'],['calc','Loan Calculator','calculator']].map(t => `<button class="${S.loanTab === t[0] ? 'on' : ''}" data-act="loanTab" data-t="${t[0]}">${img(t[2],21,21)}${t[1]}</button>`).join('')}</div>`;
     if (S.loanTab === 'offers'){
-      v += sq(228,166,'toast',0,'','Previous offers').replace('data-act="toast"', 'data-act="toast" data-msg="These are all current offers"') + sq(818,166,'toast',180,'','More offers').replace('data-act="toast"', 'data-act="toast" data-msg="More offers unlock at level 15"');
-      v += LOANS.map((l, i) => `<div class="panel thin" style="left:${276 + i*181}px;top:112px;width:170px"><div class="pin" style="padding:12px 10px 10px;display:flex;flex-direction:column;gap:10px">
+      v += LOANS.map((l, i) => `<div class="panel thin" style="left:${258 + i*181}px;top:104px;width:170px"><div class="pin" style="padding:10px 10px 10px;display:flex;flex-direction:column;gap:8px">
         <div class="row" style="gap:10px;padding-left:4px">${l[0] === 'coins' ? `<span class="row" style="gap:0">${img('coin',21,21)}${img('coin',21,21,'margin-left:-14px')}${img('coin',21,21,'margin-left:-14px')}</span>` : img(l[0],26,26)}<div class="col" style="gap:4px"><span style="font:600 11px var(--ui)">${l[1]}</span><span class="price" style="font-size:8px"><span style="opacity:.7;font-weight:500">Up to</span>${img('coin-sm',12,12)}${fmt(l[2])}</span></div></div>
-        ${dd('loan' + i, S.loanFarm[i], 'Select farm', farmOpts(), 'sprout')}
-        <button class="btn wide" data-act="getLoan" data-i="${i}">Get now</button></div></div>`).join('');
+        <span class="row" style="gap:4px;font:500 8.5px var(--ui);opacity:.8">Your referral fee ${img('coin-sm',12,12)}<b>${l[3]}</b></span>
+        ${dd('loan' + i, S.loanFarm[i], 'Select farm', farmOpts().map(o => [...o, o[1] + (S.loans[o[0] + '-' + i] ? ' · active' : '')]), 'sprout')}
+        ${S.loans[S.loanFarm[i] + '-' + i] ? `<button class="btn wide ghost" tabindex="-1">Active for Farm ${S.loanFarm[i]}</button>` : `<button class="btn wide" data-act="getLoan" data-i="${i}">Arrange loan</button>`}</div></div>`).join('') + `<p class="caption" style="top:290px">Loans are paid to the farmer, not to you. Input and equipment loans also improve their farms.</p>`;
     } else {
       const c = ui.calc;
       v += `<div class="panel" style="left:235px;top:86px;width:437px"><div class="pin" style="padding:8px 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px">
@@ -539,21 +637,24 @@ function calcOut(){
   el.innerHTML = `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Estimated repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(total)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Daily repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${daily < 10 && amt > 0 ? daily.toFixed(2) : fmt(daily)}</span></div>`;
 }
 
-/* Sell form (marketplace and sell & rent) */
+/* Sell form (marketplace and sell & rent): price must be in a fair range */
+const priceRange = it => [Math.round(it.base * .5), Math.round(it.base * 1.5)];
 V.sell = () => {
-  const it = ui.sellItem;
-  const icon = it.kind === 'input' ? 'in-' + it.k : (it.k === 'cart' ? 'cart' : 'eq-' + it.k);
+  const it = ui.sellItem, [lo, hi] = priceRange(it);
+  const icon = it.kind === 'input' ? 'in-' + it.icon : (it.icon === 'cart' ? 'cart' : 'eq-' + it.icon);
+  const helps = it.helps ? `<span style="font:400 9px var(--ui);opacity:.75">Improves ${CATS[it.helps].name.toLowerCase()} on the farm you sell to</span>` : '';
   return {view: backBtn(163,20) + `<div class="panel" style="left:215px;top:13px;width:440px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
-    <div class="box col" style="align-items:center;gap:6px;padding:10px;background:rgba(107,64,43,.07)">${img(icon,26,30,'object-fit:contain')}<span style="font:600 11px var(--ui)">${it.name}</span></div>
-    <p class="lbl" style="margin:2px 0 -2px">Farm</p>${dd('sellFarm', ui.sellFarm, 'Select Farm', FARMS.slice(0,3).map(f => [String(f.id), `Farm ${f.id}`])).replace('<ul>', '<ul class="fl">')}
-    <label class="lbl" for="sellPrice" style="margin:4px 0 -2px">Price</label><input id="sellPrice" class="fld" inputmode="numeric" placeholder="Input price" value="${it.price || ''}">
-    <div id="sellOut" class="col" style="gap:8px;margin-top:2px"></div>
-    <button class="btn wide" style="padding:5px" data-act="completeSale">Complete</button></div></div>`};
+    <div class="box col" style="align-items:center;gap:4px;padding:8px;background:rgba(107,64,43,.07)">${img(icon,26,30,'object-fit:contain')}<span style="font:600 11px var(--ui)">${it.name}</span>${helps}</div>
+    <p class="lbl" style="margin:2px 0 -2px">Farm</p>${dd('sellFarm', ui.sellFarm, 'Select Farm', FARMS.slice(0,4).map(f => [String(f.id), `Farm ${f.id}`, 'sprout', `Farm ${f.id}: ${f.owner}${S.sales[f.id + '-' + it.k] ? ' · already bought' : ''}`]))}
+    <label class="lbl" for="sellPrice" style="margin:4px 0 -2px">Price</label><input id="sellPrice" class="fld" inputmode="numeric" maxlength="6" placeholder="Fair price: ${lo}–${hi} coins" value="${it.price || ''}">
+    <div id="sellOut" class="col" style="gap:7px;margin-top:2px"></div>
+    <button class="btn wide" style="padding:5px" data-act="completeSale">Complete sale</button></div></div>`};
 };
 function sellOut(){
-  const it = ui.sellItem, p = parseFloat(it.price) || it.base, com = Math.round(p * .05);
+  const it = ui.sellItem, [lo, hi] = priceRange(it), raw = parseFloat(it.price), p = raw || it.base, bad = raw && (raw < lo || raw > hi);
   const el = $('#sellOut'); if (!el) return;
-  el.innerHTML = `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Sale price</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(p)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Commission earned</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(com)}</span></div>`;
+  el.innerHTML = bad ? `<div class="err">Farmers pay ${lo}–${hi} coins for ${it.name.toLowerCase()}. Enter a price in that range.</div>` :
+    `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Sale price</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(p)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Your commission (5%)</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(Math.round(p * .05))}</span></div>`;
 }
 
 /* Training */
@@ -567,7 +668,6 @@ V.training = () => {
       ${dd('train' + i, b ? String(b.farm) : S.trainFarm[i], 'Select farm', farmOpts(), 'sprout')}
       ${b ? `<button class="btn wide ghost" style="padding:5px" tabindex="-1">Booked</button>` : `<button class="btn wide" style="padding:5px" data-act="book" data-i="${i}">${cost(60)}</button>`}</div></div>`; }).join('');
   return {view: `<img class="guide" src="${A('guide')}" style="left:578px;top:4px" alt="">` + `<div class="screen-title" style="top:27px">Bookings, Training &amp; Advisory</div>` + trainTabs(57) + cards +
-    sq(107,184,'toast',0,'','Previous').replace('data-act="toast"', 'data-act="toast" data-msg="All sessions for this week are shown"') + sq(726,184,'toast',180,'','Next').replace('data-act="toast"', 'data-act="toast" data-msg="New sessions are added every Monday"') +
     tipBubble(712, 24, 158, 'Daily Tip', TIPS[S.tip % TIPS.length], `<button class="btn sm" style="padding:3px 22px;font-size:11px" data-act="nextTip">Next</button>`)};
 };
 V.calendar = () => {
@@ -609,14 +709,13 @@ V.storage = () => {
       <span style="font:500 8px var(--ui);opacity:.7;padding-left:14px">${w.cap} kg capacity</span>
       <span class="row" style="gap:4px;font:500 8px var(--ui);padding-left:14px">${img('distance',14,14)}50km</span>
       <button class="btn" style="margin:2px 14px 0;padding:5px" data-act="pickStorage" data-k="${w.k}">${S.storage === w.k ? 'Selected' : 'Select'}</button></div></div>`).join('') +
-    sq(100,214,'toast',0,'','Previous').replace('data-act="toast"', 'data-act="toast" data-msg="These are all storage options near you"') + sq(732,214,'toast',180,'','Next').replace('data-act="toast"', 'data-act="toast" data-msg="More storage unlocks at level 15"') +
     tipBubble(700, 64, 170, 'Increase storage capacity', 'Your maize stock is high. Upgrade to avoid losses &amp; sell later at better prices', `<button class="btn sm" style="padding:4px 12px;font-size:12px" data-act="upgrade">Upgrade ${cost(30)}</button>`)};
 };
 
 /* Stats */
 const levelCard = (x, y, w) => `<div class="panel thin" style="left:${x}px;top:${y}px;width:${w}px"><button class="pin" style="width:calc(100% + 14px);border:0;display:flex;flex-direction:column;gap:4px;padding:6px 10px 10px;text-align:left" data-act="go" data-v="profile">
-  <span style="font:500 8px var(--ui);opacity:.7;align-self:center">Level ${S.level}</span>
-  <span class="row" style="gap:12px;padding:0 14px"><span style="width:43px;height:43px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',35,null)}</span><span class="col" style="gap:6px"><span style="font:600 11px var(--ui)">Wakala Agent</span><span class="row" style="gap:12px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.trophies}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins - 5 + 120000)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems - 8 + 20000)}</span></span></span></span></button></div>`;
+  <span style="font:500 8px var(--ui);opacity:.7;align-self:center">Level ${level()}</span>
+  <span class="row" style="gap:12px;padding:0 14px"><span style="width:43px;height:43px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',35,null)}</span><span class="col" style="gap:6px"><span style="font:600 11px var(--ui)">${esc(agentName())}</span><span class="row" style="gap:12px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.ratedRight}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></span></span></button></div>`;
 V.stats = () => {
   const f = FARMS[S.statFarm], k = S.statFarm;
   const nums = [[350000,250000,179000,350000],[280000,190000,90000,210000],[150000,320000,60000,120000],[420000,280000,200000,300000],[90000,40000,0,80000]][k];
@@ -637,12 +736,12 @@ V.stats = () => {
 V.profile = () => ({view: `<div class="panel thin" style="left:291px;top:34px;width:288px"><div class="pin" style="padding:6px 10px 10px">
     <div style="font:500 8px var(--ui);opacity:.7;text-align:center;margin-bottom:6px">Wakala Agent Profile</div>
     <div class="row" style="gap:12px;padding:0 14px"><span style="width:66px;height:77px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',49,61)}</span>
-    <div class="col" style="gap:5px"><span style="font:600 11px var(--ui)">Brian</span><span style="font:400 10px var(--ui);opacity:.6">ID: WA4567890</span><span class="row" style="gap:5px;font:500 10px var(--ui)"><svg width="14" height="10" viewBox="0 0 14 10"><rect width="14" height="10" fill="#000"/><rect y="3.2" width="14" height="3.6" fill="#b30000"/><rect y="2.8" width="14" height=".5" fill="#fff"/><rect y="6.7" width="14" height=".5" fill="#fff"/><ellipse cx="7" cy="5" rx="1.8" ry="4" fill="#b30000" stroke="#fff" stroke-width=".4"/></svg>Kenya</span>
-      <span class="row" style="gap:10px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.trophies}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins - 5 + 120000)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems - 8 + 20000)}</span></span></div></div></div></div>
+    <div class="col" style="gap:5px"><span style="font:600 11px var(--ui)">${esc(S.name || 'Agent')}</span><span style="font:400 10px var(--ui);opacity:.6">Level ${level()} · ID: WA4567890</span><span class="row" style="gap:5px;font:500 10px var(--ui)"><svg width="14" height="10" viewBox="0 0 14 10"><rect width="14" height="10" fill="#000"/><rect y="3.2" width="14" height="3.6" fill="#b30000"/><rect y="2.8" width="14" height=".5" fill="#fff"/><rect y="6.7" width="14" height=".5" fill="#fff"/><ellipse cx="7" cy="5" rx="1.8" ry="4" fill="#b30000" stroke="#fff" stroke-width=".4"/></svg>Kenya</span>
+      <span class="row" style="gap:10px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.ratedRight}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></div></div></div></div>
   <div class="panel" style="left:146px;top:162px;width:576px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
     <div class="row" style="justify-content:center;gap:6px;font:600 10px var(--ui)">${img('target',14,14)}Mission Stats</div>
-    <div class="row" style="gap:8px">${[['stat-clipboard',S.missions,'Total Missions<br>Completed'],['stat-target',S.active,'Active Missions'],['stat-shield','92%','Success Rate']].map(s => `<div class="sp row" style="gap:12px;border:1px solid rgba(107,64,43,.12);border-radius:8px;padding:12px;background:rgba(255,255,255,.25)">${img(s[0],39,39)}<div class="col" style="gap:4px"><span style="font:500 15px var(--ui)">${s[1]}</span><span style="font:400 9px var(--ui);opacity:.75;line-height:1.5">${s[2]}</span></div></div>`).join('')}</div>
-    <div style="align-self:center;font:500 9px var(--ui);background:rgba(107,64,43,.08);border-radius:4px;padding:3px 8px">${img('bulb',10,10,'vertical-align:-1px')} Great work! Keep completing missions to level up and unlock greater works.</div>
+    <div class="row" style="gap:8px">${[['stat-clipboard',S.missions,'Farm visits<br>completed'],['stat-target',`${thriving()}/4`,'Farms at 80+'],['stat-shield',S.ratedTotal ? Math.round(S.ratedRight / S.ratedTotal * 100) + '%' : '–','Rating accuracy']].map(s => `<div class="sp row" style="gap:12px;border:1px solid rgba(107,64,43,.12);border-radius:8px;padding:12px;background:rgba(255,255,255,.25)">${img(s[0],39,39)}<div class="col" style="gap:4px"><span style="font:500 15px var(--ui)">${s[1]}</span><span style="font:400 9px var(--ui);opacity:.75;line-height:1.5">${s[2]}</span></div></div>`).join('')}</div>
+    <div style="align-self:center;font:500 9px var(--ui);background:rgba(107,64,43,.08);border-radius:4px;padding:3px 8px">${img('bulb',10,10,'vertical-align:-1px')} ${S.missions ? 'Every two visits raises your level. Accurate ratings earn the biggest rewards.' : 'Finish your first farm visit to start your record.'}</div>
   </div></div>`});
 
 /* Smart route */
@@ -660,18 +759,56 @@ V.route = () => {
       <button class="btn wide" style="padding:5px" data-act="applyRoute">${S.routeApplied ? 'Route scheduled' : `Apply 40 ${img('gem',14,14)}`}</button></div></div>` + steps};
 };
 
-/* Task complete overlay */
+/* Report submitted overlay */
 function completeOverlay(){
-  return `<div class="dimmer"></div>${img('confetti',246,74,'position:absolute;left:314px;top:0')}${img('trophy-farm',216,144,'position:absolute;left:329px;top:28px')}
+  const L = ui.last; if (!L) return '';
+  const o = owner(L.id), up = L.after - L.before;
+  return `<div class="dimmer"></div>${img('confetti',246,74,'position:absolute;left:314px;top:0')}${img('trophy-farm',216,144,'position:absolute;left:329px;top:22px')}
   <button class="sq" style="left:622px;top:49px" data-act="claim" aria-label="Close"><span>${X}</span></button>
-  <div class="abs" style="left:237px;width:400px;top:180px;text-align:center"><div style="font:700 18px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05">Task Complete!</div>
-   <p style="margin:8px auto 0;width:300px;font:400 10px var(--ui);line-height:1.6;color:#fff">Great work Agent. You have successfully completed your task and helped the farm grow.</p></div>
-  <div class="abs" style="left:290px;top:255px;width:294px;height:73px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px">
+  <div class="abs" style="left:237px;width:400px;top:168px;text-align:center"><div style="font:700 18px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05">Report Submitted!</div>
+   <p style="margin:6px auto 0;width:330px;font:400 10px var(--ui);line-height:1.6;color:#fff">Great work, ${esc(agentName())}. You rated ${L.correct} of 5 areas correctly.<br>${up > 0 ? `${o}'s success score rose from <b>${L.before}</b> to <b style="color:#b9f27c">${L.after}</b>.` : `${o}'s success score stays at <b>${L.after}</b>. Advice on weak areas is what raises it.`}</p></div>
+  <div class="abs" style="left:290px;top:246px;width:294px;height:73px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px">
     <span style="font:500 10px var(--ui);color:#d9cbb8">Reward</span>
-    <div class="row" style="gap:12px">${[['coin-sm','rgba(202,147,36,.35)'],['gem','rgba(155,93,229,.35)'],['water','rgba(34,173,226,.3)']].map(r => `<span class="row" style="gap:4px;background:${r[1]};padding:7px 14px;border-radius:6px;font:600 11px var(--ui);color:#fff">${img(r[0],14,14)}+ 400</span>`).join('')}</div></div>
-  <button class="btn cream" style="position:absolute;left:286px;top:339px;width:145px;padding:7px" data-act="claim">Awesome!</button>
-  <button class="btn" style="position:absolute;left:442px;top:339px;width:145px;padding:7px" data-act="claim">Save Rewards</button>`;
+    <div class="row" style="gap:12px">${[['coin-sm','rgba(202,147,36,.35)',L.r.c],['gem','rgba(155,93,229,.35)',L.r.g],['water','rgba(34,173,226,.3)',L.r.w]].map(r => `<span class="row" style="gap:4px;background:${r[1]};padding:7px 14px;border-radius:6px;font:600 11px var(--ui);color:#fff">${img(r[0],14,14)}+ ${r[2]}</span>`).join('')}</div></div>
+  <button class="btn cream" style="position:absolute;left:286px;top:331px;width:145px;padding:7px" data-act="claim" data-to="map">See the map</button>
+  <button class="btn" style="position:absolute;left:442px;top:331px;width:145px;padding:7px" data-act="claim">Next visit</button>`;
 }
+
+/* First-run intro (also reachable from Settings) */
+function introOverlay(){
+  const step = ui.introStep;
+  const body = step === 0
+    ? `<div class="ttl" style="justify-content:flex-start">Welcome, agent</div>
+       <p class="ip">Four farmers near you need help. Visit their farms, find out what is wrong, and advise them. Good advice raises each farm's success score.</p>
+       <label class="lbl" for="introName" style="margin:6px 0 4px;display:block">What should farmers call you?</label>
+       <input id="introName" class="fld" maxlength="18" autocomplete="off" placeholder="Your name" value="${esc(S.name)}">
+       <div class="row" style="gap:10px;margin-top:12px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="introSkip">Skip</button><button class="btn sp" style="padding:7px" data-act="introNext">Next</button></div>`
+    : `<div class="ttl" style="justify-content:flex-start">How a farm visit works</div>
+       <ol class="isteps"><li><b>Inspect</b> five areas of the farm. Read what you see and rate each one Good, Fair or Poor.</li><li><b>Advise</b> the farmer on every area that isn't good.</li><li><b>Submit</b> the report. Accurate ratings earn coins, gems and water, and your advice lifts the farm's score.</li></ol>
+       <p class="ip" style="margin-top:6px"><b>Goal:</b> get all four farms to a success score of ${GOAL} or more. The orange <b>Next</b> bar at the top always shows your next step.</p>
+       <div class="row" style="gap:10px;margin-top:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="introBack">Back</button><button class="btn sp" style="padding:7px" data-act="introDone">${S.onboarded ? 'Got it' : 'Start first visit'}</button></div>`;
+  return `<div class="dimmer"></div><img class="guide" src="${A('guide')}" style="left:188px;top:120px;width:139px;height:217px" alt="">
+    <div class="panel" style="left:330px;top:${step === 0 ? 70 : 48}px;width:360px" role="dialog" aria-label="Introduction"><div class="pin" style="padding:12px 14px">${body}</div></div>`;
+}
+
+/* Settings */
+V.settings = () => ({view: backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:10px;padding:10px 12px">
+  <div class="ttl">${img('settings',20,20)}Settings</div>
+  <div class="box"><label class="lbl" for="nameIn">Your name</label><div class="row"><input id="nameIn" class="fld sp" maxlength="18" placeholder="Your name" value="${esc(S.name)}"><button class="btn sm" style="padding:6px 14px;font-size:11px" data-act="saveName">Save</button></div></div>
+  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How to play</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
+  <div class="box" style="background:rgba(229,72,77,.06)">${ui.confirmReset
+    ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your farms, rewards and activity on this device. It can't be undone.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
+    : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from the first visit. Progress is saved on this device only.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
+</div></div>`});
+
+/* Activity log (mail button) */
+V.activity = () => {
+  const when = t => { const d = new Date(t), m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'Just now' : m < 60 ? m + ' min ago' : d.toLocaleDateString('en-GB', {day:'numeric', month:'short'}) + ' ' + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}); };
+  const rows = S.log.length ? S.log.map((e, i) => `<div class="row" style="gap:8px;padding:7px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(e.i,16,16)}<span class="sp" style="font:500 10px var(--ui);line-height:1.45">${esc(e.t)}</span><span style="font:400 8.5px var(--ui);opacity:.6;white-space:nowrap">${when(e.at)}</span></div>`).join('')
+    : `<div class="empty">${img('mail',22,22)}<span><b>Nothing here yet.</b> Submitted reports, sales, loans and bookings will show up here.</span></div>`;
+  return {view: backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
+    <div class="ttl">${img('mail',20,20)}Activity</div><div class="box" style="padding:2px 10px;max-height:290px;overflow:auto">${rows}</div></div></div>`};
+};
 
 /* ---------- render ---------- */
 let lastBg = '';
@@ -689,8 +826,10 @@ function render(){
   [['#rCoins',S.coins],['#rGems',S.gems],['#rWater',S.water]].forEach(([id, v]) => $(id + ' b').textContent = fmt(v));
   const out = V[view]();
   $('#world').innerHTML = out.world || '';
-  $('#view').innerHTML = out.view || '';
-  $('#overlay').innerHTML = ui.overlay === 'complete' ? completeOverlay() : '';
+  $('#view').innerHTML = ui.overlay === 'complete' ? '' : (out.view || '');
+  $('#overlay').innerHTML = ui.overlay === 'complete' ? completeOverlay() : ui.overlay === 'intro' ? introOverlay() : '';
+  $('#aname').textContent = agentName(); $('#trophies').textContent = S.ratedRight;
+  if (ui.overlay === 'intro'){ const n = $('#introName'); if (n && ui.introStep === 0) setTimeout(() => n.focus(), 50); }
   if (view === 'shop' && S.shopTab === 'loans' && S.loanTab === 'calc') calcOut();
   if (view === 'sell') sellOut();
   save();
@@ -708,14 +847,15 @@ const ACT = {
   go: d => go(d.v),
   goReplace: d => go(d.v, true),
   back: () => back(),
-  nav: d => { hist = []; go(d.v === 'shop' ? 'shop' : d.v, true); },
+  nav: d => { hist = []; go(d.v, true); },
   toast: d => toast(d.msg),
-  reset: () => { if (ui.confirmReset){ S = FRESH(); hist = []; view = 'home'; ui.confirmReset = false; render(); toast('New game started'); } else { ui.confirmReset = true; toast('Tap settings again to restart the game'); setTimeout(() => ui.confirmReset = false, 3000); } },
+  next: d => { hist = view === 'home' ? [] : [view]; if (d.v === 'recs' && view !== 'result') hist.push('result'); go(d.v, true); },
   pickFarm: d => { S.sel = +d.farm; go('map'); },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
+  visitFarm: d => visit(+d.farm),
   farmAct: d => {
-    const id = S.sel || 1;
-    if (d.a === 'analyze'){ if (S.taskFarm !== id){ S.taskFarm = id; S.checks = {soil:null,nutrient:null,water:null,pest:null,weed:null}; S.rewarded = false; S.recsApplied = false; } go('analyze'); }
+    const id = S.sel || S.taskFarm;
+    if (d.a === 'analyze') return visit(id);
     if (d.a === 'route') go('route');
     if (d.a === 'calendar') go('calendar');
     if (d.a === 'quote'){ S.shopTab = 'loans'; S.loanTab = 'calc'; ui.calc.farm = String(Math.min(id, 4)); go('shop'); }
@@ -723,28 +863,62 @@ const ACT = {
   },
   inspect: d => { ui.inspectCat = d.cat; ui.pick = null; go('inspect'); },
   rate: d => { ui.pick = d.r; render(); },
-  inspectDone: () => { const p = ui.pick ?? S.checks[ui.inspectCat]; if (!p){ toast('Choose Good, Fair or Poor first'); return; } S.checks[ui.inspectCat] = p; ui.pick = null; toast(`${CATS[ui.inspectCat].name} checked`); back(); },
-  makeAnalysis: () => { const left = 5 - doneCount(); if (left){ toast(`Check ${left} more area${left > 1 ? 's' : ''} to run the analysis`); return; } go('result'); },
-  submitReport: () => { if (S.rewarded){ toast('Report already submitted'); return; } ui.overlay = 'complete'; render(); },
-  claim: () => {
-    if (!S.rewarded){ earn(400, 400, 400); S.rewarded = true; S.missions++; S.trophies += 6; S.taskFarm = S.taskFarm % 4 + 1; S.checks = {soil:null,nutrient:null,water:null,pest:null,weed:null}; S.recs = []; S.recsApplied = false; S.rewarded = false; }
-    ui.overlay = null; hist = []; view = 'home'; render(); toast(`Rewards saved. Next task: ${fname(S.taskFarm)}`);
+  inspectDone: () => {
+    const p = ui.pick ?? S.checks[ui.inspectCat]; if (!p){ toast('Choose Good, Fair or Poor first'); return; }
+    S.checks[ui.inspectCat] = p; ui.pick = null;
+    const nextCat = CAT_ORDER.find(k => !S.checks[k]);
+    if (nextCat){ ui.inspectCat = nextCat; toast(`Saved. Next: ${CATS[nextCat].name}`); render(); }
+    else { toast('All five areas rated'); view = 'result'; render(); }
   },
-  newRec: () => { ui.recEdit = null; ui.recCat = 'soil'; ui.recText = ''; go('recform'); },
+  makeAnalysis: () => { const left = 5 - doneCount(); if (left){ toast(`Rate ${left} more area${left > 1 ? 's' : ''} first`); return; } go('result'); },
+  submitReport: d => {
+    if (S.rewarded) return;
+    const weak = weakAreas();
+    if (!d.force && weak.length && (!S.recsApplied || uncovered().length)){ ui.submitWarn = true; render(); return; }
+    const id = S.taskFarm, n = correctCount(), r = rewardFor(n), f = S.farms[id], before = score(id);
+    f.known = {...S.taskTruth}; f.visits++;
+    if (S.recsApplied) recCats().forEach(k => { if (rateOf(f.cond[k]) !== 'good') boost(id, k, 35); });
+    const after = score(id);
+    earn(r.c, r.g, r.w); S.missions++; S.ratedTotal += 5; S.ratedRight += n; S.rewarded = true; ui.submitWarn = false;
+    ui.last = {id, correct:n, r, before, after};
+    logAdd('hdr-task', `Report for ${fname(id)}: ${n}/5 correct. Score ${before} → ${after}. Earned ${r.c} coins, ${r.g} gems, ${r.w} water.`);
+    stage.querySelectorAll('.toast').forEach(t => t.remove());
+    ui.overlay = 'complete'; render();
+  },
+  claim: d => {
+    if (S.rewarded){
+      const done = S.taskFarm;
+      const next = [1,2,3,4].filter(id => id !== done).sort((a, b) => score(a) - score(b))[0];
+      startTask(next);
+      if (!S.won && thriving() === 4){ S.won = true; logAdd('trophy', 'All four farms reached a success score of 80+.'); }
+    }
+    ui.overlay = null; hist = []; view = d && d.to === 'map' ? 'map' : 'home'; S.sel = null; render();
+    toast(S.won && thriving() === 4 ? 'All four farms are thriving! Keep them there.' : `Next visit: ${fname(S.taskFarm)}`);
+  },
+  newRec: () => { ui.recEdit = null; ui.recCat = uncovered()[0] || weakAreas()[0] || 'soil'; ui.recText = ''; go('recform'); },
   editRec: d => { const r = S.recs[+d.i]; ui.recEdit = +d.i; ui.recCat = r.cat; ui.recText = r.text; go('recform'); },
+  delRec: () => { S.recs.splice(ui.recEdit, 1); S.recsApplied = false; ui.recEdit = null; toast('Recommendation deleted'); back(); },
   saveRec: d => {
     const t = ($('#recText').value || '').trim();
-    if (!t){ toast('Write the recommendation first'); return; }
-    if (ui.recEdit != null){ S.recs[ui.recEdit] = {cat:ui.recCat, text:t}; toast('Recommendation updated'); back(); return; }
-    if (!d.more && !spend('gems', 30)) return;
+    if (t.length < 8){ toast('Write a short instruction for the farmer first'); $('#recText').focus(); return; }
+    S.recsApplied = false; ui.submitWarn = false;
+    if (ui.recEdit != null){ S.recs[ui.recEdit] = {cat:ui.recCat, text:t}; ui.recEdit = null; toast('Recommendation updated'); back(); return; }
     S.recs.push({cat:ui.recCat, text:t}); ui.recText = '';
-    if (d.more){ toast('Added. Write the next one'); render(); } else { S.recsApplied = true; toast(`Recommendation sent to ${fname(S.taskFarm)}`); back(); }
+    if (d.more){ ui.recCat = uncovered()[0] || ui.recCat; toast('Saved. Write the next one'); render(); } else { toast('Saved. Send it when you are ready'); back(); }
   },
-  applyRecs: () => { if (!S.recs.length){ toast('Add a recommendation first'); return; } if (S.recsApplied){ toast('Already sent to the farmer'); return; } if (!spend('gems', 30)) return; S.recsApplied = true; toast(`${S.recs.length} recommendations sent to ${fname(S.taskFarm)}`); back(); },
+  applyRecs: () => {
+    if (!S.recs.length){ toast('Write a recommendation first'); return; }
+    if (S.recsApplied) return;
+    if (!S.recsPaid){ if (!spend('gems', 30)) return; S.recsPaid = true; }
+    S.recsApplied = true; ui.submitWarn = false;
+    const left = uncovered();
+    toast(left.length ? `Sent. Still no advice on ${left.map(k => CATS[k].short).join(', ')}` : `Sent to ${owner(S.taskFarm)}. Now submit the report`);
+    hist = hist.filter(v => v !== 'result'); view = 'result'; render();
+  },
   dd: d => { ui.dd = ui.dd === d.k ? null : d.k; render(); },
   ddpick: d => {
     const k = d.k, v = d.val; ui.dd = null;
-    if (k === 'rec') ui.recCat = v, ui.recText = ($('#recText') || {}).value || ui.recText;
+    if (k === 'rec'){ ui.recCat = v; ui.recText = ($('#recText') || {}).value || ui.recText; }
     else if (k.startsWith('loan')) S.loanFarm[k.slice(4)] = v;
     else if (k.startsWith('train')) S.trainFarm[k.slice(5)] = v;
     else if (k === 'ctype') ui.calc.type = v;
@@ -756,28 +930,45 @@ const ACT = {
   farmStep: d => { const k = d.k; S[k] = Math.max(0, Math.min(4, S[k] + +d.d)); render(); },
   farmSet: d => { S[d.k] = +d.i; render(); },
   cardMode: () => { S.cardMode = 1 - S.cardMode; render(); },
-  viewFarmTask: () => go('task'),
   crop: d => { ui.crop = d.c; go('crop'); },
   shopTab: d => { S.shopTab = d.t; ui.dd = null; render(); },
   sellTab: d => { S.sellTab = d.t; render(); },
   loanTab: d => { S.loanTab = d.t; ui.dd = null; render(); },
   sellItem: d => {
     const inp = INPUTS.find(x => x[0] === d.k);
-    ui.sellItem = d.kind === 'input' ? {kind:'input', k:d.k, name:inp[1], base:inp[2]} : {kind:'equip', k:d.k, name:d.name || d.k, base:200};
+    ui.sellItem = d.kind === 'input' ? {kind:'input', k:d.k, icon:d.k, name:inp[1], base:inp[2], helps:inp[3]} : {kind:'equip', k:(d.name || d.k).toLowerCase().replace(/\s+/g, '-'), icon:d.k, name:d.name || d.k, base:200};
     ui.sellFarm = null; go('sell');
   },
   completeSale: () => {
-    if (!ui.sellFarm){ toast('Select a farm for this sale'); return; }
-    const it = ui.sellItem, p = parseFloat(it.price) || it.base, com = Math.round(p * .05);
-    S.coins += com; bump('#rCoins'); toast(`${it.name} sold to Farm ${ui.sellFarm}. You earned ${com} coins`); back();
+    const it = ui.sellItem, [lo, hi] = priceRange(it), raw = parseFloat(it.price), p = raw || it.base;
+    if (!ui.sellFarm){ toast('Select the farm you are selling to'); return; }
+    if (raw && (raw < lo || raw > hi)){ toast(`Enter a price between ${lo} and ${hi} coins`); $('#sellPrice').focus(); return; }
+    const key = ui.sellFarm + '-' + it.k;
+    if (S.sales[key]){ toast(`${fname(+ui.sellFarm)} already bought ${it.name.toLowerCase()} this season`); return; }
+    const com = Math.round(p * .05); S.sales[key] = true;
+    S.coins += com; bump('#rCoins');
+    if (it.helps) boost(+ui.sellFarm, it.helps, 10);
+    logAdd(it.kind === 'input' ? 'in-' + it.icon : 'cart', `Sold ${it.name.toLowerCase()} to ${fname(+ui.sellFarm)} for ${fmt(p)} coins. Commission ${com} coins.`);
+    toast(`Sold to ${fname(+ui.sellFarm)}. You earned ${com} coins`); back();
   },
-  getLoan: d => { const i = +d.i, f = S.loanFarm[i]; if (!f){ toast('Select a farm for this loan'); return; } const l = LOANS[i]; S.coins += l[2]; bump('#rCoins'); toast(`${l[1]} of ${fmt(l[2])} coins approved for Farm ${f}`); render(); },
+  getLoan: d => {
+    const i = +d.i, f = S.loanFarm[i]; if (!f){ toast('Select the farm that needs this loan'); return; }
+    const l = LOANS[i], key = f + '-' + i;
+    if (S.loans[key]){ toast(`${fname(+f)} already has an active ${l[1].toLowerCase()}`); return; }
+    S.loans[key] = true; S.coins += l[3]; bump('#rCoins');
+    Object.entries(l[4]).forEach(([k, n]) => boost(+f, k, n));
+    logAdd('loan-bag', `${l[1]} arranged for ${fname(+f)}. Referral fee ${l[3]} coins.`);
+    toast(`${l[1]} arranged for ${owner(+f)}. You earned a ${l[3]}-coin referral fee`); render();
+  },
   quote: () => { const c = ui.calc; if (!c.type || !(parseFloat(c.amt) > 0)){ toast('Choose a loan type and enter an amount'); return; } const total = parseFloat(c.amt) * (1 + (parseFloat(c.rate) || 0) / 100 * c.tenure / 12); toast(`${LOANS[+c.type][1]}: repay ${fmt(total)} coins over ${c.tenure} months`); },
   book: d => {
     const i = +d.i, f = S.trainFarm[i]; if (!f){ toast('Select a farm for this session'); return; }
     if (!spend('gems', 60)) return;
     const used = Object.values(S.bookings).map(b => b.day); let day = 4; while (used.includes(day)) day += 3;
-    S.bookings[TRAININGS[i][0]] = {farm:+f, day}; S.calDay = day; toast(`${TRAININGS[i][1]} booked for June ${day}`); render();
+    S.bookings[TRAININGS[i][0]] = {farm:+f, day}; S.calDay = day;
+    const c = S.farms[+f].cond, weakest = CAT_ORDER.slice().sort((a, b) => c[a] - c[b])[0]; boost(+f, weakest, 8);
+    logAdd('nav-training', `${TRAININGS[i][1]} booked for ${fname(+f)} on June ${day}. Helps with ${CATS[weakest].short.toLowerCase()}.`);
+    toast(`${TRAININGS[i][1]} booked for June ${day}`); render();
   },
   calDay: d => { if (d.d){ S.calDay = +d.d; render(); } },
   nextTip: () => { S.tip++; render(); },
@@ -785,12 +976,32 @@ const ACT = {
   upgrade: () => {
     if (S.hub >= 3){ toast('Your storage is fully upgraded'); return; }
     if (!spend('gems', 30)) return;
-    S.hub++; if (S.storage === 'medium') S.storage = 'xl'; toast(`Storage upgraded. Your hub has grown on Home (stage ${S.hub})`); render();
+    S.hub++; if (S.storage === 'medium') S.storage = 'xl';
+    logAdd('wh-xl', `Storage upgraded. Your hub reached stage ${S.hub}.`);
+    toast(`Storage upgraded. See your hub grow on Home`); render();
   },
-  applyRoute: () => { if (S.routeApplied){ toast('Route already scheduled'); return; } if (!spend('gems', 40)) return; S.routeApplied = true; toast('Tractor route scheduled. Saves about 400 coins'); render(); },
+  applyRoute: () => { if (S.routeApplied){ toast('Route already scheduled'); return; } if (!spend('gems', 40)) return; S.routeApplied = true; logAdd('tractor', 'Tractor route to Farm 5 scheduled.'); toast('Tractor route scheduled. Saves about 400 coins'); render(); },
   closeSteps: () => { S.stepsOpen = false; render(); },
   openSteps: () => { S.stepsOpen = true; render(); },
+  /* intro + settings */
+  introNext: () => { S.name = ($('#introName').value || '').trim().slice(0, 18); ui.introStep = 1; render(); },
+  introBack: () => { ui.introStep = 0; render(); },
+  introSkip: () => { const n = $('#introName'); if (n) S.name = n.value.trim().slice(0, 18); S.onboarded = true; ui.overlay = null; render(); },
+  introDone: () => { const first = !S.onboarded; S.onboarded = true; ui.overlay = null; if (first){ hist = []; go('task'); } else render(); },
+  howTo: () => { ui.introStep = 1; ui.overlay = 'intro'; render(); },
+  saveName: () => { S.name = ($('#nameIn').value || '').trim().slice(0, 18); toast('Name saved'); render(); },
+  askReset: () => { ui.confirmReset = true; render(); },
+  cancelReset: () => { ui.confirmReset = false; render(); },
+  doReset: () => { S = FRESH(); hist = []; view = 'home'; ui.confirmReset = false; ui.introStep = 0; ui.overlay = 'intro'; render(); },
 };
+/* Start or resume a visit, without silently throwing away work on another farm */
+function visit(id){
+  if (id !== S.taskFarm){
+    if (hasProgress()){ toast(`Finish your visit to ${fname(S.taskFarm)} first`); hist = []; go('task'); return; }
+    startTask(id); toast(`Visit switched to ${fname(id)}`);
+  }
+  hist = view === 'home' ? [] : [view]; go('task', true);
+}
 
 stage.addEventListener('click', e => {
   const t = e.target.closest('[data-act]');
@@ -806,19 +1017,21 @@ stage.addEventListener('input', e => {
   if (id === 'sellPrice'){ ui.sellItem.price = e.target.value.replace(/[^\d.]/g, ''); sellOut(); }
   if (id === 'recText') ui.recText = e.target.value;
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape'){ if (ui.overlay){ ACT.claim(); } else if (ui.dd){ ui.dd = null; render(); } else if (view !== 'home') back(); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape'){ if (ui.overlay === 'complete'){ ACT.claim({}); } else if (ui.overlay === 'intro'){ ACT.introSkip(); } else if (ui.dd){ ui.dd = null; render(); } else if (view !== 'home') back(); } });
 
 /* ---------- fit stage to window ---------- */
+// On an upright phone, turn the landscape game sideways so it fills the screen instead of shrinking to 40%.
 function fit(){
-  const app = $('#app'), w = app.clientWidth, h = app.clientHeight;
-  const portrait = h > w;
-  stage.style.setProperty('--s', Math.min(w / 874, (portrait ? h - 40 : h) / 402));
+  const app = $('#app'), w = app.clientWidth, h = app.clientHeight, rot = h > w * 1.15;
+  stage.style.setProperty('--s', rot ? Math.min(h / 874, w / 402) : Math.min(w / 874, h / 402));
+  stage.style.setProperty('--rot', rot ? '90deg' : '0deg');
 }
 addEventListener('resize', fit); fit();
 
 /* allow deep links like #shop or #training */
 const start = (location.hash || '').slice(1);
-if (CFG[start] && !['inspect','sell','crop','recform'].includes(start)) view = start;
+if (CFG[start] && !['inspect','sell','crop','recform','result','recs'].includes(start)) view = start;
+if (!S.onboarded) ui.overlay = 'intro';
 render();
 })();
 </script>

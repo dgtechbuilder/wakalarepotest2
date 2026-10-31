@@ -17,4 +17,12 @@ Open `index.html` in a browser, or serve the folder:
 python3 -m http.server 8000
 ```
 
-Progress is saved in the browser's local storage. Tap the settings cog twice to start a new game.
+## How to play
+
+1. **Inspect** five areas of a farm. Each one shows what you see in the field; rate it Good, Fair or Poor.
+2. **Advise** the farmer on every area that isn't good.
+3. **Submit** the report. Accurate ratings earn coins, gems and water, and your advice raises the farm's success score.
+
+Goal: get all four farms to a success score of 80 or more. The orange **Next** bar always shows your next step.
+
+Progress is saved in the browser on this device. Settings (the cog) has your name, How to play, and Restart.
