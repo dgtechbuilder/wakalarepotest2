@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f0a05">
-<meta name="description" content="Wakala Agent: a farm-agent game. Inspect farms, advise farmers, trade inputs, book training and grow your hub.">
+<meta name="description" content="Wakala Agent: read a farm with your own eyes, make the right call, and help farmers grow.">
 <title>Wakala Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -193,9 +193,6 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .nextchip:active{transform:translateX(-50%) translateY(2px);box-shadow:0 1px 0 #a9530f}
 @keyframes pulse{50%{box-shadow:0 3px 0 #a9530f,0 6px 12px rgba(0,0,0,.35),0 0 0 5px rgba(251,180,64,.35)}}
 .pinTag{font:600 7.5px var(--ui);font-style:normal;background:var(--orange);border-radius:4px;padding:1px 4px;margin-left:4px}
-.seen{background:#fff6e8;border:1px solid rgba(107,64,43,.14);border-left:3px solid var(--orange);border-radius:6px;padding:7px 10px}
-.seen span{display:block;font:600 8.5px var(--ui);letter-spacing:.05em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
-.seen p{margin:0;font:500 11px var(--ui);line-height:1.5}
 .empty{display:flex;align-items:center;gap:10px;padding:12px 4px;font:400 10px var(--ui);line-height:1.5}
 .empty b{font-weight:600}
 .notice{display:flex;align-items:center;gap:8px;background:rgba(229,72,77,.08);border:1px solid rgba(229,72,77,.25);border-radius:8px;padding:6px 8px;font:500 9.5px var(--ui);line-height:1.45}
@@ -207,6 +204,99 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .isteps{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:7px;font:400 10.5px var(--ui);line-height:1.5;color:var(--brown)}
 .isteps b{font-weight:600}
 @media (prefers-reduced-motion:reduce){.nextchip{animation:none}}
+
+/* ---------- first session: walking, fog, character ---------- */
+#view{z-index:6}#overlay{z-index:8}#hud,#nav,#btnMap,#btnTask{z-index:4}
+.walkpad{position:absolute;inset:0;cursor:pointer;touch-action:manipulation}
+.fog,.wpath,.goal,.hint,.tapme,#me,.banner{pointer-events:none!important}
+.fog,.wpath{position:absolute;left:0;top:0}
+.fog.lift{animation:fogLift 1.6s ease forwards}
+@keyframes fogLift{to{opacity:0}}
+.wpath path{animation:dash 1.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-24}}
+#me{position:absolute;width:34px;height:51px;transform:translate(-50%,-94%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));z-index:3}
+#me .ch{width:100%;height:100%;display:block}
+#me.flip .ch{transform:scaleX(-1)}
+#me.walking .ch{animation:bob .32s ease-in-out infinite alternate}
+#me.walking .legL{animation:stepL .32s ease-in-out infinite alternate;transform-origin:16px 41px}
+#me.walking .legR{animation:stepL .32s ease-in-out infinite alternate-reverse;transform-origin:24px 41px}
+@keyframes bob{to{translate:0 -2px}}
+@keyframes stepL{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.goal{position:absolute;display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;background:rgba(0,0,0,.45);font:600 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;white-space:nowrap}
+.hint{position:absolute;left:50%;top:18px;transform:translateX(-50%);padding:7px 16px;border-radius:12px;border:1.5px solid rgba(255,255,255,.75);background:linear-gradient(#f39a3a,#ed8324);box-shadow:0 3px 0 #a9530f,0 6px 12px rgba(0,0,0,.35);font:700 13px var(--ui);color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.45);white-space:nowrap}
+.banner{position:absolute;left:50%;top:164px;transform:translateX(-50%);font:700 18px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05,1px 2px 3px rgba(0,0,0,.8);white-space:nowrap;animation:bannerIn 2.6s ease forwards}
+@keyframes bannerIn{0%{opacity:0;transform:translate(-50%,8px) scale(.9)}15%,80%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0}}
+.tapme{position:absolute;width:30px;height:30px;transform:translate(-30%,-10%)}
+.finger{animation:tap 1.1s ease-in-out infinite;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+@keyframes tap{0%,100%{transform:translateY(0)}45%{transform:translateY(-7px)}55%{transform:translateY(1px) scale(.92)}}
+.flabel.pop{animation:popIn .5s cubic-bezier(.2,1.6,.4,1) both}
+.flabel.pop.d0{animation-delay:.5s}.flabel.pop.d1{animation-delay:.75s}.flabel.pop.d2{animation-delay:1s}.flabel.pop.d3{animation-delay:1.25s}
+@keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+#hud.enter,#nav.enter,#btnMap.enter,#btnTask.enter{animation:slideIn .7s .9s ease both}
+@keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+#nav.enter,#btnMap.enter,#btnTask.enter{animation-name:slideUp}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+#hudFace{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:#f4efe8}
+#hudFace svg{width:100%;height:100%;display:block}
+.portrait{display:inline-grid;place-items:end center;border-radius:6px;background:linear-gradient(#fff,#f3e3c8);overflow:hidden;flex:none}
+.portrait svg{width:78%;height:auto;display:block}
+.nextchip.calm{background:linear-gradient(#8a6a4a,#6b4f34);box-shadow:0 3px 0 #3d2a17,0 6px 12px rgba(0,0,0,.35);animation:none}
+
+/* ---------- character creation ---------- */
+.create{position:absolute;inset:0;background:rgba(12,8,2,.35)}
+.plate{width:150px;height:210px;flex:none;border-radius:16px;background:radial-gradient(circle at 50% 70%,#fff6e3,#f0d6ad);display:grid;place-items:center;box-shadow:inset 0 -6px 0 rgba(107,64,43,.12)}
+.plate .ch{width:118px;height:177px}
+.chipbtn{border:1.5px solid rgba(107,64,43,.25);background:#fff7ea;border-radius:9px;padding:6px 10px;font:600 11px var(--ui);color:var(--brown)}
+.chipbtn.on{background:var(--orange);color:#fff;border-color:var(--orange-line);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.looks{display:flex;gap:8px}
+.look{width:58px;height:74px;border-radius:12px;border:2px solid rgba(107,64,43,.18);background:#fff7ea;padding:4px 6px 0;display:grid;place-items:end center}
+.look .ch{width:44px;height:66px}
+.look.on{border-color:var(--orange);background:#ffe9c9;box-shadow:0 0 0 3px rgba(237,131,36,.25)}
+.looks.small .look{width:40px;height:50px;border-radius:9px}
+.looks.small .look .ch{width:30px;height:44px}
+#nameIn0{font-size:13px;padding:8px 10px;background:#fff8ee;border:1.5px solid rgba(237,131,36,.55)}
+
+/* ---------- the review ---------- */
+.rpanel{position:relative;display:flex;flex-direction:column;gap:8px;padding:8px 12px 12px}
+.rsteps{display:flex;gap:4px}
+.rsteps span{display:flex;align-items:center;gap:4px;font:600 9.5px var(--ui);color:rgba(107,64,43,.45);padding:3px 7px 3px 3px;border-radius:10px}
+.rsteps i{font-style:normal;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;background:rgba(107,64,43,.12);font-size:9px}
+.rsteps span.on{color:#fff;background:var(--orange);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.rsteps span.on i{background:rgba(255,255,255,.3)}
+.rsteps span.done{color:var(--green)}
+.rsteps span.done i{background:rgba(86,123,0,.15)}
+.rprompt{margin:0;font:600 13px var(--ui);color:var(--brown)}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.part{position:relative;border:2px solid rgba(107,64,43,.16);background:#fff7ea;border-radius:10px;padding:5px 5px 6px;display:flex;flex-direction:column;gap:5px;align-items:center;font:600 12px var(--ui);color:var(--brown)}
+.part canvas{border-radius:6px;display:block}
+.part.next{border-color:var(--orange);box-shadow:0 0 0 4px rgba(237,131,36,.25);animation:glowPulse 1.4s ease-in-out infinite}
+.part.seen{border-color:rgba(86,123,0,.45)}
+.part.seen span{color:var(--green)}
+.part .finger{position:absolute;right:-6px;bottom:14px}
+@keyframes glowPulse{50%{box-shadow:0 0 0 7px rgba(237,131,36,.12)}}
+.minis{display:flex;gap:6px}
+.part.mini{padding:3px 3px 4px;font-size:8.5px;gap:3px;border-width:1.5px}
+.spotwrap{position:relative;width:330px;height:206px;border-radius:8px;overflow:hidden;flex:none;box-shadow:0 0 0 2px rgba(107,64,43,.2)}
+.spotwrap canvas{display:block}
+.fieldbtn{position:absolute;border:0;background:transparent;border-radius:4px;cursor:pointer}
+.fieldbtn:hover,.fieldbtn:focus-visible{background:rgba(255,230,120,.18);outline:2px solid #ffd34d}
+.calls{display:flex;flex-direction:column;gap:9px;flex:1}
+.call{display:flex;align-items:center;gap:12px;border:2px solid rgba(107,64,43,.18);background:#fff7ea;border-radius:12px;padding:10px 14px;font:600 14px var(--ui);color:var(--brown);text-align:left;box-shadow:0 3px 0 rgba(107,64,43,.15)}
+.call:hover,.call:focus-visible{border-color:var(--orange);background:#ffefd8}
+.call:active{transform:translateY(2px);box-shadow:none}
+.bubble2{position:relative;background:#fff;border-radius:14px;padding:8px 14px;font:500 12px var(--ui);color:var(--brown);box-shadow:0 3px 8px rgba(0,0,0,.15)}
+.bubble2::after{content:"";position:absolute;left:50%;bottom:-8px;border:8px solid transparent;border-top-color:#fff;border-bottom:0;transform:translateX(-50%)}
+.bubble2.sad{background:#fff3ef}
+.bubble2.sad::after{border-top-color:#fff3ef}
+.cheer .ch{width:70px;height:105px;animation:jump .6s ease-in-out 3}
+@keyframes jump{50%{transform:translateY(-12px)}}
+.rline{margin:0;font:600 13px var(--ui);line-height:1.45;color:var(--brown);max-width:260px}
+.zoomfull{position:absolute;inset:0;background:rgba(12,8,2,.55);animation:fade .2s}
+.zoomfull canvas{border-radius:8px;display:block;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.zx{border:0;background:none;padding:2px}
+.trow{gap:10px;padding:6px 8px;border-radius:8px;background:rgba(107,64,43,.05)}
+.trow canvas{border-radius:4px;flex:none}
+@media (prefers-reduced-motion:reduce){.finger,.part.next,.wpath path,.cheer .ch,.banner,.flabel.pop,#me.walking .ch,#me.walking .legL,#me.walking .legR{animation:none!important}.fog.lift{animation-duration:.01s}}
 
 /* ---------- overlays ---------- */
 .dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
@@ -227,7 +317,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
     <nav id="nav" aria-label="Main"></nav>
     <div id="hud">
       <button class="agent" data-act="go" data-v="profile" aria-label="Agent profile">
-        <span class="avatar"><span><img data-src="avatar" alt=""></span></span>
+        <span class="avatar"><span id="hudFace"></span></span>
         <span class="col" style="gap:2px"><span class="aname" id="aname">Wakala Agent</span><span><span class="chip" title="Correct ratings"><img data-src="trophy" alt=""><span id="trophies">0</span></span></span></span>
       </button>
       <div class="res">
@@ -243,6 +333,216 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 </div>
 
 <script>
+/* ---------- farm renderer ----------
+   Every review picture is drawn from farm data: {seed, crop, problem, sev, field}.
+   problem: 'water' | 'pest' | 'healthy'; sev: 0..1 how visible the problem is; field: 0..3 which field has it.
+   t: 0 = as found, 1 = fully recovered. Nothing is a stat panel: colour, height, wilting, holes,
+   bugs and dry soil carry the information. */
+const REN = (() => {
+  const rng = seed => { let s = (seed >>> 0) || 1; return () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296; };
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+  const mixC = (c1, c2, t) => { const a = hex(c1), b = hex(c2); t = Math.max(0, Math.min(1, t)); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(',')})`; };
+  const P = {leaf:'#3c8b2c', leafHi:'#6fb446', dry:'#c9a43e', dryHi:'#e0c56a', tip:'#8a5326', soilWet:'#4b3121', soilDry:'#d0ad72', crack:'#6f4d2a', grass:'#86b24c', water:'#4fa3d4'};
+  const state = (sc, i, t) => (sc.problem === 'healthy' || i !== sc.field) ? {p:'ok', a:0, w:0, b:0} : {p:sc.problem, a:sc.sev * (1 - t), w:sc.problem === 'water' ? sc.sev * (1 - t) : 0, b:sc.problem === 'pest' ? sc.sev * (1 - t) : 0};
+
+  function ellipse(ctx, x, y, rx, ry, rot, fill, stroke, lw){ ctx.beginPath(); ctx.ellipse(x, y, Math.max(.1, rx), Math.max(.1, ry), rot || 0, 0, Math.PI * 2); if (fill){ ctx.fillStyle = fill; ctx.fill(); } if (stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); } }
+  function hole(ctx, x, y, r){ ellipse(ctx, x, y, r, r * .8, .4, '#efe6c4', '#6d4a1f', Math.max(.6, r * .28)); }
+  function caterpillar(ctx, x, y, s, ang){
+    ctx.save(); ctx.translate(x, y); ctx.rotate(ang || 0);
+    for (let k = 5; k >= 0; k--) ellipse(ctx, k * 3.1 * s, Math.sin(k * 1.3) * .9 * s, 2.3 * s, 2.0 * s, 0, k % 2 ? '#7c8f35' : '#94a743', 'rgba(40,40,10,.35)', .4 * s);
+    ellipse(ctx, -2.6 * s, 0, 2.2 * s, 2.0 * s, 0, '#3b2a14');
+    ellipse(ctx, -3.2 * s, -.6 * s, .5 * s, .5 * s, 0, '#f3e9c8');
+    ctx.restore();
+  }
+  function frass(ctx, x, y, n, s, R){ for (let i = 0; i < n; i++) ellipse(ctx, x + (R() - .5) * 18 * s, y + (R() - .5) * 8 * s, .9 * s, .7 * s, 0, '#4a3418'); }
+  function cracks(ctx, x0, y0, x1, y1, amt, R, u, col){
+    if (amt < .15) return;
+    ctx.strokeStyle = col || P.crack; ctx.lineCap = 'round';
+    const n = Math.round(4 + amt * 14);
+    for (let i = 0; i < n; i++){
+      let x = lerp(x0, x1, R()), y = lerp(y0, y1, R());
+      ctx.lineWidth = (.6 + R() * 1.1) * u * (.6 + amt * .6); ctx.globalAlpha = .45 + amt * .5;
+      ctx.beginPath(); ctx.moveTo(x, y);
+      for (let k = 0; k < 4; k++){ x += (R() - .5) * 26 * u; y += (R() - .5) * 12 * u; ctx.lineTo(Math.min(x1, Math.max(x0, x)), Math.min(y1, Math.max(y0, y))); }
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+  function leaf(ctx, x, y, dir, len, droop, w, col, hi, tip, u){
+    const tx = x + dir * len * (1 - droop * .25), ty = y - len * .42 + droop * len * .95;
+    const cx = x + dir * len * .52, cy = y - len * .5 + droop * len * .25;
+    const g = ctx.createLinearGradient(x, y, tx, ty); g.addColorStop(0, col); g.addColorStop(.55, hi); g.addColorStop(1, tip || hi);
+    ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x, y - w * .35);
+    ctx.quadraticCurveTo(cx, cy - w, tx, ty); ctx.quadraticCurveTo(cx, cy + w * .9, x, y + w * .35); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = .7 * u; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(cx, cy, tx, ty); ctx.stroke();
+    return [cx * .4 + tx * .6, cy * .4 + ty * .6];
+  }
+  function maize(ctx, x, y, h, st, R, u){
+    const a = st.w, b = st.b, H = h * (1 - .2 * a), lean = a * 8 * u;
+    const col = mixC(P.leaf, P.dry, a * 1.05), hi = mixC(P.leafHi, P.dryHi, a);
+    ctx.strokeStyle = mixC('#5c8d2b', '#a8893a', a); ctx.lineWidth = 3.4 * u; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + lean * .4, y - H * .55, x + lean, y - H); ctx.stroke();
+    ctx.strokeStyle = mixC('#dcc56d', '#b39a55', a); ctx.lineWidth = 1.2 * u;
+    for (let k = -2; k <= 2; k++){ ctx.beginPath(); ctx.moveTo(x + lean, y - H); ctx.lineTo(x + lean + k * 3 * u, y - H - (9 - Math.abs(k) * 2) * u); ctx.stroke(); }
+    if (a < .6) ellipse(ctx, x + lean * .5 + 3.5 * u, y - H * .5, 2.4 * u, 6.5 * u, .35, mixC('#9cc25a', '#c7b05a', a));
+    for (let i = 0; i < 6; i++){
+      const f = .16 + i * .13, sx = x + lean * f, sy = y - H * f, dir = i % 2 ? 1 : -1;
+      const len = H * (.52 - i * .05) * (1 + (R() - .5) * .16);
+      const droop = .12 + a * 1.0 + (R() - .5) * .08;
+      const mid = leaf(ctx, sx, sy, dir, len, droop, 4.4 * u * (1 - a * .4), col, hi, a > .25 ? P.tip : null, u);
+      if (b > 0 && R() < .25 + b * .8){ const n = 1 + Math.round(b * 2.5 * R()); for (let k = 0; k < n; k++) hole(ctx, mid[0] + (R() - .5) * 10 * u, mid[1] + (R() - .5) * 3 * u, (1 + R() * 1.4 * b) * u); }
+    }
+    if (b > .2 && R() < .5 + b * .5) caterpillar(ctx, x + 4 * u, y - H * .4, u * (.55 + b * .3), -1.2);
+  }
+  function beans(ctx, x, y, h, st, R, u){
+    const a = st.w, b = st.b, H = h * .62 * (1 - .22 * a);
+    const col = mixC(P.leaf, P.dry, a), hi = mixC('#5aa63c', P.dryHi, a);
+    ctx.strokeStyle = mixC('#5a8a2a', '#a0883a', a); ctx.lineWidth = 1.5 * u;
+    const pts = [];
+    for (let i = 0; i < 11; i++){
+      const ang = -Math.PI * (.12 + .76 * (i / 10)) + (R() - .5) * .2, r = H * (.45 + R() * .55);
+      const px = x + Math.cos(ang) * r * .95, py = y + Math.sin(ang) * r + a * H * .25 * (.5 + R() * .5);
+      pts.push([px, py, ang]);
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + (px - x) * .3, py + (y - py) * .35, px, py); ctx.stroke();
+    }
+    if (a < .55) for (let k = 0; k < 2; k++){ const px = x + (k ? 5 : -6) * u, py = y - H * .3; ctx.strokeStyle = '#7fae3e'; ctx.lineWidth = 1.8 * u; ctx.beginPath(); ctx.moveTo(px, py); ctx.quadraticCurveTo(px + 2 * u, py + 6 * u, px + (k ? 3 : -1) * u, py + 11 * u); ctx.stroke(); }
+    pts.forEach(([px, py, ang]) => {
+      const rot = ang + Math.PI / 2 + a * (px > x ? .9 : -.9);
+      const g = ctx.createLinearGradient(px - 6 * u, py - 6 * u, px + 6 * u, py + 6 * u); g.addColorStop(0, hi); g.addColorStop(1, col);
+      ellipse(ctx, px, py, 7.2 * u * (1 - a * .25), 4.6 * u * (1 - a * .35), rot, g, 'rgba(20,50,10,.25)', .5 * u);
+      if (b > 0 && R() < .2 + b * .7) hole(ctx, px + (R() - .5) * 5 * u, py + (R() - .5) * 2 * u, (.8 + R() * 1.2 * b) * u);
+    });
+    if (b > .15 && R() < .45 + b * .6){ const q = pts[Math.floor(R() * pts.length)]; caterpillar(ctx, q[0], q[1] - 2 * u, u * (.45 + b * .3), .3); }
+  }
+  const plant = (crop, ...args) => (crop === 'beans' ? beans : maize)(...args);
+
+  /* 1. Crops: two neighbouring fields side by side. The right one is the field under review. */
+  function crops(ctx, W, H, sc, t, R, u){
+    const st = state(sc, sc.field, t), ok = {p:'ok', a:0, w:0, b:0}, ground = H * .7;
+    let g = ctx.createLinearGradient(0, 0, 0, ground); g.addColorStop(0, '#bfe0f2'); g.addColorStop(1, '#eef3dc'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, ground);
+    ellipse(ctx, W * .25, ground + 8 * u, W * .4, 26 * u, 0, '#a9c97c'); ellipse(ctx, W * .78, ground + 10 * u, W * .38, 30 * u, 0, '#9fc373');
+    [[0, W / 2, ok], [W / 2, W, st]].forEach(([x0, x1, s]) => {
+      const sg = ctx.createLinearGradient(0, ground, 0, H); sg.addColorStop(0, mixC('#6a4529', '#d8b77c', s.w)); sg.addColorStop(1, mixC(P.soilWet, P.soilDry, s.w));
+      ctx.fillStyle = sg; ctx.fillRect(x0, ground, x1 - x0, H - ground);
+      cracks(ctx, x0 + 4 * u, ground + 6 * u, x1 - 4 * u, H - 3 * u, s.w, R, u);
+      if (s.w < .2) for (let k = 0; k < 5; k++) ellipse(ctx, lerp(x0, x1, R()), lerp(ground + 8 * u, H - 6 * u, R()), 9 * u, 1.6 * u, 0, 'rgba(255,255,255,.12)');
+    });
+    ctx.fillStyle = '#6b4a2b'; ctx.fillRect(W / 2 - 2.5 * u, ground - 34 * u, 5 * u, H - ground + 34 * u);
+    ctx.strokeStyle = 'rgba(80,60,40,.6)'; ctx.lineWidth = .8 * u; [ground - 26 * u, ground - 14 * u].forEach(y => { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); });
+    const h = H * (sc.crop === 'beans' ? .5 : .6);
+    [.08, .2, .32, .44].forEach(f => plant(sc.crop, ctx, W * f, ground + 10 * u, h * (.92 + R() * .12), ok, R, u));
+    [.58, .7, .82, .94].forEach(f => plant(sc.crop, ctx, W * f, ground + 10 * u, h * (.92 + R() * .12), st, R, u));
+    return st.p === 'water' ? {x:W * .76, y:H * .55, r:W * .2} : st.p === 'pest' ? {x:W * .76, y:H * .42, r:W * .2} : {x:W * .5, y:H * .45, r:W * .42};
+  }
+
+  /* 2. Health signs: one leaf from the field, up close. */
+  function signs(ctx, W, H, sc, t, R, u){
+    const st = state(sc, sc.field, t), a = st.w, b = st.b;
+    ctx.fillStyle = '#c9dcae'; ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 14; i++) ellipse(ctx, W * R(), H * R(), (20 + R() * 40) * u, (20 + R() * 40) * u, 0, `rgba(${60 + R() * 60 | 0},${120 + R() * 60 | 0},${40 + R() * 30 | 0},.22)`);
+    let clue;
+    if (sc.crop === 'beans'){
+      const cx = W * .5, cy = H * .52, rx = W * .36 * (1 - a * .12), ry = H * .34 * (1 - a * .3), rot = -.25 + a * .5;
+      const g = ctx.createRadialGradient(cx - rx * .3, cy - ry * .4, 4 * u, cx, cy, rx); g.addColorStop(0, mixC('#79c04f', P.dryHi, a)); g.addColorStop(1, mixC('#2f7a25', P.dry, a));
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
+      ctx.beginPath(); ctx.moveTo(-rx, 0); ctx.bezierCurveTo(-rx * .6, -ry * 1.15, rx * .7, -ry * 1.05, rx, 0); ctx.bezierCurveTo(rx * .7, ry * 1.05, -rx * .6, ry * 1.15, -rx, 0); ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1.4 * u; ctx.beginPath(); ctx.moveTo(-rx * 1.15, 0); ctx.lineTo(rx * .95, 0); ctx.stroke();
+      ctx.lineWidth = .8 * u; for (let k = -3; k <= 3; k++){ if (!k) continue; const vx = k * rx * .22; ctx.beginPath(); ctx.moveTo(vx, 0); ctx.quadraticCurveTo(vx + rx * .12, Math.sign(k) * ry * .4, vx + rx * .2, Math.sign(k) * ry * .8 * (1 - Math.abs(k) * .1)); ctx.stroke(); ctx.beginPath(); ctx.moveTo(vx, 0); ctx.quadraticCurveTo(vx + rx * .12, -Math.sign(k) * ry * .4, vx + rx * .2, -Math.sign(k) * ry * .8 * (1 - Math.abs(k) * .1)); ctx.stroke(); }
+      if (a > .2){ ctx.strokeStyle = mixC('#2f7a25', P.tip, a); ctx.lineWidth = 3 * u * a; ctx.beginPath(); ctx.moveTo(-rx, 0); ctx.bezierCurveTo(-rx * .6, -ry * 1.15, rx * .7, -ry * 1.05, rx, 0); ctx.stroke(); }
+      ctx.restore();
+      const holesAt = [[-.35, -.3], [.1, .35], [.3, -.25], [-.1, .1], [.45, .15], [-.45, .25], [.05, -.45]];
+      const nh = b > 0 ? Math.round(2 + b * 6) : 0;
+      holesAt.slice(0, nh).forEach(([fx, fy], i) => hole(ctx, cx + fx * rx, cy + fy * ry, (3 + (i % 3) * 1.6) * u * (.6 + b * .6)));
+      if (b > 0){ const bx = cx + rx * .55, by = cy + ry * .45; caterpillar(ctx, bx, by, u * (1.1 + b * 1.2), -.5); frass(ctx, bx - 10 * u, by + 8 * u, Math.round(3 + b * 8), u, R); clue = {x:bx, y:by, r:W * .17}; }
+      else if (a > 0) clue = {x:cx + rx * .7, y:cy - ry * .2, r:W * .2};
+    } else {
+      const B = [W * .02, H * .92], T = a > .1 ? [W * .95, H * (.18 + a * .55)] : [W * .97, H * .14], C = [W * .52, H * (.28 - a * .05)];
+      const w0 = 24 * u * (1 - a * .2), w = 30 * u * (1 - a * .22);
+      const g = ctx.createLinearGradient(B[0], B[1], T[0], T[1]); g.addColorStop(0, mixC('#327f25', P.dry, a * .8)); g.addColorStop(.6, mixC('#62ad40', P.dryHi, a)); g.addColorStop(1, a > .2 ? P.tip : mixC('#6fb446', P.dryHi, a));
+      ctx.beginPath(); ctx.moveTo(B[0], B[1] - w0); ctx.quadraticCurveTo(C[0], C[1] - w, T[0], T[1]); ctx.quadraticCurveTo(C[0], C[1] + w, B[0], B[1] + w0); ctx.closePath(); ctx.fillStyle = g; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2 * u; ctx.beginPath(); ctx.moveTo(B[0], B[1]); ctx.quadraticCurveTo(C[0], C[1], T[0], T[1]); ctx.stroke();
+      ctx.lineWidth = .7 * u; ctx.strokeStyle = 'rgba(255,255,255,.18)';
+      [-.6, -.3, .3, .6].forEach(k => { ctx.beginPath(); ctx.moveTo(B[0], B[1] + w0 * k); ctx.quadraticCurveTo(C[0], C[1] + w * k, T[0], T[1]); ctx.stroke(); });
+      if (a > .2){ ctx.strokeStyle = mixC('#327f25', '#7a5a22', a); ctx.lineWidth = 5 * u * a; ctx.beginPath(); ctx.moveTo(B[0], B[1] - w0); ctx.quadraticCurveTo(C[0], C[1] - w, T[0], T[1]); ctx.stroke(); clue = {x:T[0] - W * .12, y:T[1] - H * .05, r:W * .2}; }
+      const at = s => [(1 - s) ** 2 * B[0] + 2 * (1 - s) * s * C[0] + s * s * T[0], (1 - s) ** 2 * B[1] + 2 * (1 - s) * s * C[1] + s * s * T[1]];
+      const nh = b > 0 ? Math.round(2 + b * 6) : 0;
+      for (let i = 0; i < nh; i++){ const p = at(.25 + i * .085), off = ((i % 3) - 1) * w * .45; hole(ctx, p[0], p[1] + off, (2.6 + (i % 3) * 1.5) * u * (.6 + b * .6)); }
+      if (b > 0){ const p = at(.62); caterpillar(ctx, p[0], p[1] + w * .2, u * (1.1 + b * 1.2), -.35); frass(ctx, p[0] - 16 * u, p[1] + w * .6, Math.round(3 + b * 8), u, R); clue = {x:p[0], y:p[1], r:W * .16}; }
+    }
+    if (a < .1 && b < .05) for (let i = 0; i < 6; i++){ const x = W * (.2 + R() * .6), y = H * (.3 + R() * .4); ellipse(ctx, x, y, 2.2 * u, 2 * u, 0, 'rgba(255,255,255,.55)'); ellipse(ctx, x - .7 * u, y - .7 * u, .7 * u, .7 * u, 0, '#fff'); }
+    return clue || {x:W * .5, y:H * .5, r:W * .35};
+  }
+
+  /* 3. Land and water: the soil and furrow at the field. */
+  function land(ctx, W, H, sc, t, R, u){
+    const st = state(sc, sc.field, t), a = st.w, b = st.b;
+    ctx.fillStyle = mixC('#5a3b24', '#cfac70', a); ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 260; i++) ellipse(ctx, W * R(), H * R(), (.5 + R()) * u, (.5 + R()) * u, 0, R() > .5 ? 'rgba(0,0,0,.18)' : 'rgba(255,255,255,.12)');
+    const fy = H * .42, fh = 34 * u;
+    ctx.beginPath(); ctx.moveTo(0, fy); ctx.bezierCurveTo(W * .3, fy - 10 * u, W * .6, fy + 14 * u, W, fy); ctx.lineTo(W, fy + fh); ctx.bezierCurveTo(W * .6, fy + fh + 14 * u, W * .3, fy + fh - 10 * u, 0, fy + fh); ctx.closePath();
+    ctx.fillStyle = mixC('#3a2616', '#ddc08a', a); ctx.fill();
+    ctx.save(); ctx.clip();
+    if (a < .95){ ctx.globalAlpha = (1 - a) * .9; const wg = ctx.createLinearGradient(0, fy, 0, fy + fh); wg.addColorStop(0, '#7cc3e6'); wg.addColorStop(1, '#2f7fb5'); ctx.fillStyle = wg; ctx.fillRect(0, fy - 20 * u, W, fh + 40 * u); ctx.globalAlpha = (1 - a) * .7; for (let k = 0; k < 8; k++) ellipse(ctx, W * R(), fy + fh * (.3 + R() * .4), (8 + R() * 14) * u, 1.3 * u, 0, 'rgba(255,255,255,.7)'); ctx.globalAlpha = 1; }
+    cracks(ctx, 0, fy - 10 * u, W, fy + fh + 10 * u, a, R, u, '#8a6638');
+    ctx.restore();
+    cracks(ctx, 0, 0, W, fy - 6 * u, a, R, u); cracks(ctx, 0, fy + fh + 6 * u, W, H, a, R, u);
+    if (a < .2) for (let k = 0; k < 7; k++) ellipse(ctx, W * R(), (R() > .5 ? fy * R() : fy + fh + (H - fy - fh) * R()), 10 * u, 2 * u, 0, 'rgba(255,255,255,.1)');
+    const ok = {p:'ok', a:0, w:0, b:0}, s2 = {p:st.p, a:st.a, w:a, b:b * .6};
+    [.18, .5, .82].forEach((f, i) => plant(sc.crop, ctx, W * f, H * 1.04, H * .5, i === 1 ? s2 : {...s2, b:0}, R, u * .8));
+    if (b > .2) for (let k = 0; k < 3; k++){ const x = W * (.25 + R() * .5), y = H * (.1 + R() * .2); ellipse(ctx, x, y, 7 * u, 3.5 * u, R(), '#8a9a3a'); hole(ctx, x, y, 1.6 * u); }
+    void ok;
+    return a > .05 ? {x:W * .5, y:fy + fh * .5, r:W * .3} : {x:W * .5, y:fy + fh * .5, r:W * .35};
+  }
+
+  /* 4. Layout: the whole farm from above. Returns field boxes for tapping. */
+  const FIELD = i => { const x0 = .05, x1 = .72, y0 = .07, y1 = .93, gx = .025, gy = .05, w = (x1 - x0 - gx) / 2, h = (y1 - y0 - gy) / 2; return {x:x0 + (i % 2) * (w + gx), y:y0 + Math.floor(i / 2) * (h + gy), w, h}; };
+  function layout(ctx, W, H, sc, t, R, u, opt){
+    ctx.fillStyle = P.grass; ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 220; i++) ellipse(ctx, W * R(), H * R(), 1.2 * u, 1.2 * u, 0, R() > .5 ? 'rgba(40,80,20,.18)' : 'rgba(255,255,220,.14)');
+    ctx.strokeStyle = '#c9a46a'; ctx.lineWidth = 9 * u; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(W * .385, H); ctx.lineTo(W * .385, H * .52); ctx.lineTo(W * .82, H * .52); ctx.stroke();
+    const tankEmpty = sc.problem === 'water' ? sc.sev * (1 - t) : 0;
+    ctx.fillStyle = '#c98f56'; ctx.fillRect(W * .78, H * .1, W * .17, H * .2); ctx.fillStyle = '#8c3f24'; ctx.beginPath(); ctx.moveTo(W * .765, H * .11); ctx.lineTo(W * .865, H * .02); ctx.lineTo(W * .965, H * .11); ctx.closePath(); ctx.fill();
+    ellipse(ctx, W * .87, H * .72, 15 * u, 15 * u, 0, '#6d6f70'); ellipse(ctx, W * .87, H * .72, 12 * u, 12 * u, 0, mixC('#3f93c8', '#a59a86', tankEmpty));
+    if (tankEmpty > .3) cracks(ctx, W * .87 - 9 * u, H * .72 - 9 * u, W * .87 + 9 * u, H * .72 + 9 * u, tankEmpty, R, u * .6, '#6d5a3a');
+    else ellipse(ctx, W * .865, H * .71, 6 * u, 2.5 * u, -.4, 'rgba(255,255,255,.45)');
+    const boxes = [];
+    for (let i = 0; i < 4; i++){
+      const f = FIELD(i), x = f.x * W, y = f.y * H, w = f.w * W, h = f.h * H, s = state(sc, i, t);
+      const base = mixC('#4e8f2c', '#c7a43f', s.w * 1.05), row = mixC('#6cad3c', '#e0c46a', s.w);
+      ctx.fillStyle = mixC('#5b3c24', '#c9a66c', s.w); ctx.fillRect(x, y, w, h);
+      if (sc.crop === 'beans'){ for (let ry = y + 6 * u; ry < y + h - 3 * u; ry += 9 * u) for (let rx = x + 6 * u; rx < x + w - 3 * u; rx += 9 * u) ellipse(ctx, rx + (R() - .5) * 1.5 * u, ry, 4.2 * u * (1 - s.w * .3), 3.6 * u * (1 - s.w * .3), 0, R() > .5 ? base : row); }
+      else for (let rx = x + 4 * u; rx < x + w - 2 * u; rx += 7 * u){ ctx.fillStyle = base; ctx.fillRect(rx, y + 3 * u, 4.2 * u * (1 - s.w * .3), h - 6 * u); ctx.fillStyle = row; ctx.fillRect(rx + 1 * u, y + 3 * u, 1.3 * u, h - 6 * u); }
+      if (s.b > 0){ const n = Math.round(8 + s.b * 34); for (let k = 0; k < n; k++){ const px = x + w * (.08 + R() * .84), py = y + h * (.08 + R() * .84), r = (1.6 + R() * 2.2 * s.b) * u; ellipse(ctx, px, py, r * 1.6, r * 1.4, 0, 'rgba(214,196,96,.75)'); ellipse(ctx, px, py, r * .7, r * .6, 0, '#6b4420'); } }
+      ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 1.6 * u; ctx.strokeRect(x, y, w, h);
+      boxes.push(f);
+    }
+    if (opt && opt.glow != null){ const f = FIELD(opt.glow); ctx.save(); ctx.shadowColor = '#ffd34d'; ctx.shadowBlur = 16 * u; ctx.strokeStyle = '#ffd34d'; ctx.lineWidth = 4 * u; ctx.strokeRect(f.x * W, f.y * H, f.w * W, f.h * H); ctx.restore(); if (opt.light){ ctx.fillStyle = `rgba(255,230,120,${.28 * opt.light})`; ctx.fillRect(f.x * W, f.y * H, f.w * W, f.h * H); } }
+    if (opt && opt.miss != null){ const f = FIELD(opt.miss); ctx.strokeStyle = '#e5484d'; ctx.lineWidth = 3 * u; ctx.setLineDash([6 * u, 4 * u]); ctx.strokeRect(f.x * W, f.y * H, f.w * W, f.h * H); ctx.setLineDash([]); }
+    const f = FIELD(sc.field);
+    return sc.problem === 'water' ? {x:(f.x + f.w / 2) * W, y:(f.y + f.h / 2) * H, r:Math.max(f.w * W, f.h * H) * .62} : {x:(f.x + f.w / 2) * W, y:(f.y + f.h / 2) * H, r:Math.max(f.w * W, f.h * H) * .62};
+  }
+
+  const PARTS = {crops, signs, land, layout};
+  const ORDER = ['crops', 'signs', 'land', 'layout'];
+  /* Draw one part into a canvas. opt: {t, glow, light, miss, clue:bool} */
+  function draw(cv, sc, part, opt = {}){
+    const W = +cv.dataset.w, H = +cv.dataset.h, k = Math.min(3, (window.devicePixelRatio || 1) * (opt.scale || 1));
+    if (cv.width !== Math.round(W * k)){ cv.width = Math.round(W * k); cv.height = Math.round(H * k); }
+    const ctx = cv.getContext('2d'); ctx.setTransform(k, 0, 0, k, 0, 0); ctx.clearRect(0, 0, W, H);
+    const R = rng(sc.seed * 31 + ORDER.indexOf(part) * 977), u = W / 320;
+    const clue = PARTS[part](ctx, W, H, sc, opt.t || 0, R, u, opt);
+    if (opt.clue && clue){
+      ctx.save(); ctx.fillStyle = 'rgba(20,10,0,.45)'; ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(clue.x, clue.y, clue.r, 0, Math.PI * 2, true); ctx.fill('evenodd');
+      ctx.strokeStyle = '#ffb02e'; ctx.lineWidth = 3.5 * u; ctx.setLineDash([9 * u, 5 * u]); ctx.beginPath(); ctx.arc(clue.x, clue.y, clue.r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    }
+    return clue;
+  }
+  return {draw, FIELD, ORDER};
+})();
+
+</script>
+<script>
 (() => {
 'use strict';
 const A = n => (window.ASSETS && window.ASSETS[n]) || ('assets/' + n + (n.startsWith('bg-') ? '.jpg' : '.png'));
@@ -251,53 +551,92 @@ const stage = $('#stage');
 stage.style.setProperty('--frame', `url(${A('frame')})`);
 document.querySelectorAll('img[data-src]').forEach(i => i.src = A(i.dataset.src));
 const fmt = n => Math.round(n).toLocaleString('en-US');
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 /* ---------- svg bits ---------- */
 const ARR = r => `<svg width="24" height="24" viewBox="0 0 24 24" style="transform:rotate(${r}deg)"><path d="M19 12H5M11 5.5 4.5 12l6.5 6.5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const sq = (x, y, act, rot = 0, extra = '', label = 'Back') => `<button class="sq ${extra}" style="left:${x}px;top:${y}px" data-act="${act}" aria-label="${label}"><span>${ARR(rot)}</span></button>`;
 const backBtn = (x, y) => sq(x, y, 'back', 0, '', 'Back');
-const CHEV = `<svg width="10" height="10" viewBox="0 0 10 10"><path d="M3 1.5 7 5 3 8.5z" fill="#6b402b"/></svg>`;
 const PLUS = `<svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>`;
 const X = `<svg width="22" height="22" viewBox="0 0 22 22"><path d="M5 5l12 12M17 5 5 17" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
 const img = (n, w, h, st = '') => `<img src="${A(n)}" width="${w}" ${h ? `height="${h}"` : ''} style="${st}" alt="">`;
 const cost = (n, kind = 'gem') => `${img(kind === 'gem' ? 'gem' : 'coin-sm', 14, 14)}${n}`;
+const FINGER = `<svg class="finger" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M11 27c-3-3-6-6-6-9 0-1.6 1.8-2.2 3-1l2 2V5.5a2 2 0 0 1 4 0V13l1-.3a2 2 0 0 1 2.4 1.2l.3.1a2 2 0 0 1 2.5 1.2 2 2 0 0 1 2.8 1.6V21c0 3-1.5 6-3 6z" fill="#fff" stroke="#3b2a14" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 
-/* ---------- data ---------- */
-// Each farm has real (hidden) conditions, 0-100 per area. Inspections are graded against them,
-// advice raises them, and the success score on the map is their average.
+/* ---------- the player's character ---------- */
+const LOOKS = [
+  {id:'cap',   shirt:'#3f8f3a', trim:'#2c6b28', skin:'#7a4a2c', hat:'cap',   hatC:'#e9822a', label:'Field cap'},
+  {id:'check', shirt:'#d23b3b', trim:'#f3f0ea', skin:'#5b3620', hat:'hair',  hatC:'#1d140c', label:'Check shirt'},
+  {id:'wrap',  shirt:'#2f7fc0', trim:'#1e5d92', skin:'#8a5634', hat:'wrap',  hatC:'#f2b53b', label:'Head wrap'},
+  {id:'straw', shirt:'#ef8a2b', trim:'#b85f12', skin:'#6b4127', hat:'straw', hatC:'#e2c069', label:'Straw hat'},
+];
+function charSVG(lookId, pose = 'stand', cls = ''){
+  const L = LOOKS.find(l => l.id === lookId) || LOOKS[0];
+  const arms = pose === 'cheer'
+    ? `<rect x="3" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(28 6 26)"/><rect x="31" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(-28 34 26)"/><circle cx="2.5" cy="12" r="3" fill="${L.skin}"/><circle cx="37.5" cy="12" r="3" fill="${L.skin}"/>`
+    : `<rect class="armL" x="5" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><rect class="armR" x="29" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><circle cx="8" cy="41" r="2.8" fill="${L.skin}"/><circle cx="32" cy="41" r="2.8" fill="${L.skin}"/>`;
+  const pattern = L.id === 'check' ? `<g opacity=".55" stroke="${L.trim}" stroke-width="1.4"><path d="M13 25v19M18 25v19M23 25v19M28 25v19"/><path d="M10 29h20M10 34h20M10 39h20"/></g>` : `<path d="M16 25l4 5 4-5" fill="none" stroke="${L.trim}" stroke-width="1.6"/>`;
+  const hats = {
+    cap:`<path d="M10 13a10 9 0 0 1 20 0z" fill="${L.hatC}"/><path d="M27 12.5h8a2 2 0 0 1-2 2.5h-6z" fill="${L.hatC}"/><path d="M10 13h20" stroke="rgba(0,0,0,.25)"/>`,
+    hair:`<path d="M10.5 14c0-7 4.2-9.5 9.5-9.5s9.5 2.5 9.5 9.5c-2-3.5-5-4.5-9.5-4.5s-7.5 1-9.5 4.5z" fill="${L.hatC}"/>`,
+    wrap:`<path d="M9.5 15c-.5-8 4.5-11.5 10.5-11.5S31 7 30.5 15c-3-2.5-6.5-3.5-10.5-3.5S12.5 12.5 9.5 15z" fill="${L.hatC}"/><circle cx="27" cy="5.5" r="3.4" fill="${L.hatC}"/><path d="M12 9.5c4-2 12-2 16 0" stroke="#c9861d" stroke-width="1.2" fill="none"/>`,
+    straw:`<ellipse cx="20" cy="10.5" rx="15.5" ry="3.6" fill="${L.hatC}"/><path d="M12.5 10.5c0-5 3.5-7.5 7.5-7.5s7.5 2.5 7.5 7.5z" fill="#d4ae52"/><path d="M12.5 9h15" stroke="#9b6b2a" stroke-width="1.6"/>`,
+  };
+  return `<svg class="ch ${cls}" viewBox="0 0 40 60" aria-hidden="true"><ellipse cx="20" cy="57" rx="11" ry="2.6" fill="rgba(0,0,0,.28)"/>
+    <g class="legL"><rect x="13.5" y="41" width="5.5" height="13" rx="2.2" fill="#3b2a1e"/><ellipse cx="16" cy="54.5" rx="3.6" ry="2" fill="#1f160f"/></g>
+    <g class="legR"><rect x="21" y="41" width="5.5" height="13" rx="2.2" fill="#3b2a1e"/><ellipse cx="24" cy="54.5" rx="3.6" ry="2" fill="#1f160f"/></g>
+    ${arms}<rect x="9.5" y="23.5" width="21" height="20" rx="7" fill="${L.shirt}"/>${pattern}
+    <rect x="17.5" y="20" width="5" height="5" fill="${L.skin}"/><circle cx="20" cy="14.5" r="9.5" fill="${L.skin}"/>
+    <ellipse cx="16.6" cy="15.3" rx="1.25" ry="1.5" fill="#1b120b"/><ellipse cx="23.4" cy="15.3" rx="1.25" ry="1.5" fill="#1b120b"/>
+    <path d="${pose === 'cheer' ? 'M16 18.5q4 4.2 8 0z' : 'M17 19q3 2 6 0'}" fill="${pose === 'cheer' ? '#fff' : 'none'}" stroke="#1b120b" stroke-width="1.1" stroke-linecap="round"/>
+    ${hats[L.hat]}</svg>`;
+}
+const faceSVG = look => charSVG(look).replace('viewBox="0 0 40 60"', 'viewBox="5 1 30 30"');
+
+/* ---------- farms ---------- */
 const FARMS = [
-  {id:1, owner:'Mark', km:10, acres:'1 acre', lbl:[160,38], box:[105,0,370,142], hub:[60,20,360,180], tip:[292,95], crop:'Maize', cond:{soil:75,nutrient:20,water:70,pest:25,weed:10}},
-  {id:2, owner:'June', km:14, acres:'2 acres', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], tip:[650,188], crop:'Maize', cond:{soil:85,nutrient:70,water:40,pest:90,weed:90}},
-  {id:3, owner:'Brian', km:19, acres:'1.5 acres', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], tip:[205,172], crop:'Pumpkin', cond:{soil:90,nutrient:85,water:60,pest:95,weed:95}},
-  {id:4, owner:'Vincent', km:25, acres:'3 acres', lbl:[558,46], box:[565,0,775,122], hub:[540,20,815,165], tip:[560,128], crop:'Beans', cond:{soil:50,nutrient:40,water:80,pest:60,weed:70}},
-  {id:5, owner:'', km:31, acres:'2 acres', crop:'Maize'},
+  {id:1, owner:'Mark', km:10, acres:'1 acre', crop:'maize', lbl:[175,98], box:[105,0,370,142], hub:[60,20,360,180], gate:[330,140]},
+  {id:2, owner:'June', km:14, acres:'2 acres', crop:'maize', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], gate:[628,228]},
+  {id:3, owner:'Brian', km:19, acres:'1.5 acres', crop:'maize', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], gate:[350,215]},
+  {id:4, owner:'Vincent', km:25, acres:'3 acres', crop:'beans', lbl:[560,86], box:[565,0,775,122], hub:[540,20,815,165], gate:[600,128]},
+  {id:5, owner:'', km:31, acres:'2 acres', crop:'maize'},
 ];
 const fname = id => { const f = FARMS[id - 1]; return f.owner ? `Farm ${f.id}: ${f.owner}` : `Farm ${f.id}`; };
-const CATS = {
-  soil:    {name:'Soil Management & Quality', short:'Soil', desc:'Check crop condition and growth', icon:'cat-soil', tint:'rgba(93,168,25,.1)', tip:'Soil looks tired'},
-  nutrient:{name:'Nutrient Supply', short:'Nutrients', desc:'Check nutrients and fertilizer use.', icon:'cat-nutrient', tint:'rgba(202,147,36,.12)', tip:'Needs fertilizer'},
-  water:   {name:'Water Control', short:'Water', desc:'Check water source and irrigation', icon:'cat-water', tint:'rgba(34,173,226,.1)', tip:'Crops look thirsty'},
-  pest:    {name:'Pest and Disease Defense', short:'Pests', desc:'Check for signs of pests or disease', icon:'cat-pest', tint:'rgba(188,136,247,.1)', tip:'Pests spotted'},
-  weed:    {name:'Weed Suppression', short:'Weeds', desc:'Check weed growth and control.', icon:'cat-weed', tint:'rgba(245,131,16,.1)', tip:'Weeds spreading'},
+const owner = id => FARMS[id - 1].owner;
+const cropName = c => c === 'beans' ? 'beans' : 'maize';
+const HUB = [455, 172];
+const FIRST = 2, RETRY = 3, SECOND = 4, HOOK = 1;
+const PATHS = { first:[[238,178],[330,198],[420,180],[505,196],[566,214],[628,228]], retry:[[628,228],[545,205],[455,188],[350,215]] };
+const GOAL = 80;
+
+/* Review content. Every review uses the same four steps; only this data changes.
+   problem: what is wrong; sev: how visible (1 = obvious); field: where; hint: guided first time. */
+const FIXED = {
+  2:[{crop:'maize', problem:'water', sev:1, field:1, hint:true}],
+  3:[{crop:'maize', problem:'water', sev:1, field:2, hint:true}],
+  4:[{crop:'beans', problem:'pest', sev:.5, field:0, hint:false}],
+  1:[{crop:'maize', problem:'pest', sev:.45, field:3, hint:false}],
 };
-const CAT_ORDER = ['soil','nutrient','water','pest','weed'];
-const RATINGS = [['good','Good','In good condition.'],['fair','Fair','Showing some problems.'],['poor','Poor','In bad condition.']];
-// What the agent sees in the field for each area at each real condition.
-const NOTES = {
-  soil:{good:'Dark, crumbly soil. Roots spread freely and earthworms are easy to find.', fair:'The topsoil crusts after rain in a few rows and some patches feel compacted.', poor:'Hard, pale topsoil. Water pools after rain and the roots are stunted.'},
-  nutrient:{good:'Leaves are deep green from top to bottom. Fertilizer went on this season.', fair:'Lower leaves are turning pale. The farmer skipped the last top-dressing.', poor:'Older leaves are yellow from the tip down in a V shape. No fertilizer for two seasons.'},
-  water:{good:'Furrows are still damp in the morning and the water tank is full.', fair:'The topsoil is dry by midday and the water tank is half empty.', poor:'Leaves curl and roll by mid-morning. The water tank is empty.'},
-  pest:{good:'No holes or droppings on the leaves. The traps caught only a few insects.', fair:'Ragged holes on some leaves and a few stalk borers in one corner.', poor:'Armyworm droppings in many plants and leaves eaten down to the veins.'},
-  weed:{good:'Rows are clean and mulch covers the ground between plants.', fair:'Knee-high weeds along the edges are starting to spread into the rows.', poor:'Weeds are taller than the crop and choking whole rows.'},
-};
+const CALLS = [['healthy','Healthy','leaf'],['water','Needs water','water'],['pest','Pest problem','bug']];
+const PARTS = [['crops','Crops'],['signs','Health signs'],['land','Land & water'],['layout','Layout']];
+const GUIDE = {crops:'Compare the plants in the two fields.', signs:'Look closely at one leaf.', land:'Check the soil and the water.', layout:'See the whole farm from above.'};
+const CLUE = {water:['land','See the cracked, dry soil? This field needed water.'], pest:['signs','See the holes and the caterpillar? This field has pests.'], healthy:['crops','These plants are green and upright, so the field was healthy.']};
+
+function reviewFor(id){
+  const r = S.rv[id], fixed = FIXED[id] && FIXED[id][r.n];
+  if (fixed) return {...fixed, seed:id * 97 + r.n * 13};
+  let s = id * 7919 + r.n * 104729; const R = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
+  const probs = ['water','pest','healthy','pest','water'];
+  return {crop:FARMS[id - 1].crop, problem:probs[Math.floor(R() * probs.length)], sev:.35 + R() * .35, field:Math.floor(R() * 4), seed:id * 97 + r.n * 13, hint:false};
+}
+
+/* ---------- other game data ---------- */
 const CROPS = ['potato','carrot','maize','pepper','tomato','broccoli','spinach','onion'];
 const CROP_NAMES = {potato:'Potato',carrot:'Carrot',maize:'Maize',pepper:'Pepper',tomato:'Tomato',broccoli:'Broccolli',spinach:'Spinach',onion:'Onions'};
-// [key, name, fair price, area it helps]
-const INPUTS = [['fertilizer','Fertilizer',180,'nutrient'],['herbicides','Herbicides',200,'weed'],['fungicides','Fungicides',160,'pest'],['nets','Nets',120,'pest'],['water','Water',60,'water'],['insecticides','Insecticides',210,'pest']];
+const INPUTS = [['fertilizer','Fertilizer',180],['herbicides','Herbicides',200],['fungicides','Fungicides',160],['nets','Nets',120],['water','Water',60],['insecticides','Insecticides',210]];
 const EQUIP = [['shear','Shear'],['hoe','Hoe'],['spade','Spade'],['cart','Cart'],['tractor','Tractor']];
 const TANKS = [['tank','Water tank'],['tank','Spray tank']];
-// [icon, name, max amount, agent referral fee, effect on the farm]
-const LOANS = [['coins','Input loan',200,20,{nutrient:15}],['loan-bag','Equipment loan',5000,60,{soil:10,weed:10}],['moneybag','Expansion loan',10000,120,{}]];
+const LOANS = [['coins','Input loan',200,20,5],['loan-bag','Equipment loan',5000,60,5],['moneybag','Expansion loan',10000,120,0]];
 const TRAININGS = [['field','Field training','train-field'],['workshop','Workshop','train-workshop'],['advisory','Advisory visit','train-advisory']];
 const WAREHOUSES = [
   {k:'small', name:'Small Warehouse', icon:'wh-small', cap:'+12,000', tag:'Too small'},
@@ -312,91 +651,144 @@ const TIPS = [
   'Check under leaves twice a week. Pests hide there before they spread',
 ];
 const ROUTE_STEPS = ['Load tractor','Pickup plough','Service point','Drop off trailer','Deliver tractor'];
-const GOAL = 80;
+const NAME_IDEAS = ['Amani','Wanjiru','Otieno'];
 
 /* ---------- state ---------- */
-const NO_CHECKS = () => ({soil:null,nutrient:null,water:null,pest:null,weed:null});
+const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
 const FRESH = () => ({
-  coins:100, gems:40, water:20, missions:0, ratedTotal:0, ratedRight:0,
-  name:'', onboarded:false, log:[], won:false,
-  farms:Object.fromEntries(FARMS.slice(0, 4).map(f => [f.id, {cond:{...f.cond}, known:null, visits:0}])),
-  hub:0, sel:null, farmIdx:0, statFarm:0, cardMode:0,
-  taskFarm:1, taskTruth:{...FARMS[0].cond}, checks:NO_CHECKS(), rewarded:false,
-  recs:[], recsApplied:false, recsPaid:false,
+  phase:'create', name:'', look:'cap', onboarded:false, pos:[...HUB], t0:0,
+  coins:100, gems:40, water:20, reviews:0, passed:0,
+  farms:{1:{score:45}, 2:{score:52}, 3:{score:58}, 4:{score:61}},
+  rv:{1:{n:0, readyAt:0, last:null}, 2:{n:0, readyAt:0, last:null}, 3:{n:0, readyAt:0, last:null}, 4:{n:0, readyAt:0, last:null}},
+  retryUsed:false, log:[], hub:0, sel:null, farmIdx:0, statFarm:0, cardMode:0,
   bookings:{}, trainFarm:{}, calDay:2, tip:0, loans:{}, sales:{},
   storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
   routeApplied:false, stepsOpen:true,
 });
-const SAVE_KEY = 'wakala-save-v2';
+const SAVE_KEY = 'wakala-save-v3';
 let S;
 try { S = Object.assign(FRESH(), JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { S = FRESH(); }
 const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} };
 
+/* Event log for playtests: one entry per first-session moment, timed from the start. */
+const EV_KEY = 'wakala-events';
+function track(e, data = {}){
+  const now = Date.now(); if (!S.t0) S.t0 = now;
+  const row = {e, at:now, sec:Math.round((now - S.t0) / 100) / 10, ...data};
+  try { const all = JSON.parse(localStorage.getItem(EV_KEY) || '[]'); all.push(row); localStorage.setItem(EV_KEY, JSON.stringify(all.slice(-300))); } catch (x) {}
+  (window.dataLayer = window.dataLayer || []).push({event:'wakala_' + e, ...data});
+}
+window.wakalaEvents = () => { try { return JSON.parse(localStorage.getItem(EV_KEY) || '[]'); } catch (x) { return []; } };
+
 /* transient UI state */
-let view = 'home', hist = [], ui = {dd:null, inspectCat:null, pick:null, recEdit:null, recCat:'soil', recText:'', sellItem:null, sellFarm:null, overlay:null, introStep:0, submitWarn:false, confirmReset:false, last:null, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
 function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
-function bump(id){ const el = $(id); el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+function bump(id){ const el = $(id); if (!el) return; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
 function spend(kind, n){
-  if (S[kind] < n){ toast(`You need ${n} ${kind === 'gems' ? 'gems' : 'coins'} (you have ${S[kind]}). Finish a farm visit to earn more.`); return false; }
+  if (S[kind] < n){ toast(`You need ${n} ${kind === 'gems' ? 'gems' : 'coins'}. Review a farm to earn more.`); return false; }
   S[kind] -= n; bump(kind === 'gems' ? '#rGems' : '#rCoins'); return true;
 }
 function earn(c, g, w){ S.coins += c; S.gems += g; S.water += w; ['#rCoins','#rGems','#rWater'].forEach(bump); }
 function logAdd(icon, text){ S.log.unshift({i:icon, t:text, at:Date.now()}); S.log.length = Math.min(S.log.length, 40); }
-const agentName = () => S.name || 'Wakala Agent';
-const level = () => 1 + Math.floor(S.missions / 2);
-const rateOf = v => v >= 70 ? 'good' : v >= 45 ? 'fair' : 'poor';
-const cap = s => s ? s[0].toUpperCase() + s.slice(1) : '-';
-const rateCol = r => r === 'good' ? '#5f8a0b' : r === 'fair' ? '#d9730d' : '#d93a3f';
-const avg = o => Math.round(CAT_ORDER.reduce((a, k) => a + o[k], 0) / CAT_ORDER.length);
-const score = id => avg(S.farms[id].cond);
-const owner = id => FARMS[id - 1].owner;
-const doneCount = () => CAT_ORDER.filter(k => S.checks[k]).length;
-const correctCount = () => CAT_ORDER.filter(k => S.checks[k] === rateOf(S.taskTruth[k])).length;
-const weakAreas = () => CAT_ORDER.filter(k => rateOf(S.taskTruth[k]) !== 'good');
-const recCats = () => [...new Set(S.recs.map(r => r.cat))];
-const uncovered = () => weakAreas().filter(k => !recCats().includes(k));
-const rewardFor = n => ({c:80 * n, g:12 * n, w:8 * n});
-const progress = () => Math.min(100, doneCount() * 16 + (S.recsApplied || (doneCount() === 5 && !weakAreas().length) ? 20 : 0));
-const hasProgress = () => doneCount() > 0 || S.recs.length > 0;
+const agentName = () => S.name || 'Agent';
+const level = () => 1 + Math.floor(S.passed / 2);
+const score = id => S.farms[id].score;
+const boostScore = (id, n) => { S.farms[id].score = Math.min(100, S.farms[id].score + n); };
+const ready = id => S.rv[id] && Date.now() >= S.rv[id].readyAt;
 const thriving = () => [1,2,3,4].filter(id => score(id) >= GOAL).length;
-function startTask(id){
-  S.taskFarm = id; S.taskTruth = {...S.farms[id].cond}; S.checks = NO_CHECKS();
-  S.recs = []; S.recsApplied = false; S.recsPaid = false; S.rewarded = false; ui.submitWarn = false;
-}
-function boost(id, k, n){ const c = S.farms[id].cond; c[k] = Math.min(95, c[k] + n); }
-const ring = (pct, color, track, size, sw, inner) => {
-  const r = (size - sw) / 2, c = 2 * Math.PI * r;
-  return `<div style="position:relative;width:${size}px;height:${size}px;flex:none"><svg width="${size}" height="${size}" style="transform:rotate(-90deg)"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${track}" stroke-width="${sw}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round" stroke-dasharray="${c*pct/100} ${c}"/></svg><div style="position:absolute;inset:0;display:grid;place-items:center;text-align:center">${inner}</div></div>`;
-};
+const onb = () => !S.onboarded;
 function dd(key, value, placeholder, options, iconName){
   const open = ui.dd === key;
   const opt = options.find(o => o[0] === value);
   return `<div class="dd ${open ? 'open' : ''}"><button data-act="dd" data-k="${key}" aria-expanded="${open}">${iconName ? img(opt && opt[2] ? opt[2] : iconName, 14, 14) : ''}${opt ? `<span>${opt[1]}</span>` : `<span class="ph">${placeholder}</span>`}<i class="car"></i></button>${open ? `<ul>${options.map(o => `<li><button data-act="ddpick" data-k="${key}" data-val="${o[0]}">${iconName ? img(o[2] || iconName, 14, 14) : ''}${o[3] || o[1]}</button></li>`).join('')}</ul>` : ''}</div>`;
 }
 const farmOpts = () => FARMS.slice(0, 4).map(f => [String(f.id), `Farm ${f.id} : ${f.owner}`, 'sprout']);
-const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}${r.w}</span>`;
-const CHECK = `<svg width="10" height="10" viewBox="0 0 12 12" aria-label="correct"><path d="M2 6.2 5 9l5-6" fill="none" stroke="#5f8a0b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const CROSS = `<svg width="10" height="10" viewBox="0 0 12 12" aria-label="wrong"><path d="M3 3l6 6M9 3 3 9" stroke="#d93a3f" stroke-width="2.2" stroke-linecap="round"/></svg>`;
-
-/* Next-step chip: always tells the player what to do and takes them there. */
-function nextStep(){
-  const n = doneCount(), o = owner(S.taskFarm), weak = weakAreas();
-  if (n === 0) return ['task', `Next: visit ${fname(S.taskFarm)}`];
-  if (n < 5) return ['analyze', `Next: inspect ${o}'s farm · ${n}/5 areas rated`];
-  if (weak.length && !S.recsApplied) return ['recs', `Next: advise ${o} on ${weak.length} weak area${weak.length > 1 ? 's' : ''}`];
-  return ['result', `Next: submit ${o}'s report`];
+const until = ts => { const m = Math.max(1, Math.round((ts - Date.now()) / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+/* canvases are painted after each render from their data attributes */
+const canvas = (key, part, w, h, extra = '') => `<canvas data-scene="${key}" data-part="${part}" data-w="${w}" data-h="${h}" width="${w}" height="${h}" style="width:${w}px;height:${h}px" ${extra}></canvas>`;
+const scenes = {};
+function paint(){
+  const k = parseFloat(stage.style.getPropertyValue('--s')) || 1;
+  stage.querySelectorAll('canvas[data-scene]').forEach(cv => {
+    const sc = scenes[cv.dataset.scene]; if (!sc) return;
+    REN.draw(cv, sc, cv.dataset.part, {scale:Math.max(1, k * 1.15), t:+(cv.dataset.t || 0), glow:cv.dataset.glow ? +cv.dataset.glow : null, light:+(cv.dataset.light || 0), miss:cv.dataset.miss ? +cv.dataset.miss : null, clue:cv.dataset.clue === '1'});
+  });
 }
-const nextChip = () => { const [v, t] = nextStep();
-  return `<button class="nextchip" data-act="next" data-v="${v}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>${t}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`; };
 
-/* ---------- view definitions ---------- */
-// cfg: bg, nav (active key or false), map/task dim flags, hud
+/* ---------- walking ---------- */
+// The character walks along a path. Tapping anywhere moves it to the nearest point on the path.
+function makeWalk(path, speed, onArrive){
+  let L = 0; const seg = [];
+  for (let i = 1; i < path.length; i++){ const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]); seg.push(d); L += d; }
+  return {path, seg, L, s:0, target:0, speed, onArrive, moved:false, done:false};
+}
+function walkPoint(w, s){
+  let acc = 0;
+  for (let i = 0; i < w.seg.length; i++){ if (s <= acc + w.seg[i] || i === w.seg.length - 1){ const f = Math.min(1, (s - acc) / (w.seg[i] || 1)); const a = w.path[i], b = w.path[i + 1]; return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, b[0] - a[0]]; } acc += w.seg[i]; }
+  return [...w.path[w.path.length - 1], 1];
+}
+function project(w, x, y){
+  let best = 1e9, bs = 0, acc = 0;
+  for (let i = 0; i < w.seg.length; i++){
+    const a = w.path[i], b = w.path[i + 1], dx = b[0] - a[0], dy = b[1] - a[1];
+    const t = Math.max(0, Math.min(1, ((x - a[0]) * dx + (y - a[1]) * dy) / (dx * dx + dy * dy || 1)));
+    const d = Math.hypot(a[0] + dx * t - x, a[1] + dy * t - y);
+    if (d < best){ best = d; bs = acc + t * w.seg[i]; }
+    acc += w.seg[i];
+  }
+  return bs;
+}
+function toStage(e){
+  const r = stage.getBoundingClientRect(), k = parseFloat(stage.style.getPropertyValue('--s')) || 1, rot = stage.style.getPropertyValue('--rot').trim() === '90deg';
+  let dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+  if (rot) [dx, dy] = [dy, -dx];
+  return [437 + dx / k, 201 + dy / k];
+}
+let lastTs = 0;
+function tick(ts){
+  const w = ui.walk, me = $('#me');
+  if (w && me && !w.done){
+    const dt = Math.min(.05, (ts - (lastTs || ts)) / 1000);
+    const dir = Math.sign(w.target - w.s);
+    if (dir){
+      w.s += dir * w.speed * dt; if ((dir > 0 && w.s > w.target) || (dir < 0 && w.s < w.target)) w.s = w.target;
+      const p = walkPoint(w, w.s);
+      me.style.left = p[0] + 'px'; me.style.top = p[1] + 'px';
+      me.classList.add('walking'); me.classList.toggle('flip', p[2] < 0 && dir > 0 || p[2] > 0 && dir < 0);
+      S.pos = [Math.round(p[0]), Math.round(p[1])];
+    } else me.classList.remove('walking');
+    if (w.s >= w.L - .5){ w.done = true; me.classList.remove('walking'); save(); setTimeout(() => w.onArrive && w.onArrive(), 350); }
+  }
+  lastTs = ts; requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+function walkTap(e){
+  const w = ui.walk; if (!w || w.done) return;
+  const [x, y] = toStage(e);
+  w.target = Math.max(w.s, project(w, x, y));
+  if (w.target - w.s < 12) w.target = Math.min(w.L, w.s + 40);
+  if (!w.moved){ w.moved = true; if (w.firstMove) w.firstMove(); const h = $('#walkHint'); if (h) h.innerHTML = w.keepGoing; }
+}
+const pathTo = id => { const g = FARMS[id - 1].gate, p = S.pos; return Math.hypot(p[0] - HUB[0], p[1] - HUB[1]) < 8 ? [p, g] : [p, HUB, g]; };
+function startWalkTo(id, auto){
+  ui.walk = makeWalk(pathTo(id), 70, () => arrive(id));
+  ui.walk.keepGoing = `Keep going to ${owner(id)}'s farm.`;
+  if (auto){ ui.walk.target = ui.walk.L; ui.walk.moved = true; }
+  hist = []; view = 'home'; render();
+}
+function arrive(id){
+  ui.walk = null;
+  if (S.phase === 'walk' || S.phase === 'retryWalk'){ track('walk_arrived', {farm:id}); S.phase = S.phase === 'walk' ? 'review' : 'retryReview'; return openReview(id); }
+  if (S.phase === 'walk2'){ S.phase = 'review2'; return openReview(id); }
+  if (ready(id)) return openReview(id);
+  toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); render();
+}
+
+/* ---------- views ---------- */
 const CFG = {
-  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1},
-  analyze:{bg:'farm',nav:false,mapDim:1}, inspect:{bg:'farm',nav:false,mapDim:1}, result:{bg:'farm',nav:false,mapDim:1},
-  recs:{bg:'farm',nav:false,mapDim:1}, recform:{bg:'farm',nav:false,mapDim:1},
+  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1}, review:{bg:'farm',nav:false,noHud:1},
   farms:{bg:'farm',nav:'farms',mapDim:1,taskDim:1}, crop:{bg:'farm',nav:false,mapDim:1,taskDim:1},
   shop:{bg:'farm',nav:'shop',mapDim:1,taskDim:1}, sell:{bg:'farm',nav:'shop',mapDim:1,taskDim:1},
   training:{bg:'farm',nav:'training',mapDim:1,taskDim:1}, calendar:{bg:'calendar',nav:'training',mapDim:1,taskDim:1},
@@ -405,157 +797,208 @@ const CFG = {
   settings:{bg:'farm',nav:false,mapDim:1,taskDim:1}, activity:{bg:'farm',nav:false,mapDim:1,taskDim:1},
 };
 const NAV = [['home','Home','nav-home'],['farms','Farms','nav-farms'],['shop','Shop','nav-shop'],['training','Training','nav-training'],['storage','Storage','nav-storage'],['stats','Stats','nav-stats']];
-
 const V = {};
 
-/* Home: the farm map (switches to the hub art after storage upgrades) */
+/* Fog that locks the map: everything is dimmed except the path and the goal farm(s). */
+function fog(path, farms, lift){
+  const holes = farms.map(id => { const b = FARMS[id - 1].box; return `<rect x="${b[0] - 6}" y="${b[1] - 6}" width="${b[2] - b[0] + 12}" height="${b[3] - b[1] + 12}" rx="34" fill="#000"/>`; }).join('');
+  const d = path.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
+  return `<svg class="fog ${lift ? 'lift' : ''}" width="874" height="402" aria-hidden="true"><defs><mask id="fm"><rect width="874" height="402" fill="#fff"/><path d="${d}" stroke="#000" stroke-width="86" stroke-linecap="round" stroke-linejoin="round" fill="none"/>${holes}</mask><filter id="fb"><feGaussianBlur stdDeviation="9"/></filter></defs><rect width="874" height="402" fill="rgba(12,8,2,.72)" mask="url(#fm)"/></svg>`;
+}
+const pathSVG = path => `<svg class="wpath" width="874" height="402" aria-hidden="true"><path d="${path.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ')}" fill="none" stroke="rgba(255,230,150,.95)" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/></svg>`;
+const meEl = (x, y, look) => `<div id="me" style="left:${x}px;top:${y}px">${charSVG(look)}</div>`;
+const farmLabel = (f, extra = '', cls = '') => { const s = score(f.id), r = ready(f.id);
+  return `<button class="flabel ${cls}" style="left:${f.lbl[0]}px;top:${f.lbl[1]}px" data-act="walkFarm" data-farm="${f.id}"><span class="a">${img('sprout',14,14)}Farm ${f.id}: ${f.owner} · ${cropName(f.crop)}${r ? '<i class="pinTag">Review ready</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b>${!r ? ` · check in ${until(S.rv[f.id].readyAt)}` : ''}</span>${extra}</button>`; };
+
 V.home = () => {
+  const ph = S.phase;
+  // First session: only the path and the goal farm are visible.
+  if (ph === 'create' || ph === 'walk' || ph === 'retryWalk'){
+    const path = ph === 'retryWalk' ? PATHS.retry : PATHS.first, goal = ph === 'retryWalk' ? RETRY : FIRST;
+    if (ph !== 'create' && !ui.walk){
+      ui.walk = makeWalk(path, ph === 'walk' ? 27 : 34, () => arrive(goal));
+      ui.walk.keepGoing = `Keep going to ${owner(goal)}'s farm, ${esc(agentName())}.`;
+      ui.walk.firstMove = () => track(ph === 'walk' ? 'walk_first_move' : 'retry_first_move');
+      S.pos = [...path[0]];
+    }
+    const w = ui.walk, p = w ? walkPoint(w, w.s) : path[0], f = FARMS[goal - 1];
+    const hintAt = w ? walkPoint(w, Math.min(w.L, w.s + 46)) : path[1];
+    return {world:`<div class="walkpad" data-walk></div>` + fog(path, [goal]) + pathSVG(path) +
+      `<div class="goal" style="left:${f.gate[0] + (goal === FIRST ? 60 : -150)}px;top:${f.gate[1] + 34}px">${img('sprout',16,16)}${f.owner}'s farm</div>` +
+      (ph === 'create' ? '' : `${w && !w.moved ? `<div class="tapme" style="left:${hintAt[0]}px;top:${hintAt[1]}px">${FINGER}</div>` : ''}<div class="hint" id="walkHint">${w && w.moved ? w.keepGoing : ph === 'retryWalk' ? `Walk to ${owner(goal)}'s farm and try again, ${esc(agentName())}.` : `Tap the path to walk, ${esc(agentName())}.`}</div>`) +
+      meEl(p[0], p[1], S.look)};
+  }
+  // Unlock moment and the walk to the second review.
   const boxKey = S.hub > 0 ? 'hub' : 'box';
-  let w = FARMS.slice(0, 4).map(f => { const b = f[boxKey]; return `<button class="hot" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px" data-act="pickFarm" data-farm="${f.id}" aria-label="Open ${fname(f.id)}"></button>`; }).join('');
+  let w = FARMS.slice(0, 4).map(f => { const b = f[boxKey]; return `<button class="hot" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px" data-act="walkFarm" data-farm="${f.id}" aria-label="Walk to ${fname(f.id)}"></button>`; }).join('');
   if (S.hub > 0) w += `<button class="hot" style="left:250px;top:160px;width:370px;height:120px" data-act="nav" data-v="storage" aria-label="Your hub: open storage"></button>`;
-  else {
-    const f = FARMS[S.taskFarm - 1], weakest = CAT_ORDER.slice().sort((a, b) => S.taskTruth[a] - S.taskTruth[b])[0];
-    if (rateOf(S.taskTruth[weakest]) !== 'good' && !S.rewarded) w += `<button class="tipb" style="left:${f.tip[0]}px;top:${f.tip[1]}px" data-act="pickFarm" data-farm="${f.id}">${img('bulb',20,20)}${CATS[weakest].tip}</button>`;
-  }
-  return {world: w + nextChip()};
+  w = `<div class="walkpad" data-walk></div>` + w;
+  const anim = ui.unlockAnim;
+  w += FARMS.slice(0, 4).map((f, i) => farmLabel(f, '', anim ? `pop d${i}` : '')).join('');
+  if (ph === 'walk2'){
+    const path = ui.walk ? ui.walk.path : pathTo(SECOND);
+    if (!ui.walk){ ui.walk = makeWalk(path, 50, () => arrive(SECOND)); ui.walk.keepGoing = `Keep going to ${owner(SECOND)}'s beans.`; ui.walk.firstMove = () => track('walk2_first_move'); }
+    w = (anim ? fog(PATHS.first, [FIRST], true) : '') + w + pathSVG(path) + `<div class="hint" id="walkHint">${ui.walk.moved ? ui.walk.keepGoing : `Walk to ${owner(SECOND)}'s beans, ${esc(agentName())}.`}</div>` + (anim ? `<div class="banner">The map is open, ${esc(agentName())}.</div>` : '');
+  } else if (ui.walk) w += pathSVG(ui.walk.path);
+  const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
+  w += meEl(p[0], p[1], S.look);
+  if (ph === 'free') w += nextChip();
+  return {world:w};
 };
 
-/* Map: farm labels, selection focus, farm actions */
+/* Next-step chip: always tells the player where to go. */
+function nextChip(){
+  const id = [1,2,3,4].filter(ready).sort((a, b) => score(a) - score(b))[0];
+  if (id) return `<button class="nextchip" data-act="walkFarm" data-farm="${id}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>Next: review ${owner(id)}'s ${cropName(FARMS[id - 1].crop)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
+  const soon = Math.min(...[1,2,3,4].map(i => S.rv[i].readyAt));
+  return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>All farms checked. Next review in ${until(soon)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span></button>`;
+}
+
+/* Map view: farm labels, selection and actions */
 V.map = () => {
-  const sel = S.sel, f = FARMS[(sel || S.taskFarm) - 1];
+  const sel = S.sel, f = FARMS[(sel || 2) - 1];
   let w = '';
-  if (sel){
-    const b = f.box;
-    w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`;
-    const corner = (x, y, rot) => `<svg class="carrow" style="left:${x-13}px;top:${y-13}px;transform:rotate(${rot}deg)" viewBox="0 0 26 26"><path d="M4 4h13l-4 4 9 9-5 5-9-9-4 4z" fill="#f9b81b" stroke="#7a4a00" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
-    w += corner(b[0]-12, b[1]+8, 0) + corner(b[2]+6, b[1]+8, 90) + corner(b[2]+6, b[3]+6, 180) + corner(b[0]-12, b[3]+6, 270);
-  }
+  if (sel){ const b = f.box; w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`; }
   w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="selFarm" data-farm="${x.id}" aria-label="Select ${fname(x.id)}"></button>`).join('');
-  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => { const s = score(x.id);
-    return `<button class="flabel" style="left:${x.lbl[0]}px;top:${x.lbl[1]}px" data-act="selFarm" data-farm="${x.id}"><span class="a">${img('sprout',14,14)}Farm ${x.id}: ${x.owner} - ${x.km} km${x.id === S.taskFarm ? '<i class="pinTag">Your visit</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b></span></button>`; }).join('');
+  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => farmLabel(x).replace('data-act="walkFarm"', 'data-act="selFarm"')).join('');
   w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${sel ? f.acres + ' · tap an action below' : 'Tap a farm to select it'}</span></div>`;
-  const acts = [['analyze', f.id === S.taskFarm ? 'Inspect' : 'Visit', 'act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
+  const acts = [['review','Review','act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
   w += `<div class="actbar">${acts.map(a => `<button class="act" data-act="farmAct" data-a="${a[0]}">${img(a[2],32,32)}<span>${a[1]}</span></button>`).join('')}</div>`;
-  return {world: w + nextChip()};
+  return {world:w + nextChip()};
 };
 
-/* Current task */
+/* Task: today's farm reviews */
 V.task = () => {
-  const f = S.taskFarm, p = progress(), s = score(f), n = doneCount();
-  const pri = s < 50 ? ['hi','High priority'] : s < GOAL ? ['no','Needs support'] : ['ok','Routine check'];
-  return {view: backBtn(163,55) + `<div class="panel" style="left:215px;top:47px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:12px">
-    <div class="ttl">${img('hdr-task',25,25)}Current Task</div>
-    <div class="box" style="padding:12px 12px 10px;display:flex;flex-direction:column;gap:10px;background:rgba(107,64,43,.06)">
-      <div class="row" style="align-items:flex-start;gap:16px">
-        <div class="col sp" style="gap:6px"><span><span class="tag ${pri[0]}">${pri[1]}</span></span>
-          <span style="font:600 13px var(--ui)">Analyze Farm Health</span>
-          <span class="t10 row" style="gap:4px">${img('sprout',14,14)}${fname(f)}</span>
-          <span style="font:400 10px var(--ui);opacity:.75;line-height:1.5">Inspect all five areas and rate what you see. Then advise ${owner(f)} on anything that isn't good.</span></div>
-        ${ring(p, '#ed8324', '#f6d3ac', 78, 7, `<span><b style="font:600 15px var(--ui);color:#6b402b;display:block">${p}%</b><span style="font:500 7px var(--ui);color:#6b402b;opacity:.7">done</span></span>`)}
-      </div>
-      <div class="box" style="background:rgba(107,64,43,.07);padding:6px 8px;display:flex;flex-direction:column;gap:6px">
-        <span class="t10 row" style="gap:4px;font-weight:500">${img('target',14,14)}Success score now: <b>${s}/100</b></span>
-        <div class="row" style="border-top:1px solid rgba(107,64,43,.08);padding-top:6px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Reward, up to</span><span class="sp"></span>${rewardRow(rewardFor(5))}</div>
-      </div>
-    </div>
-    <button class="btn wide" data-act="go" data-v="${n === 5 ? 'result' : 'analyze'}">${n === 5 ? 'See results' : n ? 'Continue visit' : 'Start visit'}</button>
-  </div></div>`};
+  const rows = [1,2,3,4].map(id => {
+    const f = FARMS[id - 1], r = ready(id), last = S.rv[id].last, key = 'task' + id;
+    scenes[key] = last ? {...last.sc} : {...reviewFor(id)};
+    return `<div class="row trow">${canvas(key, 'layout', 64, 40, `data-t="${last && last.ok ? 1 : 0}"`)}
+      <div class="col sp" style="gap:2px"><span class="t10">${fname(id)} · ${cropName(f.crop)}</span><span style="font:400 9px var(--ui);opacity:.75">Success score ${score(id)}/100${last ? ` · last review ${last.ok ? 'passed' : 'missed'}` : ''}</span></div>
+      ${r ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button>` : `<span class="tag no" style="font-size:9px">Check in ${until(S.rv[id].readyAt)}</span>`}</div>`; }).join('');
+  return {view:backBtn(163,40) + `<div class="panel" style="left:215px;top:30px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:8px">
+    <div class="ttl">${img('hdr-task',25,25)}Farm Reviews</div>${rows}
+    <span style="font:500 9.5px var(--ui);opacity:.75;text-align:center">Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></div></div>`};
 };
 
-/* Analyze checklist */
-V.analyze = () => {
-  const rows = CAT_ORDER.map(k => { const c = CATS[k], st = S.checks[k];
-    return `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="inspect" data-cat="${k}">
-      <span style="width:29px;height:29px;border-radius:4px;background:${c.tint};display:grid;place-items:center;flex:none">${img(c.icon,18,18)}</span>
-      <span class="col sp" style="gap:2px"><span class="t10">${c.name}</span><span class="t8">${c.desc}</span></span>
-      <span class="tag ${st ? 'ok' : 'no'}">${st ? 'Rated ' + cap(st) : 'Not Checked'}</span>${CHEV}</button>`; }).join('');
-  const done = doneCount() === 5;
-  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:6px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:5px">
-    <div class="ttl" style="padding:2px 0">${img('hdr-analyze',25,25)}Analyze</div>
-    <div class="box row" style="padding:7px 8px;gap:8px">${img('farm1-thumb',30,30,'border-radius:2px')}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Tap each area, read what you see in the field, and rate it.</span></div></div>
-    <div class="lst" style="padding:8px 12px;display:flex;flex-direction:column;gap:12px">${rows}</div>
-    <div class="box row" style="background:rgba(0,0,0,.05)">${img('trophy',18,18)}<span style="font:500 10px var(--ui);opacity:.75;width:270px">${done ? 'All areas rated. See how accurate you were and what the farm needs.' : `Rate all five areas to see the farm's health and your reward. ${doneCount()}/5 done.`}</span><span class="sp"></span><button class="btn ${done ? '' : 'ghost-soft'}" style="padding:8px 34px" data-act="makeAnalysis">${done ? 'See results' : 'Make Analysis'}</button></div>
-  </div></div>`};
+/* ---------- the review: Look, Spot, Judge, Result ---------- */
+function openReview(id){
+  const sc = reviewFor(id);
+  ui.rv = {id, sc, step:'look', seen:[], zoom:null, miss:null, call:null, ok:null, t:0, hint:!!sc.hint, start:Date.now(), wrongSpot:0};
+  scenes.rv = sc;
+  track(S.phase === 'review2' ? 'review2_started' : S.phase === 'retryReview' ? 'retry_review_started' : S.phase === 'review' ? 'review_started' : 'review_started_free', {farm:id, problem:sc.problem});
+  hist = []; view = 'review'; render();
+}
+const STEPS = [['look','Look'],['spot','Spot'],['judge','Judge'],['result','Result']];
+V.review = () => {
+  const R = ui.rv, id = R.id, sc = R.sc, o = owner(id), nm = esc(agentName()), crop = cropName(sc.crop);
+  const stepIx = STEPS.findIndex(s => s[0] === R.step);
+  const steps = `<div class="rsteps">${STEPS.map((s, i) => `<span class="${i < stepIx ? 'done' : i === stepIx ? 'on' : ''}"><i>${i + 1}</i>${s[1]}</span>`).join('')}</div>`;
+  let body = '';
+  if (R.step === 'look'){
+    const next = PARTS.find(p => !R.seen.includes(p[0]));
+    body = `<p class="rprompt">${R.hint ? `Tap each picture to look closer, ${nm}.` : `Look at each part of ${o}'s farm.`}</p>
+      <div class="parts">${PARTS.map(p => { const seen = R.seen.includes(p[0]), nx = R.hint && next && next[0] === p[0];
+        return `<button class="part ${seen ? 'seen' : ''} ${nx ? 'next' : ''}" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 134, 98)}<span>${seen ? '✓ ' : ''}${p[1]}</span>${nx ? FINGER : ''}</button>`; }).join('')}</div>`;
+  } else if (R.step === 'spot'){
+    body = `<p class="rprompt">Tap the field that looks wrong, ${nm}.</p>
+      <div class="row" style="gap:14px;align-items:flex-start"><div class="spotwrap">${canvas('rv', 'layout', 330, 206, R.miss != null ? `data-miss="${R.miss}"` : '')}
+        ${[0,1,2,3].map(i => { const f = REN.FIELD(i); return `<button class="fieldbtn" style="left:${f.x * 100}%;top:${f.y * 100}%;width:${f.w * 100}%;height:${f.h * 100}%" data-act="spot" data-f="${i}" aria-label="Field ${i + 1}"></button>`; }).join('')}</div>
+        <div class="col" style="gap:8px;width:190px"><span style="font:500 9.5px var(--ui);opacity:.75">Look again</span><div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 86, 56)}<span>${p[1]}</span></button>`).join('')}</div>
+        <button class="btn soft" style="padding:6px;font-size:11px" data-act="spot" data-f="none">No field looks wrong</button></div></div>`;
+  } else if (R.step === 'judge'){
+    body = `<p class="rprompt">What does this field need, ${nm}?</p>
+      <div class="row" style="gap:14px;align-items:flex-start"><div class="col" style="gap:6px">${canvas('rv', 'layout', 250, 156, R.spot != null ? `data-glow="${R.spot}"` : '')}
+        <div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 78, 50)}<span>${p[1]}</span></button>`).join('')}</div></div>
+        <div class="calls">${CALLS.map(c => `<button class="call" data-act="judge" data-c="${c[0]}">${img(c[2],26,26)}<b>${c[1]}</b></button>`).join('')}</div></div>`;
+  } else if (R.ok){
+    const first = S.passed === 1 && R.hint;
+    const f = FARMS[id - 1];
+    body = `<div class="row" style="gap:14px;align-items:center"><div class="col" style="gap:6px">${canvas('rv', 'layout', 290, 176, `data-glow="${sc.problem === 'healthy' ? '' : sc.field}" data-light="1" data-t="${R.t}" data-anim="1"`)}${canvas('rv', 'crops', 290, 100, `data-t="${R.t}" data-anim="1"`)}</div>
+      <div class="col" style="gap:10px;align-items:center;flex:1;text-align:center">
+        <div class="bubble2"><b>${f.owner}:</b> Thank you, ${nm}!</div>
+        <div class="cheer">${charSVG(S.look, 'cheer')}</div>
+        <p class="rline">${first ? 'You can read a farm now, and other farms need you.' : `${o}'s ${crop} ${sc.problem === 'healthy' ? 'are doing well' : 'are recovering'}.`}</p>
+        ${first ? '' : `<div class="row" style="gap:10px;justify-content:center">${rewardRow(R.reward)}</div>`}
+        <button class="btn" style="padding:7px 40px" data-act="rvContinue">Continue</button></div></div>`;
+  } else {
+    const [part, line] = CLUE[sc.problem];
+    const retryNext = S.phase === 'review';
+    body = `<div class="row" style="gap:16px;align-items:center">${canvas('rv', part, 380, 238, 'data-clue="1"')}
+      <div class="col" style="gap:12px;flex:1;text-align:center;align-items:center">
+        <div class="bubble2 sad"><b>${o}:</b> Not quite, ${nm}.</div>
+        <p class="rline">${line}</p>
+        <button class="btn" style="padding:7px 26px" data-act="rvContinue">${retryNext ? `Try ${owner(RETRY)}'s farm` : S.phase === 'retryReview' ? 'Look again' : 'Back to the map'}</button></div></div>`;
+  }
+  const zname = R.zoom && PARTS.find(p => p[0] === R.zoom)[1];
+  const zoom = R.zoom ? `<div class="zoomfull" role="dialog" aria-label="${zname}"><div class="panel" style="left:157px;top:6px;width:560px"><div class="pin" style="padding:8px 12px 10px">
+      <div class="row" style="margin-bottom:6px"><b class="sp" style="font:600 13px var(--ui)">${zname}</b><button class="zx" data-act="unzoom" aria-label="Close">${X.replace(/#fff/g, '#6b402b')}</button></div>
+      ${canvas('rv', R.zoom, 522, 280)}
+      <div class="row" style="margin-top:8px;gap:10px"><span class="sp" style="font:600 12px var(--ui)">${R.hint ? GUIDE[R.zoom] : ''}</span><button class="btn" style="padding:7px 26px" data-act="unzoom">${R.step === 'look' ? 'Done looking' : 'Close'}</button></div></div></div></div>` : '';
+  const top = R.step === 'look' ? 72 : 8;
+  return {view:`<div class="panel" style="left:104px;top:${top}px;width:666px"><div class="pin rpanel"><div class="row" style="gap:10px"><span class="ttl" style="justify-content:flex-start">${img('hdr-analyze',22,22)}Review ${o}'s ${crop}</span><span class="sp"></span>${steps}</div>${body}</div></div>${zoom}`};
 };
+const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}+${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}+${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}+${r.w}</span>`;
+function animateRecovery(){
+  const t0 = performance.now();
+  const step = now => {
+    if (view !== 'review' || !ui.rv || !ui.rv.ok) return;
+    const t = Math.min(1, (now - t0) / 1800); ui.rv.t = t;
+    stage.querySelectorAll('canvas[data-anim]').forEach(cv => { cv.dataset.t = t; });
+    paint(); if (t < 1) requestAnimationFrame(step);
+  };
+  setTimeout(() => requestAnimationFrame(step), 450);
+}
+function judge(call){
+  const R = ui.rv, sc = R.sc, ok = call === sc.problem, id = R.id;
+  R.call = call; R.ok = ok; R.step = 'result';
+  S.reviews++; const rv = S.rv[id];
+  rv.last = {sc:{...sc}, ok, at:Date.now()};
+  track(S.phase === 'review2' ? 'review2_result' : 'review_result', {farm:id, ok, call, problem:sc.problem, sec_in_review:Math.round((Date.now() - R.start) / 1000)});
+  if (ok){
+    S.passed++; rv.n++;
+    const diff = 1 - sc.sev; R.reward = {c:Math.round(80 + 120 * diff), g:Math.round(10 + 20 * diff), w:10};
+    earn(R.reward.c, R.reward.g, R.reward.w); boostScore(id, sc.problem === 'healthy' ? 8 : 22);
+    logAdd('hdr-task', `Reviewed ${fname(id)}: ${CALLS.find(c => c[0] === call)[1].toLowerCase()} was right. Score now ${score(id)}.`);
+  } else {
+    logAdd('hdr-task', `Reviewed ${fname(id)}: the farm needed ${sc.problem === 'healthy' ? 'nothing' : CALLS.find(c => c[0] === sc.problem)[1].toLowerCase()}.`);
+  }
+  if (S.onboarded || ok){ rv.readyAt = tomorrow(); }
+  render(); if (ok) animateRecovery();
+}
 
-/* Inspection for one category: shows what the agent sees, then a rating */
-V.inspect = () => {
-  const k = ui.inspectCat, c = CATS[k], pick = ui.pick ?? S.checks[k];
-  const opts = RATINGS.map(r => `<button class="row" style="width:100%;border:0;background:none;padding:0;text-align:left;color:inherit" data-act="rate" data-r="${r[0]}" aria-pressed="${pick === r[0]}">
-      <span class="col sp" style="gap:3px"><span style="font:600 12px var(--ui)">${r[1]}</span><span style="font:400 10px var(--ui);opacity:.7">${r[2]}</span></span>
-      <span style="width:19px;height:19px;border-radius:3px;display:grid;place-items:center;${pick === r[0] ? 'background:#ed8324;box-shadow:inset 0 2px 2px rgba(255,255,255,.4)' : 'background:#f3dfc4;border:1px solid rgba(107,64,43,.12)'}">${pick === r[0] ? '<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6.2 5 9l5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</span></button>`).join('');
-  return {view: backBtn(127,33) + `<div class="panel" style="left:178px;top:14px;width:517px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
-    <div class="ttl" style="padding:2px 0 0">Inspection Checklist</div>
-    <div class="box row" style="padding:7px 8px">
-      <span style="width:32px;height:32px;border-radius:4px;background:${c.tint};display:grid;place-items:center">${img(c.icon,20,20)}</span>
-      <div class="col sp" style="gap:3px"><span style="font:600 11px var(--ui)">${c.name}</span><span style="font:400 10px var(--ui);opacity:.7">${c.desc}</span></div>
-      <span class="tag ${S.checks[k] ? 'ok' : 'no'}" style="font-size:10px">${S.checks[k] ? 'Rated ' + cap(S.checks[k]) : 'Not Checked'}</span></div>
-    <div class="seen"><span>What you see on ${owner(S.taskFarm)}'s farm</span><p>${NOTES[k][rateOf(S.taskTruth[k])]}</p></div>
-    <div class="lst" style="padding:10px 12px;display:flex;flex-direction:column;gap:10px">${opts}</div>
-    <button class="btn wide" data-act="inspectDone">Save rating</button>
-  </div></div>`};
-};
+/* ---------- character creation (first thing a new player sees) ---------- */
+function createOverlay(){
+  const nm = S.name;
+  return `<div class="create" role="dialog" aria-label="Create your agent"><div class="panel" style="left:150px;top:28px;width:574px"><div class="pin" style="padding:12px 16px;display:flex;gap:18px;align-items:center">
+    <div class="plate">${charSVG(S.look)}</div>
+    <div class="col sp" style="gap:9px">
+      <div class="ttl" style="justify-content:flex-start;font-size:15px">Who's visiting the farms today?</div>
+      <div class="row" style="gap:6px"><input id="nameIn0" class="fld sp" maxlength="16" autocomplete="off" placeholder="Type a name" value="${esc(nm)}" aria-label="Your name">${NAME_IDEAS.map(n => `<button class="chipbtn ${nm === n ? 'on' : ''}" data-act="pickName" data-n="${n}">${n}</button>`).join('')}</div>
+      <div class="looks">${LOOKS.map(l => `<button class="look ${S.look === l.id ? 'on' : ''}" data-act="pickLook" data-l="${l.id}" aria-label="${l.label}" aria-pressed="${S.look === l.id}">${charSVG(l.id)}</button>`).join('')}</div>
+      <button class="btn wide ${nm ? '' : 'ghost-soft'}" style="padding:8px" data-act="createDone">${nm ? `Start as ${esc(nm)}` : 'Pick a name to start'}</button>
+    </div></div></div></div>`;
+}
 
-/* Analysis result: real farm health, your ratings vs actual, reward, advice status */
-V.result = () => {
-  const T = S.taskTruth, h = avg(T), word = cap(rateOf(h)), n = correctCount(), weak = weakAreas(), o = owner(S.taskFarm);
-  const covered = weak.filter(k => recCats().includes(k)).length;
-  const rows = CAT_ORDER.map(k => { const you = S.checks[k], act = rateOf(T[k]), ok = you === act;
-    return `<div class="row" style="font:500 9.5px var(--ui);gap:6px">${img(CATS[k].icon,13,13)}<span class="sp" style="font-weight:600">${CATS[k].name}</span><span style="width:62px;opacity:.75">You: ${cap(you)}</span><span style="width:70px;color:${rateCol(act)};font-weight:600">Actual: ${cap(act)}</span>${ok ? CHECK : CROSS}</div>`; }).join('');
-  const msg = weak.length ? `${weak.map(k => CATS[k].short).join(', ')} ${weak.length > 1 ? 'need' : 'needs'} your advice. Recommendations raise ${o}'s success score.` : `Everything is in good shape. Submit the report to log the visit.`;
-  const buttons = ui.submitWarn
-    ? `<div class="notice"><span>${S.recsApplied ? `Your advice skips ${uncovered().map(k => CATS[k].short).join(', ')}.` : `You haven't sent ${o} any advice.`} The farm only improves in areas you advise on.</span><button class="btn soft" style="padding:5px 10px;font-size:11px" data-act="go" data-v="recs">Add advice</button><button class="btn" style="padding:5px 10px;font-size:11px" data-act="submitReport" data-force="1">Submit anyway</button></div>`
-    : `<div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="recs">Recommendations${weak.length ? ` ${S.recsApplied ? '· sent' : `${covered}/${weak.length}`}` : ''}</button><button class="btn sp" style="padding:7px" data-act="submitReport">Submit Report</button></div>`;
-  return {view: backBtn(163,24) + `<div class="panel" style="left:218px;top:6px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:6px;padding:7px 12px 9px">
-    <div class="ttl">Farm Analysis Result</div>
-    <div class="box row" style="gap:12px;padding:6px 10px">${ring(h, rateCol(rateOf(h)), '#e8dcc0', 58, 7, `<span><b style="font:600 12px var(--ui);color:#6b402b;display:block">${h}%</b><span style="font:500 7.5px var(--ui);color:${rateCol(rateOf(h))}">${word}</span></span>`)}
-      <div class="col" style="gap:4px"><span class="t10 row" style="gap:6px">${img('leaf',14,14)}${o}'s farm health</span><span style="font:400 9.5px var(--ui);opacity:.75;line-height:1.5">${msg}</span></div></div>
-    <div class="box" style="background:rgba(107,64,43,.08);display:flex;flex-direction:column;gap:5px;padding:6px 12px"><div class="row t10" style="font-weight:500;padding-bottom:4px;border-bottom:1px solid rgba(107,64,43,.12)">${img('checklist',18,19)}<span class="sp">Your ratings vs the farm</span><b style="color:${n >= 4 ? '#5f8a0b' : n >= 2 ? '#d9730d' : '#d93a3f'}">${n}/5 correct</b></div>${rows}</div>
-    <div class="box row" style="padding:5px 8px"><span style="font:500 10px var(--ui);opacity:.7;padding-right:8px;border-right:1px solid rgba(107,64,43,.15)">Your reward</span><span class="sp"></span>${rewardRow(rewardFor(n))}</div>
-    ${buttons}
-  </div></div>`};
-};
+/* Session close: a reason to come back */
+function hookOverlay(){
+  const id = HOOK, f = FARMS[id - 1];
+  scenes.hook = {...reviewFor(id)};
+  return `<div class="dimmer"></div><div class="panel" style="left:242px;top:58px;width:390px" role="dialog" aria-label="See you tomorrow"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
+    ${canvas('hook', 'layout', 300, 150, 'data-t="0"')}
+    <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} will be ready to check tomorrow, ${esc(agentName())}.</p>
+    <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}Ready in ${until(S.rv[id].readyAt)}</span>
+    <button class="btn" style="padding:7px 36px" data-act="hookDone">See you tomorrow</button></div></div>`;
+}
 
-/* Recommendations list */
-V.recs = () => {
-  const weak = weakAreas(), have = recCats(), o = owner(S.taskFarm);
-  const need = weak.length ? `<div class="row" style="flex-wrap:wrap;gap:4px"><span style="font:500 9.5px var(--ui);opacity:.75">Advise ${o} on:</span>${weak.map(k => `<span class="tag ${have.includes(k) ? 'ok' : 'no'}" style="font-size:9px">${have.includes(k) ? '✓ ' : ''}${CATS[k].name}</span>`).join('')}</div>` : `<span style="font:400 10px var(--ui);opacity:.7">This farm is healthy. Advice is optional.</span>`;
-  const rows = S.recs.length ? S.recs.map((r, i) => `<div class="row" style="gap:6px;padding:8px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(CATS[r.cat].icon,16,16,'align-self:flex-start')}<div class="col sp" style="gap:5px"><span style="font:600 10px var(--ui)">${CATS[r.cat].name}</span><span style="font:400 10px var(--ui);opacity:.75">${esc(r.text)}</span></div><button class="btn cream sm" style="font-size:11px;padding:3px 7px" data-act="editRec" data-i="${i}">Edit ${img('pencil',14,14)}</button></div>`).join('')
-    : `<div class="empty">${img('bulb',22,22)}<span><b>No advice yet.</b> Write one recommendation for each area marked above, then send them to ${o}.</span></div>`;
-  const sendLbl = S.recsApplied ? 'Sent to farmer' : S.recsPaid ? 'Send update' : `Send to farmer ${cost(30)}`;
-  return {view: backBtn(163,42) + `<div class="panel" style="left:210px;top:30px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
-    <div class="ttl">${img('bulb',20,20)}My Recommendations</div>
-    <div class="box row" style="padding:7px 8px;align-items:flex-start">${img('farm1-thumb',30,30)}<div class="col sp" style="gap:4px"><span class="t10">${fname(S.taskFarm)}</span>${need}</div></div>
-    <div class="box" style="padding:2px 10px;max-height:150px;overflow:auto">${rows}</div>
-    <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="newRec">Add New ${PLUS}</button><button class="btn sp ${S.recsApplied ? 'ghost' : ''}" style="padding:7px" data-act="applyRecs">${sendLbl}</button></div>
-  </div></div>`};
-};
+/* How a review works (Settings) */
+function howOverlay(){
+  return `<div class="dimmer"></div><div class="panel" style="left:262px;top:60px;width:350px" role="dialog" aria-label="How a review works"><div class="pin" style="padding:12px 14px">
+    <div class="ttl" style="justify-content:flex-start">How a review works</div>
+    <ol class="isteps"><li><b>Look</b> at the crops, a leaf, the soil and water, and the whole farm.</li><li><b>Spot</b> the field that looks different.</li><li><b>Judge</b> what it needs.</li><li><b>Result:</b> a right call saves the field and raises the farm's score.</li></ol>
+    <button class="btn wide" style="margin-top:10px;padding:7px" data-act="closeOverlay">Got it</button></div></div>`;
+}
 
-/* Add / edit recommendation */
-V.recform = () => {
-  const cat = ui.recCat, weak = weakAreas(), have = recCats(), o = owner(S.taskFarm);
-  const opts = CAT_ORDER.map(k => [k, CATS[k].name, CATS[k].icon, CATS[k].name + (weak.includes(k) && !have.includes(k) ? ' · needs advice' : '')]);
-  const editing = ui.recEdit != null;
-  return {view: backBtn(163,42) + `<div class="panel" style="left:218px;top:23px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px">
-    <div class="ttl">${img('bulb',20,20)}${editing ? 'Edit Recommendation' : 'Write a Recommendation'}</div>
-    <div class="box row" style="padding:7px 8px">${img('farm1-thumb',30,30)}<div class="col" style="gap:3px"><span class="t10">${fname(S.taskFarm)}</span><span style="font:400 10px var(--ui);opacity:.7">Say what ${o} should do, and by when.</span></div></div>
-    <p class="lbl" style="margin:4px 0 0">1. Choose Recommendation Type</p>
-    <div style="font-size:11px">${dd('rec', cat, 'Choose a type', opts, 'cat-soil')}</div>
-    <label class="lbl" for="recText" style="margin:2px 0 0">2. Recommendation</label>
-    <textarea id="recText" class="fld" rows="4" maxlength="160" style="background:#fff8ee;border:1px solid rgba(237,131,36,.5);resize:none;font-size:10px;line-height:1.5" placeholder="${esc(EXAMPLES[cat])}">${esc(ui.recText)}</textarea>
-    <div class="row" style="gap:10px">${editing ? `<button class="btn soft sp" style="padding:7px;font-size:12px" data-act="delRec">Delete</button>` : `<button class="btn soft sp" style="padding:7px;font-size:12px" data-act="saveRec" data-more="1">Save and add another ${PLUS}</button>`}<button class="btn sp" style="padding:7px" data-act="saveRec">Save</button></div>
-  </div></div>`};
-};
-const EXAMPLES = {
-  soil:'For example: Plough in last season\'s stalks and add manure before the next planting.',
-  nutrient:'For example: Top-dress with CAN fertilizer this week, one bottle cap per plant.',
-  water:'For example: Water early in the morning and fix the leaking tank before Friday.',
-  pest:'For example: Spray for fall armyworm within 3 days and check the funnels again next week.',
-  weed:'For example: Weed the rows within a week and mulch between plants to stop regrowth.',
-};
-const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* Farms: Crops and Livestock */
+/* ---------- Farms: Crops and Livestock ---------- */
 const farmSide = (x, top, key) => {
   const cur = S[key];
   return `<div class="side" style="left:${x}px;top:${top}px"><button class="sq ${cur === 0 ? 'off' : ''}" style="position:relative" data-act="farmStep" data-k="${key}" data-d="-1" aria-label="Previous farm"><span>${ARR(90)}</span></button>
@@ -563,41 +1006,36 @@ const farmSide = (x, top, key) => {
     <button class="sq ${cur === 4 ? 'off' : ''}" style="position:relative" data-act="farmStep" data-k="${key}" data-d="1" aria-label="Next farm"><span>${ARR(-90)}</span></button></div>`;
 };
 V.farms = () => {
-  const f = FARMS[S.farmIdx], fs = S.farms[f.id];
-  const cropTag = () => !fs || !fs.known ? '<span class="tag no" style="padding:2px 4px">Not inspected</span>' : (r => `<span class="tag ${r === 'good' ? 'ok' : r === 'fair' ? 'no' : 'hi'}" style="padding:2px 4px">${r === 'good' ? 'Healthy' : r === 'fair' ? 'At risk' : 'Struggling'}</span>`)(rateOf(avg(fs.known)));
+  const f = FARMS[S.farmIdx], fs = S.farms[f.id], last = fs && S.rv[f.id].last;
   const size = ['2.4 ha','3.1 ha','1.8 ha','4.0 ha','2.0 ha'][S.farmIdx];
-  const val = [400,520,310,660,280][S.farmIdx];
+  const tag = !fs ? '<span class="tag no" style="padding:2px 4px">No farmer</span>' : !last ? '<span class="tag no" style="padding:2px 4px">Not reviewed</span>' : last.ok ? '<span class="tag ok" style="padding:2px 4px">Healthy</span>' : '<span class="tag hi" style="padding:2px 4px">Needs help</span>';
   const card = S.cardMode === 0 ? `<div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
       ${img('farm-photo',308,60,'width:100%;height:60px;object-fit:cover;border-radius:4px')}
       <span style="font:600 11px var(--ui);margin-top:4px">${f.owner ? f.owner + "'s Farm" : 'Wakala Farm'}</span>
-      <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${f.crop}</span>
-      <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A productive ${f.crop.toLowerCase()} farm dedicated to growing quality crops and increasing farmer income through efficient resource management.</span>
-      ${f.owner ? `<button class="btn wide" data-act="visitFarm" data-farm="${f.id}">${f.id === S.taskFarm ? 'View farm task' : 'Visit this farm'}</button>` : `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>`}</div>`
-    : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span>${cropTag()}</button>`).join('')}</div>`;
-  return {view: `<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
+      <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${cropName(f.crop)}</span>
+      <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A ${f.acres} ${cropName(f.crop)} farm. Review it to keep its crops healthy and its score rising.</span>
+      ${!fs ? `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>` : ready(f.id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${f.id}">Review this farm</button>` : `<button class="btn wide ghost" tabindex="-1">Ready in ${until(S.rv[f.id].readyAt)}</button>`}</div>`
+    : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span>${tag}</button>`).join('')}</div>`;
+  return {view:`<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
     `<div class="panel thin" style="left:262px;top:48px;width:348px"><div class="pin" style="padding:6px"><div class="row" style="border:1px solid rgba(107,64,43,.15);border-radius:8px;padding:6px 8px;gap:0">
-      ${[['Farm size',size],['Crops grown',size],[fs ? 'Success score' : 'Farm value', fs ? `${img('target',14,14)}${score(f.id)}/100` : `${img('coin-sm',14,14)}${val}`]].map((x, i) => `<div class="col sp" style="gap:3px;${i ? 'border-left:1px solid rgba(107,64,43,.15);padding-left:12px' : ''};${i === 2 ? 'align-items:flex-end' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${x[0]}</span><span class="row" style="gap:4px;font:600 11px var(--ui)">${x[1]}</span></div>`).join('')}</div></div></div>
+      ${[['Farm size',size],['Crop',cropName(f.crop)],[fs ? 'Success score' : 'Farm value', fs ? `${img('target',14,14)}${score(f.id)}/100` : `${img('coin-sm',14,14)}280`]].map((x, i) => `<div class="col sp" style="gap:3px;${i ? 'border-left:1px solid rgba(107,64,43,.15);padding-left:12px' : ''};${i === 2 ? 'align-items:flex-end' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${x[0]}</span><span class="row" style="gap:4px;font:600 11px var(--ui)">${x[1]}</span></div>`).join('')}</div></div></div>
     <div class="panel thin" style="left:265px;top:120px;width:345px">${card}</div>` + sq(210,199,'cardMode',0,'','Previous card') + sq(624,199,'cardMode',180,'','Next card')};
 };
-
-/* Crop health detail: shows the farm's data from its last inspection */
+/* Crop detail: the pictures from this farm's last review */
 V.crop = () => {
-  const c = ui.crop || 'maize', id = S.farmIdx + 1, fs = S.farms[id], known = fs && fs.known;
-  const head = (tag) => `<div class="box row" style="gap:14px;padding:6px 14px">${img('crop-' + c,59,44,'object-fit:contain')}<div class="col" style="gap:5px"><span style="font:600 13px var(--ui)">${CROP_NAMES[c]}</span><span>${tag}</span></div><span class="sp"></span><span style="font:500 9px var(--ui);opacity:.7;text-align:right">${fname(id)}${known ? `<br>From your last visit` : ''}</span></div>`;
-  if (!known) return {view: backBtn(204,35) + `<div class="panel" style="left:260px;top:60px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:8px 10px 12px">
-    ${head('<span class="tag no">Not inspected</span>')}
-    <div class="empty" style="padding:10px 6px">${img('checklist',22,23)}<span>${FARMS[id - 1].owner ? `<b>No crop data yet.</b> Inspect ${fname(id)} to see how each area is doing.` : `<b>No farmer on this plot yet.</b> Crop data appears once a farmer joins and you visit.`}</span></div>
-    ${FARMS[id - 1].owner ? `<button class="btn wide" data-act="visitFarm" data-farm="${id}">${id === S.taskFarm ? 'Go to this visit' : 'Visit this farm'}</button>` : ''}</div></div>`};
-  const bars = CAT_ORDER.map(k => { const v = known[k], col = rateCol(rateOf(v));
-    return `<div class="col" style="gap:7px"><span class="row" style="gap:6px;font:500 11px var(--ui)">${img(CATS[k].icon,16,16)}${CATS[k].name}</span><div class="row" style="gap:10px"><div class="sp" style="height:5px;border-radius:3px;background:#efdcc2"><div style="width:${v}%;height:100%;border-radius:3px;background:${col}"></div></div><span style="font:600 8px var(--ui);width:24px;text-align:right">${v}%</span></div></div>`; }).join('');
-  const h = rateOf(avg(known));
-  return {view: backBtn(204,35) + `<div class="panel" style="left:260px;top:30px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:9px;padding:8px 10px 10px">
-    ${head(`<span class="tag ${h === 'good' ? 'ok' : h === 'fair' ? 'no' : 'hi'}">${h === 'good' ? 'Healthy' : h === 'fair' ? 'At risk' : 'Struggling'}</span>`)}${bars}</div></div>`};
+  const id = S.farmIdx + 1, last = S.rv[id] && S.rv[id].last;
+  if (!last) return {view:backBtn(204,35) + `<div class="panel" style="left:260px;top:70px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:12px">
+    <div class="empty">${img('checklist',22,23)}<span>${FARMS[id - 1].owner ? `<b>Not reviewed yet.</b> Review ${fname(id)} to see its crops here.` : `<b>No farmer on this plot yet.</b>`}</span></div>
+    ${FARMS[id - 1].owner && ready(id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${id}">Review this farm</button>` : ''}</div></div>`};
+  scenes.crop = {...last.sc};
+  return {view:backBtn(204,35) + `<div class="panel" style="left:248px;top:24px;width:378px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:8px 10px 10px">
+    <div class="row"><span class="t10 sp">${fname(id)} · last review</span><span class="tag ${last.ok ? 'ok' : 'hi'}">${last.ok ? 'Recovering' : 'Needs help'}</span></div>
+    ${canvas('crop', 'crops', 340, 150, `data-t="${last.ok ? 1 : 0}"`)}${canvas('crop', 'layout', 340, 150, `data-t="${last.ok ? 1 : 0}"`)}</div></div>`};
 };
 
-/* Shop */
+/* ---------- Shop ---------- */
 const shopSide = () => `<div class="shopside">${[['market','Marketplace','marketplace'],['sell','Sell & Rent','cart'],['loans','Loans & Savings','coin']].map((t, i) => `${i ? '<hr>' : ''}<button class="${S.shopTab === t[0] ? 'on' : ''}" data-act="shopTab" data-t="${t[0]}">${t[0] === 'loans' ? `<span class="row" style="gap:0">${img('coin',21,21)}${img('coin',21,21,'margin-left:-12px')}${img('coin',21,21,'margin-left:-12px')}</span>` : img(t[2], t[0] === 'market' ? 40 : 34, null)}${t[1]}</button>`).join('')}</div>`;
-const banner = () => `<div style="position:relative;border-radius:6px;overflow:hidden">${img('banner',406,79,'width:100%;height:79px;object-fit:cover;display:block')}<div style="position:absolute;right:0;top:0;bottom:0;width:178px;background:rgba(92,52,30,.88);padding:10px 12px;color:#fff"><b style="font:600 11px var(--ui);display:block;line-height:1.4">Quality inputs for better harvest</b><span style="font:500 8px var(--ui);line-height:1.5;display:block;margin-top:2px">Sell your crops &amp; equipments now to earn more coins</span></div></div>`;
+const banner = () => `<div style="position:relative;border-radius:6px;overflow:hidden">${img('banner',406,79,'width:100%;height:79px;object-fit:cover;display:block')}<div style="position:absolute;right:0;top:0;bottom:0;width:178px;background:rgba(92,52,30,.88);padding:10px 12px;color:#fff"><b style="font:600 11px var(--ui);display:block;line-height:1.4">Quality inputs for better harvest</b><span style="font:500 8px var(--ui);line-height:1.5;display:block;margin-top:2px">Sell inputs &amp; equipment to farmers and earn a commission</span></div></div>`;
 V.shop = () => {
   let v = shopSide();
   if (S.shopTab === 'market'){
@@ -615,7 +1053,7 @@ V.shop = () => {
         <div class="row" style="gap:10px;padding-left:4px">${l[0] === 'coins' ? `<span class="row" style="gap:0">${img('coin',21,21)}${img('coin',21,21,'margin-left:-14px')}${img('coin',21,21,'margin-left:-14px')}</span>` : img(l[0],26,26)}<div class="col" style="gap:4px"><span style="font:600 11px var(--ui)">${l[1]}</span><span class="price" style="font-size:8px"><span style="opacity:.7;font-weight:500">Up to</span>${img('coin-sm',12,12)}${fmt(l[2])}</span></div></div>
         <span class="row" style="gap:4px;font:500 8.5px var(--ui);opacity:.8">Your referral fee ${img('coin-sm',12,12)}<b>${l[3]}</b></span>
         ${dd('loan' + i, S.loanFarm[i], 'Select farm', farmOpts().map(o => [...o, o[1] + (S.loans[o[0] + '-' + i] ? ' · active' : '')]), 'sprout')}
-        ${S.loans[S.loanFarm[i] + '-' + i] ? `<button class="btn wide ghost" tabindex="-1">Active for Farm ${S.loanFarm[i]}</button>` : `<button class="btn wide" data-act="getLoan" data-i="${i}">Arrange loan</button>`}</div></div>`).join('') + `<p class="caption" style="top:290px">Loans are paid to the farmer, not to you. Input and equipment loans also improve their farms.</p>`;
+        ${S.loans[S.loanFarm[i] + '-' + i] ? `<button class="btn wide ghost" tabindex="-1">Active for Farm ${S.loanFarm[i]}</button>` : `<button class="btn wide" data-act="getLoan" data-i="${i}">Arrange loan</button>`}</div></div>`).join('') + `<p class="caption" style="top:290px">Loans are paid to the farmer, not to you.</p>`;
     } else {
       const c = ui.calc;
       v += `<div class="panel" style="left:235px;top:86px;width:437px"><div class="pin" style="padding:8px 14px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px 12px">
@@ -628,7 +1066,7 @@ V.shop = () => {
         <button class="btn wide" style="grid-column:1/3;padding:5px" data-act="quote">Get Quote</button></div></div>`;
     }
   }
-  return {view: v};
+  return {view:v};
 };
 function calcOut(){
   const c = ui.calc, amt = parseFloat(c.amt), rate = parseFloat(c.rate) || 0, t = c.tenure;
@@ -636,15 +1074,12 @@ function calcOut(){
   const el = $('#calcOut'); if (!el) return;
   el.innerHTML = `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Estimated repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(total)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Daily repayment</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${daily < 10 && amt > 0 ? daily.toFixed(2) : fmt(daily)}</span></div>`;
 }
-
-/* Sell form (marketplace and sell & rent): price must be in a fair range */
 const priceRange = it => [Math.round(it.base * .5), Math.round(it.base * 1.5)];
 V.sell = () => {
   const it = ui.sellItem, [lo, hi] = priceRange(it);
   const icon = it.kind === 'input' ? 'in-' + it.icon : (it.icon === 'cart' ? 'cart' : 'eq-' + it.icon);
-  const helps = it.helps ? `<span style="font:400 9px var(--ui);opacity:.75">Improves ${CATS[it.helps].name.toLowerCase()} on the farm you sell to</span>` : '';
-  return {view: backBtn(163,20) + `<div class="panel" style="left:215px;top:13px;width:440px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
-    <div class="box col" style="align-items:center;gap:4px;padding:8px;background:rgba(107,64,43,.07)">${img(icon,26,30,'object-fit:contain')}<span style="font:600 11px var(--ui)">${it.name}</span>${helps}</div>
+  return {view:backBtn(163,20) + `<div class="panel" style="left:215px;top:13px;width:440px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
+    <div class="box col" style="align-items:center;gap:4px;padding:8px;background:rgba(107,64,43,.07)">${img(icon,26,30,'object-fit:contain')}<span style="font:600 11px var(--ui)">${it.name}</span></div>
     <p class="lbl" style="margin:2px 0 -2px">Farm</p>${dd('sellFarm', ui.sellFarm, 'Select Farm', FARMS.slice(0,4).map(f => [String(f.id), `Farm ${f.id}`, 'sprout', `Farm ${f.id}: ${f.owner}${S.sales[f.id + '-' + it.k] ? ' · already bought' : ''}`]))}
     <label class="lbl" for="sellPrice" style="margin:4px 0 -2px">Price</label><input id="sellPrice" class="fld" inputmode="numeric" maxlength="6" placeholder="Fair price: ${lo}–${hi} coins" value="${it.price || ''}">
     <div id="sellOut" class="col" style="gap:7px;margin-top:2px"></div>
@@ -657,21 +1092,20 @@ function sellOut(){
     `<div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Sale price</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(p)}</span></div><div class="row" style="font:500 10px var(--ui)"><span class="sp mut">Your commission (5%)</span><span class="price" style="font-size:10px">${img('coin-sm',14,14)}${fmt(Math.round(p * .05))}</span></div>`;
 }
 
-/* Training */
+/* ---------- Training ---------- */
 const tipBubble = (x, y, w, title, text, btn) => `<div class="bubble" style="left:${x}px;top:${y}px;width:${w}px"><div class="row" style="align-items:flex-start;gap:6px">${img(title === 'Daily Tip' ? 'sprout' : 'wh-tip', 27, title === 'Daily Tip' ? 27 : 18)}<div class="col"><b>${title}</b><p>${text}</p></div></div><div style="text-align:center;margin-top:8px">${btn}</div></div>`;
 const trainTabs = top => `<div class="tabs" style="top:${top}px">${[['training','Training','nav-training'],['calendar','Calendar','calendar']].map(t => `<button class="${view === t[0] ? 'on' : ''}" data-act="goReplace" data-v="${t[0]}">${img(t[2],21,21)}${t[1]}</button>`).join('')}</div>`;
 V.training = () => {
   const cards = TRAININGS.map((t, i) => { const b = S.bookings[t[0]];
     return `<div class="panel thin" style="left:${160 + i*191}px;top:100px;width:170px"><div class="pin" style="padding:8px;display:flex;flex-direction:column;gap:6px">
-      <div style="height:66px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(t[2], i === 2 ? 67 : 67, null, 'max-height:60px;width:auto')}</div>
+      <div style="height:66px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(t[2], 67, null, 'max-height:60px;width:auto')}</div>
       <span style="font:500 11px var(--ui)">${t[1]}</span><span class="row" style="gap:4px;font:500 8px var(--ui)">${img('clock',14,14)}2-4hrs</span>
       ${dd('train' + i, b ? String(b.farm) : S.trainFarm[i], 'Select farm', farmOpts(), 'sprout')}
       ${b ? `<button class="btn wide ghost" style="padding:5px" tabindex="-1">Booked</button>` : `<button class="btn wide" style="padding:5px" data-act="book" data-i="${i}">${cost(60)}</button>`}</div></div>`; }).join('');
-  return {view: `<img class="guide" src="${A('guide')}" style="left:578px;top:4px" alt="">` + `<div class="screen-title" style="top:27px">Bookings, Training &amp; Advisory</div>` + trainTabs(57) + cards +
+  return {view:`<img class="guide" src="${A('guide')}" style="left:578px;top:4px" alt="">` + `<div class="screen-title" style="top:27px">Bookings, Training &amp; Advisory</div>` + trainTabs(57) + cards +
     tipBubble(712, 24, 158, 'Daily Tip', TIPS[S.tip % TIPS.length], `<button class="btn sm" style="padding:3px 22px;font-size:11px" data-act="nextTip">Next</button>`)};
 };
 V.calendar = () => {
-  // June 2026 starts on a Monday
   const days = 30, events = {};
   Object.entries(S.bookings).forEach(([k, b]) => { (events[b.day] = events[b.day] || []).push({type:'blue', key:k, farm:b.farm}); });
   (events[9] = events[9] || []).push({type:'green', label:'Harvest'}); (events[18] = events[18] || []).push({type:'red', label:'Emergency'});
@@ -685,7 +1119,7 @@ V.calendar = () => {
   const detail = tr ? `<div style="height:60px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(tr[2],67,null,'max-height:56px;width:auto')}</div><span style="font:500 11px var(--ui);text-align:center">${tr[1]}</span>
       ${[['Time',`${img('clock',14,14)}2-4hrs`],['Farm',`${img('sprout',14,14)}Farm ${ev.farm} : ${FARMS[ev.farm-1].owner}`],['Cost',`${img('gem',14,14)}60`]].map((r, i) => `<div class="col" style="gap:3px;${i ? 'border-top:1px solid rgba(107,64,43,.12);padding-top:5px' : ''}"><span style="font:500 8px var(--ui);opacity:.7">${r[0]}</span><span class="row" style="gap:4px;font:500 10px var(--ui)">${r[1]}</span></div>`).join('')}`
     : `<div style="height:60px;border-radius:6px;background:#f3dcbb;display:grid;place-items:center">${img(ev ? (ev.type === 'green' ? 'crop-maize' : 'cat-pest') : 'calendar', 36, null)}</div><span style="font:500 11px var(--ui);text-align:center">${ev ? ev.label : 'Nothing booked'}</span><span style="font:400 9px var(--ui);opacity:.7;line-height:1.5;text-align:center">${ev ? (ev.type === 'green' ? 'Harvest window opens for maize farms.' : 'Report any emergency on your farms.') : 'Book a training on the Training tab and it will show here.'}</span>`;
-  return {view: `<img class="guide" src="${A('guide')}" style="left:567px;top:2px" alt="">` + `<div class="screen-title" style="top:17px">Bookings, Training &amp; Advisory</div>` + trainTabs(47) +
+  return {view:`<img class="guide" src="${A('guide')}" style="left:567px;top:2px" alt="">` + `<div class="screen-title" style="top:17px">Bookings, Training &amp; Advisory</div>` + trainTabs(47) +
     `<div class="panel thin" style="left:170px;top:80px;width:114px"><div class="pin" style="padding:6px;display:flex;flex-direction:column;gap:6px;min-height:228px">${detail}</div></div>
      <div class="panel thin" style="left:290px;top:80px;width:286px"><div class="pin" style="padding:8px 12px">
        <div style="font:600 11px var(--ui);margin:0 0 6px 8px">June</div>
@@ -694,10 +1128,10 @@ V.calendar = () => {
     tipBubble(690, 30, 170, 'Daily Tip', TIPS[S.tip % TIPS.length], `<button class="btn sm" style="padding:3px 22px;font-size:11px" data-act="nextTip">Next</button>`)};
 };
 
-/* Storage */
+/* ---------- Storage ---------- */
 V.storage = () => {
   const mine = S.storage === 'medium' ? {name:'Medium Warehouse', icon:'wh-medium', cap:'+6,000'} : WAREHOUSES.find(w => w.k === S.storage);
-  return {view: `<img class="guide" src="${A('guide')}" style="left:578px;top:34px" alt="">` +
+  return {view:`<img class="guide" src="${A('guide')}" style="left:578px;top:34px" alt="">` +
     `<div class="panel thin" style="left:296px;top:15px;width:284px"><div class="pin" style="padding:6px 10px 10px;display:flex;flex-direction:column;gap:8px">
       <span style="font:500 8px var(--ui);opacity:.7;text-align:center">My Storage</span>
       <div class="row" style="gap:12px;padding:0 6px"><span style="width:43px;height:43px;border-radius:4px;background:#fff6e8;display:grid;place-items:center">${img(mine.icon,27,null)}</span><div class="col" style="gap:6px"><span style="font:600 11px var(--ui)">${mine.name}</span><span class="row" style="gap:6px;font:500 8px var(--ui)"><span class="mut">${mine.cap} kg capacity</span>${img('distance',14,14)}50km</span></div></div>
@@ -712,43 +1146,42 @@ V.storage = () => {
     tipBubble(700, 64, 170, 'Increase storage capacity', 'Your maize stock is high. Upgrade to avoid losses &amp; sell later at better prices', `<button class="btn sm" style="padding:4px 12px;font-size:12px" data-act="upgrade">Upgrade ${cost(30)}</button>`)};
 };
 
-/* Stats */
+/* ---------- Stats & profile ---------- */
+const portrait = (w, h) => `<span class="portrait" style="width:${w}px;height:${h}px">${charSVG(S.look)}</span>`;
 const levelCard = (x, y, w) => `<div class="panel thin" style="left:${x}px;top:${y}px;width:${w}px"><button class="pin" style="width:calc(100% + 14px);border:0;display:flex;flex-direction:column;gap:4px;padding:6px 10px 10px;text-align:left" data-act="go" data-v="profile">
   <span style="font:500 8px var(--ui);opacity:.7;align-self:center">Level ${level()}</span>
-  <span class="row" style="gap:12px;padding:0 14px"><span style="width:43px;height:43px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',35,null)}</span><span class="col" style="gap:6px"><span style="font:600 11px var(--ui)">${esc(agentName())}</span><span class="row" style="gap:12px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.ratedRight}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></span></span></button></div>`;
+  <span class="row" style="gap:12px;padding:0 14px">${portrait(43, 43)}<span class="col" style="gap:6px"><span style="font:600 11px var(--ui)">${esc(agentName())}</span><span class="row" style="gap:12px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.passed}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></span></span></button></div>`;
 V.stats = () => {
   const f = FARMS[S.statFarm], k = S.statFarm;
   const nums = [[350000,250000,179000,350000],[280000,190000,90000,210000],[150000,320000,60000,120000],[420000,280000,200000,300000],[90000,40000,0,80000]][k];
   const line = (icon, lab, val) => `<span class="row" style="gap:6px;font:500 8px var(--ui)">${img(icon,14,14)}<span class="mut">${lab}</span>${val}</span>`;
-  return {view: farmSide(106, 46, 'statFarm') + levelCard(295, 76, 283) +
+  return {view:farmSide(106, 46, 'statFarm') + levelCard(295, 76, 283) +
     `<div class="panel" style="left:177px;top:166px;width:515px"><div class="pin" style="padding:10px 12px;display:flex;gap:14px;align-items:center">
       ${img('farm-thumb',39,39,'align-self:flex-start;margin-top:4px')}
-      <div class="col" style="gap:7px;min-width:126px"><span style="font:600 11px var(--ui)">${f.owner ? f.owner + 's Farm' : 'Farm ' + f.id}</span>
-        ${line('sprout','Inputs',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[0])}</span>`)}${line('eq-tractor','Equipment',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[1])}</span>`)}${line('crop-maize','Crop',`<b style="font-weight:600">${f.crop}</b>`)}</div>
+      <div class="col" style="gap:7px;min-width:126px"><span style="font:600 11px var(--ui)">${f.owner ? f.owner + "'s Farm" : 'Farm ' + f.id}</span>
+        ${line('sprout','Inputs',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[0])}</span>`)}${line('eq-tractor','Equipment',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[1])}</span>`)}${line('crop-maize','Crop',`<b style="font-weight:600">${cropName(f.crop)}</b>`)}</div>
       <div class="col" style="gap:9px;border-left:1px solid rgba(107,64,43,.15);padding-left:16px;align-self:stretch;justify-content:center">${line('moneybag','Loans',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[2])}</span>`)}${line('wh-medium','Storage',`<span class="price">${img('coin-sm',14,14)}${fmt(nums[3])}</span>`)}</div>
       <span class="sp"></span>
       <div style="background:#fff;border-radius:8px;padding:8px 10px;width:130px"><div style="font:500 10px var(--ui);padding-bottom:5px;border-bottom:1px solid rgba(107,64,43,.12);margin-bottom:6px">Achievements</div>
         ${[['trophy','Best maize farm'],['sprout','Most effective water user'],['eq-tractor','Top machine user']].map(a => `<div class="row" style="gap:4px;font:500 7.5px var(--ui);margin-top:5px">${img(a[0],12,12)}<span class="mut">${a[1]}</span></div>`).join('')}</div>
     </div></div>`};
 };
-
-/* Agent profile */
-V.profile = () => ({view: `<div class="panel thin" style="left:291px;top:34px;width:288px"><div class="pin" style="padding:6px 10px 10px">
+V.profile = () => ({view:`<div class="panel thin" style="left:291px;top:34px;width:288px"><div class="pin" style="padding:6px 10px 10px">
     <div style="font:500 8px var(--ui);opacity:.7;text-align:center;margin-bottom:6px">Wakala Agent Profile</div>
-    <div class="row" style="gap:12px;padding:0 14px"><span style="width:66px;height:77px;border-radius:4px;background:#fff;display:grid;place-items:center;overflow:hidden">${img('agent-full',49,61)}</span>
-    <div class="col" style="gap:5px"><span style="font:600 11px var(--ui)">${esc(S.name || 'Agent')}</span><span style="font:400 10px var(--ui);opacity:.6">Level ${level()} · ID: WA4567890</span><span class="row" style="gap:5px;font:500 10px var(--ui)"><svg width="14" height="10" viewBox="0 0 14 10"><rect width="14" height="10" fill="#000"/><rect y="3.2" width="14" height="3.6" fill="#b30000"/><rect y="2.8" width="14" height=".5" fill="#fff"/><rect y="6.7" width="14" height=".5" fill="#fff"/><ellipse cx="7" cy="5" rx="1.8" ry="4" fill="#b30000" stroke="#fff" stroke-width=".4"/></svg>Kenya</span>
-      <span class="row" style="gap:10px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.ratedRight}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></div></div></div></div>
+    <div class="row" style="gap:12px;padding:0 14px">${portrait(66, 77)}
+    <div class="col" style="gap:5px"><span style="font:600 11px var(--ui)">${esc(agentName())}</span><span style="font:400 10px var(--ui);opacity:.6">Level ${level()} · ID: WA4567890</span><span class="row" style="gap:5px;font:500 10px var(--ui)"><svg width="14" height="10" viewBox="0 0 14 10"><rect width="14" height="10" fill="#000"/><rect y="3.2" width="14" height="3.6" fill="#b30000"/><rect y="2.8" width="14" height=".5" fill="#fff"/><rect y="6.7" width="14" height=".5" fill="#fff"/><ellipse cx="7" cy="5" rx="1.8" ry="4" fill="#b30000" stroke="#fff" stroke-width=".4"/></svg>Kenya</span>
+      <span class="row" style="gap:10px;font:600 8px var(--ui)"><span class="row" style="gap:4px;background:#f3dcbb;border-radius:4px;padding:2px 6px;font-size:10px">${img('trophy',14,14)}${S.passed}</span><span class="price">${img('coin-sm',14,14)}${fmt(S.coins)}</span><span class="price">${img('gem',14,14)}${fmt(S.gems)}</span></span></div></div></div></div>
   <div class="panel" style="left:146px;top:162px;width:576px"><div class="pin" style="padding:8px 10px 10px;display:flex;flex-direction:column;gap:8px">
-    <div class="row" style="justify-content:center;gap:6px;font:600 10px var(--ui)">${img('target',14,14)}Mission Stats</div>
-    <div class="row" style="gap:8px">${[['stat-clipboard',S.missions,'Farm visits<br>completed'],['stat-target',`${thriving()}/4`,'Farms at 80+'],['stat-shield',S.ratedTotal ? Math.round(S.ratedRight / S.ratedTotal * 100) + '%' : '–','Rating accuracy']].map(s => `<div class="sp row" style="gap:12px;border:1px solid rgba(107,64,43,.12);border-radius:8px;padding:12px;background:rgba(255,255,255,.25)">${img(s[0],39,39)}<div class="col" style="gap:4px"><span style="font:500 15px var(--ui)">${s[1]}</span><span style="font:400 9px var(--ui);opacity:.75;line-height:1.5">${s[2]}</span></div></div>`).join('')}</div>
-    <div style="align-self:center;font:500 9px var(--ui);background:rgba(107,64,43,.08);border-radius:4px;padding:3px 8px">${img('bulb',10,10,'vertical-align:-1px')} ${S.missions ? 'Every two visits raises your level. Accurate ratings earn the biggest rewards.' : 'Finish your first farm visit to start your record.'}</div>
+    <div class="row" style="justify-content:center;gap:6px;font:600 10px var(--ui)">${img('target',14,14)}Review Stats</div>
+    <div class="row" style="gap:8px">${[['stat-clipboard',S.reviews,'Farm reviews<br>done'],['stat-target',`${thriving()}/4`,'Farms at 80+'],['stat-shield',S.reviews ? Math.round(S.passed / S.reviews * 100) + '%' : '–','Right calls']].map(s => `<div class="sp row" style="gap:12px;border:1px solid rgba(107,64,43,.12);border-radius:8px;padding:12px;background:rgba(255,255,255,.25)">${img(s[0],39,39)}<div class="col" style="gap:4px"><span style="font:500 15px var(--ui)">${s[1]}</span><span style="font:400 9px var(--ui);opacity:.75;line-height:1.5">${s[2]}</span></div></div>`).join('')}</div>
+    <div style="align-self:center;font:500 9px var(--ui);background:rgba(107,64,43,.08);border-radius:4px;padding:3px 8px">${img('bulb',10,10,'vertical-align:-1px')} Every two right calls raise your level.</div>
   </div></div>`});
 
-/* Smart route */
+/* ---------- Smart route ---------- */
 V.route = () => {
   const steps = S.stepsOpen ? `<div class="panel thin" style="left:692px;top:75px;width:165px"><div class="pin" style="padding:8px 10px 12px"><div class="row" style="margin-bottom:8px"><span class="sp" style="font:600 11px var(--ui)">Route steps</span><button aria-label="Close steps" data-act="closeSteps" style="border:0;background:none;padding:2px"><svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 2l10 10M12 2 2 12" stroke="#6b402b" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
       <ol style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:12px;font:500 10px var(--ui);opacity:.85">${ROUTE_STEPS.map(s => `<li>${s}</li>`).join('')}</ol></div></div>` : `<button class="btn cream sm" style="position:absolute;left:760px;top:80px" data-act="openSteps">Route steps</button>`;
-  return {view: backBtn(39,33) +
+  return {view:backBtn(39,33) +
     `<svg class="abs" style="left:0;top:0;pointer-events:none" width="874" height="402"><path d="M418 182 L442 222 L470 244 L478 272 L462 300 L452 326 L548 346 L604 318" fill="none" stroke="#c8f7a0" stroke-width="2.6" stroke-dasharray="7 6" stroke-linecap="round" opacity=".9">${matchMedia('(prefers-reduced-motion: reduce)').matches ? '' : '<animate attributeName="stroke-dashoffset" from="26" to="0" dur="1.2s" repeatCount="indefinite"/>'}</path></svg>
      <div class="abs" style="left:385px;top:33px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.35);font:500 13px var(--ui);color:#fff;text-shadow:1px 1px 0 #000">Schedule</div>
      <div class="abs" style="left:633px;top:236px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.35);font:500 13px var(--ui);color:#fff;text-shadow:1px 1px 0 #000">Farm 5</div>
@@ -759,80 +1192,49 @@ V.route = () => {
       <button class="btn wide" style="padding:5px" data-act="applyRoute">${S.routeApplied ? 'Route scheduled' : `Apply 40 ${img('gem',14,14)}`}</button></div></div>` + steps};
 };
 
-/* Report submitted overlay */
-function completeOverlay(){
-  const L = ui.last; if (!L) return '';
-  const o = owner(L.id), up = L.after - L.before;
-  return `<div class="dimmer"></div>${img('confetti',246,74,'position:absolute;left:314px;top:0')}${img('trophy-farm',216,144,'position:absolute;left:329px;top:22px')}
-  <button class="sq" style="left:622px;top:49px" data-act="claim" aria-label="Close"><span>${X}</span></button>
-  <div class="abs" style="left:237px;width:400px;top:168px;text-align:center"><div style="font:700 18px var(--ui);color:var(--gold);text-shadow:0 1px 0 #3d1e05">Report Submitted!</div>
-   <p style="margin:6px auto 0;width:330px;font:400 10px var(--ui);line-height:1.6;color:#fff">Great work, ${esc(agentName())}. You rated ${L.correct} of 5 areas correctly.<br>${up > 0 ? `${o}'s success score rose from <b>${L.before}</b> to <b style="color:#b9f27c">${L.after}</b>.` : `${o}'s success score stays at <b>${L.after}</b>. Advice on weak areas is what raises it.`}</p></div>
-  <div class="abs" style="left:290px;top:246px;width:294px;height:73px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:8px">
-    <span style="font:500 10px var(--ui);color:#d9cbb8">Reward</span>
-    <div class="row" style="gap:12px">${[['coin-sm','rgba(202,147,36,.35)',L.r.c],['gem','rgba(155,93,229,.35)',L.r.g],['water','rgba(34,173,226,.3)',L.r.w]].map(r => `<span class="row" style="gap:4px;background:${r[1]};padding:7px 14px;border-radius:6px;font:600 11px var(--ui);color:#fff">${img(r[0],14,14)}+ ${r[2]}</span>`).join('')}</div></div>
-  <button class="btn cream" style="position:absolute;left:286px;top:331px;width:145px;padding:7px" data-act="claim" data-to="map">See the map</button>
-  <button class="btn" style="position:absolute;left:442px;top:331px;width:145px;padding:7px" data-act="claim">Next visit</button>`;
-}
-
-/* First-run intro (also reachable from Settings) */
-function introOverlay(){
-  const step = ui.introStep;
-  const body = step === 0
-    ? `<div class="ttl" style="justify-content:flex-start">Welcome, agent</div>
-       <p class="ip">Four farmers near you need help. Visit their farms, find out what is wrong, and advise them. Good advice raises each farm's success score.</p>
-       <label class="lbl" for="introName" style="margin:6px 0 4px;display:block">What should farmers call you?</label>
-       <input id="introName" class="fld" maxlength="18" autocomplete="off" placeholder="Your name" value="${esc(S.name)}">
-       <div class="row" style="gap:10px;margin-top:12px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="introSkip">Skip</button><button class="btn sp" style="padding:7px" data-act="introNext">Next</button></div>`
-    : `<div class="ttl" style="justify-content:flex-start">How a farm visit works</div>
-       <ol class="isteps"><li><b>Inspect</b> five areas of the farm. Read what you see and rate each one Good, Fair or Poor.</li><li><b>Advise</b> the farmer on every area that isn't good.</li><li><b>Submit</b> the report. Accurate ratings earn coins, gems and water, and your advice lifts the farm's score.</li></ol>
-       <p class="ip" style="margin-top:6px"><b>Goal:</b> get all four farms to a success score of ${GOAL} or more. The orange <b>Next</b> bar at the top always shows your next step.</p>
-       <div class="row" style="gap:10px;margin-top:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="introBack">Back</button><button class="btn sp" style="padding:7px" data-act="introDone">${S.onboarded ? 'Got it' : 'Start first visit'}</button></div>`;
-  return `<div class="dimmer"></div><img class="guide" src="${A('guide')}" style="left:188px;top:120px;width:139px;height:217px" alt="">
-    <div class="panel" style="left:330px;top:${step === 0 ? 70 : 48}px;width:360px" role="dialog" aria-label="Introduction"><div class="pin" style="padding:12px 14px">${body}</div></div>`;
-}
-
-/* Settings */
-V.settings = () => ({view: backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:10px;padding:10px 12px">
+/* ---------- Settings & activity ---------- */
+V.settings = () => ({view:backBtn(163,22) + `<div class="panel" style="left:218px;top:14px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
   <div class="ttl">${img('settings',20,20)}Settings</div>
-  <div class="box"><label class="lbl" for="nameIn">Your name</label><div class="row"><input id="nameIn" class="fld sp" maxlength="18" placeholder="Your name" value="${esc(S.name)}"><button class="btn sm" style="padding:6px 14px;font-size:11px" data-act="saveName">Save</button></div></div>
-  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How to play</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
+  <div class="box row" style="gap:10px">${portrait(40, 46)}<div class="col sp" style="gap:6px"><div class="row"><input id="nameIn" class="fld sp" maxlength="16" placeholder="Your name" value="${esc(S.name)}" aria-label="Your name"><button class="btn sm" style="padding:6px 14px;font-size:11px" data-act="saveName">Save</button></div>
+    <div class="looks small">${LOOKS.map(l => `<button class="look ${S.look === l.id ? 'on' : ''}" data-act="pickLook" data-l="${l.id}" aria-label="${l.label}">${charSVG(l.id)}</button>`).join('')}</div></div></div>
+  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How a review works</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
+  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:10.5px" data-act="readyAll">Playtest: make all farms ready now</button></div>
   <div class="box" style="background:rgba(229,72,77,.06)">${ui.confirmReset
-    ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your farms, rewards and activity on this device. It can't be undone.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
-    : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from the first visit. Progress is saved on this device only.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
+    ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your character, farms and rewards on this device.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
+    : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from character creation.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
 </div></div>`});
-
-/* Activity log (mail button) */
 V.activity = () => {
   const when = t => { const d = new Date(t), m = Math.round((Date.now() - t) / 60000); return m < 1 ? 'Just now' : m < 60 ? m + ' min ago' : d.toLocaleDateString('en-GB', {day:'numeric', month:'short'}) + ' ' + d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'}); };
   const rows = S.log.length ? S.log.map((e, i) => `<div class="row" style="gap:8px;padding:7px 0;${i ? 'border-top:1px solid rgba(107,64,43,.1)' : ''}">${img(e.i,16,16)}<span class="sp" style="font:500 10px var(--ui);line-height:1.45">${esc(e.t)}</span><span style="font:400 8.5px var(--ui);opacity:.6;white-space:nowrap">${when(e.at)}</span></div>`).join('')
-    : `<div class="empty">${img('mail',22,22)}<span><b>Nothing here yet.</b> Submitted reports, sales, loans and bookings will show up here.</span></div>`;
-  return {view: backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
+    : `<div class="empty">${img('mail',22,22)}<span><b>Nothing here yet.</b> Reviews, sales and loans will show up here.</span></div>`;
+  return {view:backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
     <div class="ttl">${img('mail',20,20)}Activity</div><div class="box" style="padding:2px 10px;max-height:290px;overflow:auto">${rows}</div></div></div>`};
 };
 
 /* ---------- render ---------- */
 let lastBg = '';
 function render(){
-  const cfg = CFG[view] || {};
+  const cfg = CFG[view] || {}, firstSession = onb() || S.phase === 'unlock';
   let bg = cfg.bg || 'home';
-  if (view === 'home' && S.hub > 0) bg = 'hub' + S.hub;
+  if (view === 'home' && S.hub > 0 && S.onboarded) bg = 'hub' + S.hub;
   if (bg !== lastBg){ const el = $('#bg'); el.style.backgroundImage = `url(${A('bg-' + bg)})`; el.classList.remove('fade'); void el.offsetWidth; el.classList.add('fade'); lastBg = bg; }
-  $('#hud').hidden = !!cfg.noHud;
-  $('#btnMap').hidden = $('#btnTask').hidden = !!cfg.noHud;
+  // Until the first review is passed, only the walk and the review are shown.
+  $('#hud').hidden = !!cfg.noHud || onb();
+  $('#btnMap').hidden = $('#btnTask').hidden = !!cfg.noHud || onb();
   $('#btnMap').classList.toggle('dim', !!cfg.mapDim);
   $('#btnTask').classList.toggle('dim', !!cfg.taskDim);
-  $('#nav').hidden = !cfg.nav || !!ui.overlay;
+  $('#nav').hidden = !cfg.nav || !!ui.overlay || onb();
+  ['#hud','#nav','#btnMap','#btnTask'].forEach(s => $(s).classList.toggle('enter', !!ui.unlockAnim));
   $('#nav').innerHTML = NAV.map(n => `<button class="nb ${cfg.nav === n[0] ? 'on' : ''}" data-act="nav" data-v="${n[0]}"><span class="o"><span class="i"><img src="${A(n[2])}" alt=""></span></span><span>${n[1]}</span></button>`).join('');
   [['#rCoins',S.coins],['#rGems',S.gems],['#rWater',S.water]].forEach(([id, v]) => $(id + ' b').textContent = fmt(v));
+  $('#aname').textContent = agentName(); $('#trophies').textContent = S.passed; $('#hudFace').innerHTML = faceSVG(S.look);
   const out = V[view]();
   $('#world').innerHTML = out.world || '';
-  $('#view').innerHTML = ui.overlay === 'complete' ? '' : (out.view || '');
-  $('#overlay').innerHTML = ui.overlay === 'complete' ? completeOverlay() : ui.overlay === 'intro' ? introOverlay() : '';
-  $('#aname').textContent = agentName(); $('#trophies').textContent = S.ratedRight;
-  if (ui.overlay === 'intro'){ const n = $('#introName'); if (n && ui.introStep === 0) setTimeout(() => n.focus(), 50); }
+  $('#view').innerHTML = ui.overlay ? '' : (out.view || '');
+  $('#overlay').innerHTML = S.phase === 'create' ? createOverlay() : ui.overlay === 'hook' ? hookOverlay() : ui.overlay === 'how' ? howOverlay() : '';
   if (view === 'shop' && S.shopTab === 'loans' && S.loanTab === 'calc') calcOut();
   if (view === 'sell') sellOut();
-  save();
+  paint(); save(); void firstSession;
 }
 function go(v, replace){
   if (v === view) return render();
@@ -840,86 +1242,86 @@ function go(v, replace){
   if (hist.length > 30) hist.shift();
   view = v; ui.dd = null; render();
 }
-function back(){ ui.dd = null; ui.pick = null; view = hist.pop() || 'home'; render(); }
+function back(){ ui.dd = null; view = hist.pop() || 'home'; render(); }
 
 /* ---------- actions ---------- */
 const ACT = {
   go: d => go(d.v),
   goReplace: d => go(d.v, true),
   back: () => back(),
-  nav: d => { hist = []; go(d.v, true); },
+  nav: d => { hist = []; ui.walk = null; go(d.v, true); },
   toast: d => toast(d.msg),
-  next: d => { hist = view === 'home' ? [] : [view]; if (d.v === 'recs' && view !== 'result') hist.push('result'); go(d.v, true); },
-  pickFarm: d => { S.sel = +d.farm; go('map'); },
+  /* character creation */
+  pickName: d => { S.name = d.n; save(); render(); },
+  pickLook: d => { S.look = d.l; save(); render(); },
+  createDone: () => {
+    const v = ($('#nameIn0') || {}).value; if (v != null) S.name = v.trim().slice(0, 16);
+    if (!S.name){ toast('Type a name or tap one of the suggestions'); return; }
+    track('character_created', {look:S.look, named:NAME_IDEAS.includes(S.name) ? 'suggested' : 'typed'});
+    S.phase = 'walk'; ui.walk = null; save(); render();
+  },
+  /* walking */
+  walkFarm: d => {
+    const id = +d.farm;
+    if (S.phase === 'walk2'){ if (id !== SECOND){ toast(`Start with ${owner(SECOND)}'s beans, ${agentName()}.`); return; } ui.walk.target = ui.walk.L; if (!ui.walk.moved){ ui.walk.moved = true; ui.walk.firstMove(); } return; }
+    if (!ready(id)){ toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); return; }
+    startWalkTo(id, true);
+  },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
-  visitFarm: d => visit(+d.farm),
   farmAct: d => {
-    const id = S.sel || S.taskFarm;
-    if (d.a === 'analyze') return visit(id);
+    const id = S.sel || 2;
+    if (d.a === 'review') return ACT.walkFarm({farm:id});
     if (d.a === 'route') go('route');
     if (d.a === 'calendar') go('calendar');
     if (d.a === 'quote'){ S.shopTab = 'loans'; S.loanTab = 'calc'; ui.calc.farm = String(Math.min(id, 4)); go('shop'); }
     if (d.a === 'info'){ S.farmIdx = id - 1; S.cardMode = 0; go('farms'); }
   },
-  inspect: d => { ui.inspectCat = d.cat; ui.pick = null; go('inspect'); },
-  rate: d => { ui.pick = d.r; render(); },
-  inspectDone: () => {
-    const p = ui.pick ?? S.checks[ui.inspectCat]; if (!p){ toast('Choose Good, Fair or Poor first'); return; }
-    S.checks[ui.inspectCat] = p; ui.pick = null;
-    const nextCat = CAT_ORDER.find(k => !S.checks[k]);
-    if (nextCat){ ui.inspectCat = nextCat; toast(`Saved. Next: ${CATS[nextCat].name}`); render(); }
-    else { toast('All five areas rated'); view = 'result'; render(); }
+  /* review */
+  zoom: d => { ui.rv.zoom = d.p; render(); },
+  unzoom: () => {
+    const R = ui.rv, p = R.zoom; R.zoom = null;
+    if (R.step === 'look' && !R.seen.includes(p)){ R.seen.push(p); track('review_part_viewed', {farm:R.id, part:p, n:R.seen.length}); if (R.seen.length === 4){ R.step = 'spot'; track('review_looked_all', {farm:R.id, sec_in_review:Math.round((Date.now() - R.start) / 1000)}); } }
+    render();
   },
-  makeAnalysis: () => { const left = 5 - doneCount(); if (left){ toast(`Rate ${left} more area${left > 1 ? 's' : ''} first`); return; } go('result'); },
-  submitReport: d => {
-    if (S.rewarded) return;
-    const weak = weakAreas();
-    if (!d.force && weak.length && (!S.recsApplied || uncovered().length)){ ui.submitWarn = true; render(); return; }
-    const id = S.taskFarm, n = correctCount(), r = rewardFor(n), f = S.farms[id], before = score(id);
-    f.known = {...S.taskTruth}; f.visits++;
-    if (S.recsApplied) recCats().forEach(k => { if (rateOf(f.cond[k]) !== 'good') boost(id, k, 35); });
-    const after = score(id);
-    earn(r.c, r.g, r.w); S.missions++; S.ratedTotal += 5; S.ratedRight += n; S.rewarded = true; ui.submitWarn = false;
-    ui.last = {id, correct:n, r, before, after};
-    logAdd('hdr-task', `Report for ${fname(id)}: ${n}/5 correct. Score ${before} → ${after}. Earned ${r.c} coins, ${r.g} gems, ${r.w} water.`);
-    stage.querySelectorAll('.toast').forEach(t => t.remove());
-    ui.overlay = 'complete'; render();
-  },
-  claim: d => {
-    if (S.rewarded){
-      const done = S.taskFarm;
-      const next = [1,2,3,4].filter(id => id !== done).sort((a, b) => score(a) - score(b))[0];
-      startTask(next);
-      if (!S.won && thriving() === 4){ S.won = true; logAdd('trophy', 'All four farms reached a success score of 80+.'); }
+  spot: d => {
+    const R = ui.rv, sc = R.sc;
+    if (d.f === 'none'){
+      if (sc.problem === 'healthy'){ R.spot = null; R.step = 'judge'; track('review_spotted', {farm:R.id, ok:true}); render(); }
+      else { R.wrongSpot++; toast(R.hint ? 'One field looks a different colour. Look again.' : 'One field looks different. Look again.'); }
+      return;
     }
-    ui.overlay = null; hist = []; view = d && d.to === 'map' ? 'map' : 'home'; S.sel = null; render();
-    toast(S.won && thriving() === 4 ? 'All four farms are thriving! Keep them there.' : `Next visit: ${fname(S.taskFarm)}`);
+    const f = +d.f;
+    if (sc.problem !== 'healthy' && f === sc.field){ R.spot = f; R.miss = null; R.step = 'judge'; track('review_spotted', {farm:R.id, ok:true, wrong_taps:R.wrongSpot}); render(); }
+    else { R.wrongSpot++; R.miss = f; render(); toast(sc.problem === 'healthy' ? 'That field looks fine. Do any look wrong?' : R.hint ? 'That field looks healthy. Look for a different colour.' : 'That field looks healthy. Look again.'); }
   },
-  newRec: () => { ui.recEdit = null; ui.recCat = uncovered()[0] || weakAreas()[0] || 'soil'; ui.recText = ''; go('recform'); },
-  editRec: d => { const r = S.recs[+d.i]; ui.recEdit = +d.i; ui.recCat = r.cat; ui.recText = r.text; go('recform'); },
-  delRec: () => { S.recs.splice(ui.recEdit, 1); S.recsApplied = false; ui.recEdit = null; toast('Recommendation deleted'); back(); },
-  saveRec: d => {
-    const t = ($('#recText').value || '').trim();
-    if (t.length < 8){ toast('Write a short instruction for the farmer first'); $('#recText').focus(); return; }
-    S.recsApplied = false; ui.submitWarn = false;
-    if (ui.recEdit != null){ S.recs[ui.recEdit] = {cat:ui.recCat, text:t}; ui.recEdit = null; toast('Recommendation updated'); back(); return; }
-    S.recs.push({cat:ui.recCat, text:t}); ui.recText = '';
-    if (d.more){ ui.recCat = uncovered()[0] || ui.recCat; toast('Saved. Write the next one'); render(); } else { toast('Saved. Send it when you are ready'); back(); }
+  judge: d => judge(d.c),
+  rvContinue: () => {
+    const R = ui.rv, ph = S.phase;
+    if (R.ok){
+      if (ph === 'review' || ph === 'retryReview'){
+        // First review passed: onboarding is done for good.
+        S.onboarded = true; S.phase = 'walk2'; S.pos = [...FARMS[R.id - 1].gate];
+        S.rv[RETRY].n = Math.max(1, S.rv[RETRY].n); S.rv[FIRST].n = Math.max(1, S.rv[FIRST].n);
+        S.rv[RETRY].readyAt = tomorrow(); S.rv[HOOK].readyAt = tomorrow(); S.rv[FIRST].readyAt = tomorrow();
+        ui.rv = null; ui.walk = null; ui.unlockAnim = true; view = 'home'; hist = [];
+        track('map_unlocked'); render(); setTimeout(() => { ui.unlockAnim = false; }, 2600); return;
+      }
+      if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; ui.overlay = 'hook'; S.pos = [...FARMS[R.id - 1].gate]; view = 'home'; track('return_hook_shown', {after:'pass'}); render(); return; }
+      S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; hist = []; render(); return;
+    }
+    // wrong call
+    if (ph === 'review'){ S.retryUsed = true; S.phase = 'retryWalk'; S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; ui.walk = null; view = 'home'; track('retry_started'); render(); return; }
+    if (ph === 'retryReview'){ track('retry_review_again'); return openReview(RETRY); }
+    if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = [...FARMS[R.id - 1].gate]; S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
+    S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; render();
   },
-  applyRecs: () => {
-    if (!S.recs.length){ toast('Write a recommendation first'); return; }
-    if (S.recsApplied) return;
-    if (!S.recsPaid){ if (!spend('gems', 30)) return; S.recsPaid = true; }
-    S.recsApplied = true; ui.submitWarn = false;
-    const left = uncovered();
-    toast(left.length ? `Sent. Still no advice on ${left.map(k => CATS[k].short).join(', ')}` : `Sent to ${owner(S.taskFarm)}. Now submit the report`);
-    hist = hist.filter(v => v !== 'result'); view = 'result'; render();
-  },
+  hookDone: () => { ui.overlay = null; track('session_closed'); render(); toast(`See you tomorrow, ${agentName()}.`); },
+  closeOverlay: () => { ui.overlay = null; render(); },
+  /* farms, shop and the rest */
   dd: d => { ui.dd = ui.dd === d.k ? null : d.k; render(); },
   ddpick: d => {
     const k = d.k, v = d.val; ui.dd = null;
-    if (k === 'rec'){ ui.recCat = v; ui.recText = ($('#recText') || {}).value || ui.recText; }
-    else if (k.startsWith('loan')) S.loanFarm[k.slice(4)] = v;
+    if (k.startsWith('loan')) S.loanFarm[k.slice(4)] = v;
     else if (k.startsWith('train')) S.trainFarm[k.slice(5)] = v;
     else if (k === 'ctype') ui.calc.type = v;
     else if (k === 'ctenure') ui.calc.tenure = +v;
@@ -930,13 +1332,13 @@ const ACT = {
   farmStep: d => { const k = d.k; S[k] = Math.max(0, Math.min(4, S[k] + +d.d)); render(); },
   farmSet: d => { S[d.k] = +d.i; render(); },
   cardMode: () => { S.cardMode = 1 - S.cardMode; render(); },
-  crop: d => { ui.crop = d.c; go('crop'); },
+  crop: () => go('crop'),
   shopTab: d => { S.shopTab = d.t; ui.dd = null; render(); },
   sellTab: d => { S.sellTab = d.t; render(); },
   loanTab: d => { S.loanTab = d.t; ui.dd = null; render(); },
   sellItem: d => {
     const inp = INPUTS.find(x => x[0] === d.k);
-    ui.sellItem = d.kind === 'input' ? {kind:'input', k:d.k, icon:d.k, name:inp[1], base:inp[2], helps:inp[3]} : {kind:'equip', k:(d.name || d.k).toLowerCase().replace(/\s+/g, '-'), icon:d.k, name:d.name || d.k, base:200};
+    ui.sellItem = d.kind === 'input' ? {kind:'input', k:d.k, icon:d.k, name:inp[1], base:inp[2]} : {kind:'equip', k:(d.name || d.k).toLowerCase().replace(/\s+/g, '-'), icon:d.k, name:d.name || d.k, base:200};
     ui.sellFarm = null; go('sell');
   },
   completeSale: () => {
@@ -945,9 +1347,7 @@ const ACT = {
     if (raw && (raw < lo || raw > hi)){ toast(`Enter a price between ${lo} and ${hi} coins`); $('#sellPrice').focus(); return; }
     const key = ui.sellFarm + '-' + it.k;
     if (S.sales[key]){ toast(`${fname(+ui.sellFarm)} already bought ${it.name.toLowerCase()} this season`); return; }
-    const com = Math.round(p * .05); S.sales[key] = true;
-    S.coins += com; bump('#rCoins');
-    if (it.helps) boost(+ui.sellFarm, it.helps, 10);
+    const com = Math.round(p * .05); S.sales[key] = true; S.coins += com; bump('#rCoins'); boostScore(+ui.sellFarm, 3);
     logAdd(it.kind === 'input' ? 'in-' + it.icon : 'cart', `Sold ${it.name.toLowerCase()} to ${fname(+ui.sellFarm)} for ${fmt(p)} coins. Commission ${com} coins.`);
     toast(`Sold to ${fname(+ui.sellFarm)}. You earned ${com} coins`); back();
   },
@@ -955,8 +1355,7 @@ const ACT = {
     const i = +d.i, f = S.loanFarm[i]; if (!f){ toast('Select the farm that needs this loan'); return; }
     const l = LOANS[i], key = f + '-' + i;
     if (S.loans[key]){ toast(`${fname(+f)} already has an active ${l[1].toLowerCase()}`); return; }
-    S.loans[key] = true; S.coins += l[3]; bump('#rCoins');
-    Object.entries(l[4]).forEach(([k, n]) => boost(+f, k, n));
+    S.loans[key] = true; S.coins += l[3]; bump('#rCoins'); boostScore(+f, l[4]);
     logAdd('loan-bag', `${l[1]} arranged for ${fname(+f)}. Referral fee ${l[3]} coins.`);
     toast(`${l[1]} arranged for ${owner(+f)}. You earned a ${l[3]}-coin referral fee`); render();
   },
@@ -965,9 +1364,8 @@ const ACT = {
     const i = +d.i, f = S.trainFarm[i]; if (!f){ toast('Select a farm for this session'); return; }
     if (!spend('gems', 60)) return;
     const used = Object.values(S.bookings).map(b => b.day); let day = 4; while (used.includes(day)) day += 3;
-    S.bookings[TRAININGS[i][0]] = {farm:+f, day}; S.calDay = day;
-    const c = S.farms[+f].cond, weakest = CAT_ORDER.slice().sort((a, b) => c[a] - c[b])[0]; boost(+f, weakest, 8);
-    logAdd('nav-training', `${TRAININGS[i][1]} booked for ${fname(+f)} on June ${day}. Helps with ${CATS[weakest].short.toLowerCase()}.`);
+    S.bookings[TRAININGS[i][0]] = {farm:+f, day}; S.calDay = day; boostScore(+f, 5);
+    logAdd('nav-training', `${TRAININGS[i][1]} booked for ${fname(+f)} on June ${day}.`);
     toast(`${TRAININGS[i][1]} booked for June ${day}`); render();
   },
   calDay: d => { if (d.d){ S.calDay = +d.d; render(); } },
@@ -978,30 +1376,18 @@ const ACT = {
     if (!spend('gems', 30)) return;
     S.hub++; if (S.storage === 'medium') S.storage = 'xl';
     logAdd('wh-xl', `Storage upgraded. Your hub reached stage ${S.hub}.`);
-    toast(`Storage upgraded. See your hub grow on Home`); render();
+    toast('Storage upgraded. See your hub grow on Home'); render();
   },
   applyRoute: () => { if (S.routeApplied){ toast('Route already scheduled'); return; } if (!spend('gems', 40)) return; S.routeApplied = true; logAdd('tractor', 'Tractor route to Farm 5 scheduled.'); toast('Tractor route scheduled. Saves about 400 coins'); render(); },
   closeSteps: () => { S.stepsOpen = false; render(); },
   openSteps: () => { S.stepsOpen = true; render(); },
-  /* intro + settings */
-  introNext: () => { S.name = ($('#introName').value || '').trim().slice(0, 18); ui.introStep = 1; render(); },
-  introBack: () => { ui.introStep = 0; render(); },
-  introSkip: () => { const n = $('#introName'); if (n) S.name = n.value.trim().slice(0, 18); S.onboarded = true; ui.overlay = null; render(); },
-  introDone: () => { const first = !S.onboarded; S.onboarded = true; ui.overlay = null; if (first){ hist = []; go('task'); } else render(); },
-  howTo: () => { ui.introStep = 1; ui.overlay = 'intro'; render(); },
-  saveName: () => { S.name = ($('#nameIn').value || '').trim().slice(0, 18); toast('Name saved'); render(); },
+  howTo: () => { ui.overlay = 'how'; render(); },
+  saveName: () => { const n = ($('#nameIn').value || '').trim().slice(0, 16); if (!n){ toast('Type a name first'); return; } S.name = n; toast('Name saved'); render(); },
+  readyAll: () => { [1,2,3,4].forEach(id => S.rv[id].readyAt = 0); toast('All farms are ready to review'); render(); },
   askReset: () => { ui.confirmReset = true; render(); },
   cancelReset: () => { ui.confirmReset = false; render(); },
-  doReset: () => { S = FRESH(); hist = []; view = 'home'; ui.confirmReset = false; ui.introStep = 0; ui.overlay = 'intro'; render(); },
+  doReset: () => { S = FRESH(); hist = []; view = 'home'; ui = {...ui, confirmReset:false, overlay:null, rv:null, walk:null, unlockAnim:false}; S.t0 = Date.now(); track('character_shown'); render(); },
 };
-/* Start or resume a visit, without silently throwing away work on another farm */
-function visit(id){
-  if (id !== S.taskFarm){
-    if (hasProgress()){ toast(`Finish your visit to ${fname(S.taskFarm)} first`); hist = []; go('task'); return; }
-    startTask(id); toast(`Visit switched to ${fname(id)}`);
-  }
-  hist = view === 'home' ? [] : [view]; go('task', true);
-}
 
 stage.addEventListener('click', e => {
   const t = e.target.closest('[data-act]');
@@ -1010,29 +1396,41 @@ stage.addEventListener('click', e => {
   if (ui.dd && d.act !== 'dd' && d.act !== 'ddpick') ui.dd = null;
   (ACT[d.act] || (() => {}))(d);
 });
+stage.addEventListener('pointerdown', e => { if (e.target.closest('[data-walk]')) walkTap(e); });
 stage.addEventListener('input', e => {
   const id = e.target.id;
+  if (id === 'nameIn0'){ S.name = e.target.value.trim().slice(0, 16); save(); const b = stage.querySelector('[data-act="createDone"]'); if (b){ b.textContent = S.name ? `Start as ${S.name}` : 'Pick a name to start'; b.classList.toggle('ghost-soft', !S.name); } stage.querySelectorAll('.chipbtn').forEach(c => c.classList.toggle('on', c.dataset.n === S.name)); }
   if (id === 'calcAmt'){ ui.calc.amt = e.target.value.replace(/[^\d.]/g, ''); calcOut(); }
   if (id === 'calcRate'){ ui.calc.rate = e.target.value.replace(/[^\d.]/g, ''); calcOut(); }
   if (id === 'sellPrice'){ ui.sellItem.price = e.target.value.replace(/[^\d.]/g, ''); sellOut(); }
-  if (id === 'recText') ui.recText = e.target.value;
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape'){ if (ui.overlay === 'complete'){ ACT.claim({}); } else if (ui.overlay === 'intro'){ ACT.introSkip(); } else if (ui.dd){ ui.dd = null; render(); } else if (view !== 'home') back(); } });
+stage.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'nameIn0') ACT.createDone(); });
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (ui.rv && ui.rv.zoom) return ACT.unzoom();
+  if (ui.overlay === 'how') return ACT.closeOverlay();
+  if (ui.dd){ ui.dd = null; return render(); }
+  if (S.onboarded && view !== 'home' && view !== 'review') back();
+});
 
 /* ---------- fit stage to window ---------- */
-// On an upright phone, turn the landscape game sideways so it fills the screen instead of shrinking to 40%.
+// On an upright phone, turn the landscape game sideways so it fills the screen.
 function fit(){
   const app = $('#app'), w = app.clientWidth, h = app.clientHeight, rot = h > w * 1.15;
   stage.style.setProperty('--s', rot ? Math.min(h / 874, w / 402) : Math.min(w / 874, h / 402));
   stage.style.setProperty('--rot', rot ? '90deg' : '0deg');
 }
-addEventListener('resize', fit); fit();
+addEventListener('resize', () => { fit(); paint(); }); fit();
 
-/* allow deep links like #shop or #training */
-const start = (location.hash || '').slice(1);
-if (CFG[start] && !['inspect','sell','crop','recform','result','recs'].includes(start)) view = start;
-if (!S.onboarded) ui.overlay = 'intro';
-render();
+/* resume where the player left off */
+if (S.phase === 'create'){ if (!S.t0) S.t0 = Date.now(); track('character_shown'); }
+if (S.phase === 'review' || S.phase === 'retryReview' || S.phase === 'review2'){ const id = S.phase === 'review' ? FIRST : S.phase === 'retryReview' ? RETRY : SECOND; render(); openReview(id); }
+else {
+  if (S.phase === 'unlock') S.phase = 'walk2';
+  const start = (location.hash || '').slice(1);
+  if (S.onboarded && CFG[start] && !['sell','crop','review'].includes(start)) view = start;
+  render();
+}
 })();
 </script>
 

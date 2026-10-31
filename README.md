@@ -19,10 +19,15 @@ python3 -m http.server 8000
 
 ## How to play
 
-1. **Inspect** five areas of a farm. Each one shows what you see in the field; rate it Good, Fair or Poor.
-2. **Advise** the farmer on every area that isn't good.
-3. **Submit** the report. Accurate ratings earn coins, gems and water, and your advice raises the farm's success score.
+Your first session:
 
-Goal: get all four farms to a success score of 80 or more. The orange **Next** bar always shows your next step.
+1. **Create your agent:** pick a name and a look.
+2. **Walk to June's farm:** tap the path to walk.
+3. **Review the farm:** look at the crops, a leaf up close, the soil and water, and the whole farm from above. Spot the field that looks wrong and choose what it needs: healthy, needs water, or pest problem.
+4. **Next review:** the map opens and Vincent's beans need you. One farm will be ready to check tomorrow.
+
+Every review uses the same four steps (Look, Spot, Judge, Result). The pictures are drawn in code from each farm's data, so new reviews need no new artwork.
+
+For playtesting, `wakalaEvents()` in the browser console lists the first-session events with timings, and Settings has "make all farms ready now".
 
 Progress is saved in the browser on this device. Settings (the cog) has your name, How to play, and Restart.
