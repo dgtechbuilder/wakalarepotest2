@@ -341,6 +341,15 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .banner.news{top:120px;font-size:15px}
 @media (prefers-reduced-motion:reduce){.tgt,.pslot.wet::after{animation:none!important}}
 
+.fsay{display:flex;gap:10px;align-items:center}
+.fface{display:inline-block;flex:none;border-radius:50%;overflow:hidden;background:#f4efe8;box-shadow:0 0 0 2px #fff,0 2px 4px rgba(0,0,0,.2)}
+.fface svg{width:100%;height:100%;display:block}
+.fbub{position:relative;flex:1;background:#fff;border-radius:12px;padding:7px 12px;font:500 12px var(--ui);line-height:1.4;color:var(--brown);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.fbub::before{content:"";position:absolute;left:-7px;top:50%;margin-top:-7px;border:7px solid transparent;border-right-color:#fff;border-left:0}
+.fline{display:flex;align-items:center;gap:6px;font:500 11.5px var(--ui);color:var(--brown);background:#fff;border-radius:10px;padding:3px 10px 3px 4px;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.rtag{font-style:normal;font:600 8px var(--ui);background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:1px 4px;margin-left:5px}
+.rtag.dark{font-size:10px;background:#fff1dc;border-color:rgba(237,131,36,.5);color:#b85f12;padding:2px 7px;margin-left:8px;text-shadow:none}
+
 /* ---------- overlays ---------- */
 .dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
 .confetti{position:absolute;left:314px;top:0}
@@ -636,6 +645,12 @@ const cost = (n, kind = 'gem') => `${img(kind === 'gem' ? 'gem' : 'coin-sm', 14,
 const FINGER = `<svg class="finger" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M11 27c-3-3-6-6-6-9 0-1.6 1.8-2.2 3-1l2 2V5.5a2 2 0 0 1 4 0V13l1-.3a2 2 0 0 1 2.4 1.2l.3.1a2 2 0 0 1 2.5 1.2 2 2 0 0 1 2.8 1.6V21c0 3-1.5 6-3 6z" fill="#fff" stroke="#3b2a14" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
 
 /* ---------- the player's character ---------- */
+const FOLKS = [
+  {id:'f-mark', shirt:'#7a5a3a', trim:'#5a4028', skin:'#5e3a22', hat:'hair', hatC:'#2a1c10'},
+  {id:'f-june', shirt:'#8e4fb5', trim:'#6a3590', skin:'#7a4a2c', hat:'wrap', hatC:'#e2483b'},
+  {id:'f-brian', shirt:'#3f7fa0', trim:'#2a5a74', skin:'#6b4127', hat:'straw', hatC:'#d9b65e'},
+  {id:'f-vincent', shirt:'#6f7b86', trim:'#4d5660', skin:'#563420', hat:'cap', hatC:'#2f6b3a'},
+];
 const LOOKS = [
   {id:'cap',   shirt:'#3f8f3a', trim:'#2c6b28', skin:'#7a4a2c', hat:'cap',   hatC:'#e9822a', label:'Field cap'},
   {id:'check', shirt:'#d23b3b', trim:'#f3f0ea', skin:'#5b3620', hat:'hair',  hatC:'#1d140c', label:'Check shirt'},
@@ -643,7 +658,7 @@ const LOOKS = [
   {id:'straw', shirt:'#ef8a2b', trim:'#b85f12', skin:'#6b4127', hat:'straw', hatC:'#e2c069', label:'Straw hat'},
 ];
 function charSVG(lookId, pose = 'stand', cls = ''){
-  const L = LOOKS.find(l => l.id === lookId) || LOOKS[0];
+  const L = LOOKS.find(l => l.id === lookId) || FOLKS.find(l => l.id === lookId) || LOOKS[0];
   const arms = pose === 'cheer'
     ? `<rect x="3" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(28 6 26)"/><rect x="31" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(-28 34 26)"/><circle cx="2.5" cy="12" r="3" fill="${L.skin}"/><circle cx="37.5" cy="12" r="3" fill="${L.skin}"/>`
     : `<rect class="armL" x="5" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><rect class="armR" x="29" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><circle cx="8" cy="41" r="2.8" fill="${L.skin}"/><circle cx="32" cy="41" r="2.8" fill="${L.skin}"/>`;
@@ -668,7 +683,7 @@ const faceSVG = look => charSVG(look).replace('viewBox="0 0 40 60"', 'viewBox="5
 /* ---------- farms ---------- */
 const FARMS = [
   {id:1, owner:'Mark', km:10, acres:'1 acre', crop:'maize', lbl:[175,98], box:[105,0,370,142], hub:[60,20,360,180], gate:[233,137]},
-  {id:2, owner:'June', km:14, acres:'2 acres', crop:'maize', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], gate:[630,226]},
+  {id:2, owner:'June', km:14, acres:'2 acres', crop:'maize', lbl:[606,227], box:[598,200,874,382], hub:[535,240,820,402], gate:[630,226]},
   {id:3, owner:'Brian', km:19, acres:'1.5 acres', crop:'maize', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], gate:[226,192]},
   {id:4, owner:'Vincent', km:25, acres:'3 acres', crop:'beans', lbl:[560,86], box:[565,0,775,122], hub:[540,20,815,165], gate:[664,117]},
   {id:5, owner:'', km:31, acres:'2 acres', crop:'maize'},
@@ -760,7 +775,8 @@ const gTime = gm => { const h = Math.floor(gm % 1440 / 60), m = Math.floor(gm % 
 const WIN = {am:[360, 600, 'Morning'], pm:[960, 1200, 'Evening'], day:[360, 1200, 'Today']};
 const partOfDay = gm => { const h = gm % 1440 / 60; return h < 6 ? 'night' : h < 12 ? 'morning' : h < 16 ? 'afternoon' : h < 20 ? 'evening' : 'night'; };
 const UNLOCK_MS = 2 * 3600 * 1000;
-const unlocked = () => S.unlockAt && Date.now() >= S.unlockAt;
+/* Low nutrients and weeds unlock when any farm reaches round 5, or 2 hours after the agent starts. */
+const unlocked = () => (S.unlockAt && Date.now() >= S.unlockAt) || [1,2,3,4].some(id => S.rv[id] && S.rv[id].n >= 4);
 
 /* ---------- care routines: what the agent helps the farmer do after a review ---------- */
 const ACTS = {
@@ -806,12 +822,59 @@ const GOAL = 80;
 
 /* Review content. Every review uses the same four steps; only this data changes.
    problem: what is wrong; sev: how visible (1 = obvious); field: where; hint: guided first time. */
-const FIXED = {
-  2:[{crop:'maize', problem:'water', sev:1, field:1, hint:true}],
-  3:[{crop:'maize', problem:'water', sev:1, field:2, hint:true}],
-  4:[{crop:'beans', problem:'pest', sev:.5, field:0, hint:false}],
-  1:[{crop:'maize', problem:'pest', sev:.45, field:3, hint:false}],
+/* Seven rounds per farm, played back to back (a farm can be checked again 30 seconds after a review).
+   say: what the farmer tells the agent on arrival. The farmer describes what they see; from round 4 on they sometimes guess wrong.
+   Rounds 1 to 4 use water, pests and healthy fields. Low nutrients and weeds arrive from round 5. */
+const ROUNDS = {
+  2:[ // June, maize
+    {problem:'water', sev:1, field:1, hint:true, say:'Welcome! One of my fields looks thirsty. The rains stopped a week ago.'},
+    {problem:'pest', sev:.7, field:2, say:'Something is eating holes in my maize. I found droppings this morning.'},
+    {problem:'healthy', sev:.5, field:0, say:'My maize looks good to me, but my neighbour lost his crop. Can you make sure mine is fine?'},
+    {problem:'water', sev:.5, field:0, say:'In the afternoon heat some leaves roll up tight. Is that normal?'},
+    {problem:'nutrient', sev:.7, field:3, say:'The bottom leaves in one field are going yellow from the tips. I water every day.'},
+    {problem:'weeds', sev:.65, field:1, say:'Pretty pink flowers came up between my maize. The plants there look weak.'},
+    {problem:'pest', sev:.35, field:0, say:'I think they just need more water. They look tired to me.'}],
+  3:[ // Brian, maize
+    {problem:'water', sev:1, field:2, hint:true, say:'My maize is drooping and the soil is as hard as the road.'},
+    {problem:'healthy', sev:.5, field:1, say:'I sprayed last week. I want to know if it worked.'},
+    {problem:'pest', sev:.6, field:1, say:'Caterpillars! I saw one deep in a plant. Are there more?'},
+    {problem:'water', sev:.4, field:3, say:'My tank ran low on Tuesday. I am not sure every field got water.'},
+    {problem:'nutrient', sev:.55, field:0, say:'My maize is short and pale this season. I could not buy fertilizer.'},
+    {problem:'weeds', sev:.5, field:2, say:'My children say new weeds are coming up. I have not had time to look.'},
+    {problem:'nutrient', sev:.35, field:1, say:'I think pests are back. Some leaves have a yellow stripe.'}],
+  4:[ // Vincent, beans
+    {problem:'pest', sev:.5, field:0, say:'Small insects are all over my bean leaves.'},
+    {problem:'water', sev:.7, field:3, say:'My bean leaves are hanging down and turning dull.'},
+    {problem:'healthy', sev:.5, field:2, say:'The first flowers are out! Is everything on track?'},
+    {problem:'pest', sev:.4, field:1, say:'A few leaves have holes in them. Maybe it was the hail?'},
+    {problem:'nutrient', sev:.6, field:2, say:'Some of my beans have turned pale yellow all over.'},
+    {problem:'weeds', sev:.6, field:3, say:'Weeds came up fast after the rain. They are everywhere in one corner.'},
+    {problem:'water', sev:.35, field:0, say:'Everything looks fine to me. Can you check anyway?'}],
+  1:[ // Mark, maize
+    {problem:'pest', sev:.45, field:3, say:'I keep finding chewed leaves near the house.'},
+    {problem:'water', sev:.75, field:0, say:'My furrow got blocked. Water has not reached one of the fields.'},
+    {problem:'healthy', sev:.5, field:3, say:'I want to sell this maize soon. Is it healthy?'},
+    {problem:'pest', sev:.55, field:2, say:'Birds keep pecking at my plants. Something must be living in there.'},
+    {problem:'weeds', sev:.7, field:1, say:'Pink flowers everywhere in one field. Pretty, but my maize is suffering.'},
+    {problem:'nutrient', sev:.5, field:3, say:'The old leaves at the bottom are yellow in a V shape.'},
+    {problem:'healthy', sev:.5, field:0, say:'I followed all your advice. How does it look now?'}],
 };
+const NROUNDS = 7, CHECK_MS = 30 * 1000;
+const round = id => Math.min(S.rv[id].n, NROUNDS);
+const roundTag = id => S.rv[id].n < NROUNDS ? `Round ${S.rv[id].n + 1}/${NROUNDS}` : 'Extra round';
+/* After the 7 rounds, the farmer reports in general terms. */
+const SAY = {water:'Some of my plants look thirsty.', pest:'I keep seeing damage on the leaves.', nutrient:'Part of my crop looks pale.', weeds:'Something is growing between my rows.', healthy:'Things look good. Can you double-check?'};
+/* What the farmer says about each picture as the agent looks at it. */
+const REMARK = {
+  water:{crops:'Look how the plants hang their heads by noon.', signs:'The leaves roll up and feel dry.', land:'The soil cracks open. The furrow was empty this week.', layout:'The tank by the house is nearly empty.'},
+  pest:{crops:'Some plants look torn at the top.', signs:{maize:'Look at the holes. I found droppings deep in the plant.', beans:'Small insects sit under the leaves.'}, land:'The soil seems fine to me.', layout:'It started in one corner of the farm.'},
+  nutrient:{crops:'One field is shorter than the rest.', signs:{maize:'The yellow starts at the tip and runs down the middle.', beans:'The whole leaf has gone pale.'}, land:'I water the same as always.', layout:'I have planted that field every season without a break.'},
+  weeds:{crops:'Those pink flowers came up two weeks ago.', signs:'The weeds grow right up against the roots.', land:'They seem to like the poor soil.', layout:'The flowers are only in one field.'},
+  healthy:{crops:'They all look the same to me.', signs:'The leaves feel strong and green.', land:'We water on Mondays and Thursdays.', layout:'Every field was planted on the same day.'},
+};
+const remark = (sc, part) => { const r = REMARK[sc.problem][part]; return typeof r === 'string' ? r : r[sc.crop === 'beans' ? 'beans' : 'maize']; };
+/* Farmers have their own look. */
+const FOLK = {1:'f-mark', 2:'f-june', 3:'f-brian', 4:'f-vincent'};
 const CALLS = [['healthy','Healthy','leaf'],['water','Needs water','water'],['pest','Pest problem','bug'],['nutrient','Low nutrients','cat-nutrient'],['weeds','Weeds','cat-weed']];
 const callsNow = () => CALLS.filter(c => unlocked() || !['nutrient','weeds'].includes(c[0]));
 const callName = k => CALLS.find(c => c[0] === k)[1];
@@ -822,14 +885,15 @@ const CLUE = {water:['land','See the cracked, dry soil? This field needed water.
   healthy:['crops','These plants are green and upright, so the field was healthy.']};
 
 function reviewFor(id){
-  const r = S.rv[id], fixed = FIXED[id] && FIXED[id][r.n];
-  if (r.ret) return {...r.ret, seed:id * 97 + r.n * 13 + 5, hint:false};
-  if (fixed) return {...fixed, seed:id * 97 + r.n * 13};
+  const r = S.rv[id], fixed = ROUNDS[id] && ROUNDS[id][r.n];
+  if (r.ret) return {...r.ret, seed:id * 97 + r.n * 13 + 5, hint:false, say:`The problem came back. ${SAY[r.ret.problem]}`};
+  if (fixed) return {crop:FARMS[id - 1].crop, hint:false, ...fixed, seed:id * 97 + r.n * 13};
   let s = id * 7919 + r.n * 104729; const R = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
   const probs = ['water','pest','healthy','pest','water'];
-  // Low nutrients and weeds unlock 2 hours after the agent starts.
+  // Low nutrients and weeds are unlocked by round 5 (or 2 hours after the agent starts).
   if (unlocked()) probs.push('nutrient', 'nutrient', ...(FARMS[id - 1].crop === 'beans' ? [] : ['weeds', 'weeds']));
-  return {crop:FARMS[id - 1].crop, problem:probs[Math.floor(R() * probs.length)], sev:.35 + R() * .35, field:Math.floor(R() * 4), seed:id * 97 + r.n * 13, hint:false};
+  const problem = probs[Math.floor(R() * probs.length)];
+  return {crop:FARMS[id - 1].crop, problem, sev:.35 + R() * .35, field:Math.floor(R() * 4), seed:id * 97 + r.n * 13, hint:false, say:SAY[problem]};
 }
 
 /* ---------- other game data ---------- */
@@ -857,7 +921,8 @@ const NAME_IDEAS = ['Amani','Wanjiru','Otieno'];
 
 /* ---------- state ---------- */
 /* next review: 6 am the next game day (about an hour of real time) */
-const tomorrow = () => { if (S && S.clock0) return gTs(Math.floor(gNow() / 1440) * 1440 + 1440 + 360); const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
+const tomorrow = () => Date.now() + CHECK_MS;
+const nextGameMorning = () => { if (S && S.clock0) return gTs(Math.floor(gNow() / 1440) * 1440 + 1440 + 360); const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
 const FRESH = () => ({
   phase:'create', name:'', look:'cap', onboarded:false, pos:[...HUB], t0:0,
   coins:100, gems:40, water:20, reviews:0, passed:0,
@@ -885,7 +950,7 @@ function track(e, data = {}){
 window.wakalaEvents = () => { try { return JSON.parse(localStorage.getItem(EV_KEY) || '[]'); } catch (x) { return []; } };
 
 /* transient UI state */
-let view = 'home', hist = [], ui = {care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {waiting:null, care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
 function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
@@ -909,7 +974,8 @@ function dd(key, value, placeholder, options, iconName){
   return `<div class="dd ${open ? 'open' : ''}"><button data-act="dd" data-k="${key}" aria-expanded="${open}">${iconName ? img(opt && opt[2] ? opt[2] : iconName, 14, 14) : ''}${opt ? `<span>${opt[1]}</span>` : `<span class="ph">${placeholder}</span>`}<i class="car"></i></button>${open ? `<ul>${options.map(o => `<li><button data-act="ddpick" data-k="${key}" data-val="${o[0]}">${iconName ? img(o[2] || iconName, 14, 14) : ''}${o[3] || o[1]}</button></li>`).join('')}</ul>` : ''}</div>`;
 }
 const farmOpts = () => FARMS.slice(0, 4).map(f => [String(f.id), `Farm ${f.id} : ${f.owner}`, 'sprout']);
-const until = ts => { const m = Math.max(1, Math.round((ts - Date.now()) / 60000)); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+const until = ts => { const sec = Math.max(1, Math.ceil((ts - Date.now()) / 1000)); if (sec < 60) return sec + 's'; const m = Math.round(sec / 60); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; };
+const live = ts => `<span data-until="${ts}">${until(ts)}</span>`;
 /* canvases are painted after each render from their data attributes */
 const canvas = (key, part, w, h, extra = '') => `<canvas data-scene="${key}" data-part="${part}" data-w="${w}" data-h="${h}" width="${w}" height="${h}" style="width:${w}px;height:${h}px" ${extra}></canvas>`;
 const scenes = {};
@@ -941,9 +1007,8 @@ const credit = (sc, part) => { const ph = sc && photosFor(sc, part); if (!ph) re
 const rOf = id => S.care.find(r => r.id === +id);
 const core = r => r.steps.filter(x => !x.opt && x.st !== 'skip');
 const recOf = r => { if (!r) return 0; if (r.status === 'done') return 1; const c = core(r), d = c.filter(x => x.st === 'done').length, m = c.filter(x => x.st === 'missed').length; return Math.max(0, Math.min(1, (d - m) / c.length)); };
-const activeFor = id => S.care.find(r => r.farm === id && r.status === 'active');
 function addRoutine(farm, sc, cf){
-  S.care.filter(x => x.farm === farm && x.status === 'active').forEach(x => x.status = 'replaced');
+  S.care.filter(x => x.farm === farm && x.kind === cf.kind && x.status === 'active').forEach(x => x.status = 'replaced');
   const m = gNow(), r = {id:++S.careN, farm, kind:cf.kind, product:cf.product, crop:sc.crop, problem:sc.problem, sev:sc.sev, field:sc.field, title:cf.title, steps:cf.plan(m).map(x => ({...x, st:'todo'})), streak:0, status:'active', at:Date.now()};
   r.steps.forEach((x, i) => { if (x.s <= m) S.notified[r.id + '-' + i] = 1; });
   S.care.push(r); S.care = S.care.slice(-30);
@@ -1057,11 +1122,11 @@ function walkTap(e){
   const path = S.hub > 0 ? [S.pos, [x, y]] : route(S.pos, [x, y]);
   if (path.length < 2) return;
   const nw = makeWalk(path, 90, () => { if (ui.walk === nw){ ui.walk = null; render(); } });
-  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; render();
+  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; ui.waiting = null; render();
 }
 const pathTo = id => { const g = FARMS[id - 1].gate; return S.hub > 0 ? [S.pos, g] : route(S.pos, g); };
 function startWalkTo(id, auto){
-  preload(reviewFor(id));
+  preload(reviewFor(id)); ui.waiting = null;
   ui.walk = makeWalk(pathTo(id), 90, () => arrive(id));
   ui.walk.keepGoing = `Keep going to ${owner(id)}'s farm.`;
   if (auto){ ui.walk.target = ui.walk.L; ui.walk.moved = true; }
@@ -1073,6 +1138,8 @@ function arrive(id){
   if (S.phase === 'walk2'){ S.phase = 'review2'; return openReview(id); }
   if (ui.goTask){ const g = ui.goTask; ui.goTask = null; const r = rOf(g.r); if (r && r.steps[g.i].st === 'todo') return openCare(g.r, g.i, 'task'); }
   if (ready(id)) return openReview(id);
+  // A farm is never more than 30 seconds away from its next round, so the agent waits there.
+  if (S.rv[id].readyAt - Date.now() <= CHECK_MS + 1000){ ui.waiting = id; track('waited_at_farm', {farm:id, sec:Math.ceil((S.rv[id].readyAt - Date.now()) / 1000)}); render(); return; }
   const due = dueNow().find(t => t.r.farm === id);
   if (due) return openCare(due.r.id, due.i, 'task');
   const next = tasks().find(t => t.r.farm === id);
@@ -1101,7 +1168,7 @@ function fog(path, farms, lift){
 const pathSVG = path => `<svg class="wpath" width="874" height="402" aria-hidden="true"><path d="${path.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ')}" fill="none" stroke="rgba(255,230,150,.95)" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/></svg>`;
 const meEl = (x, y, look) => `<div id="me" style="left:${x}px;top:${y}px">${charSVG(look)}</div>`;
 const farmLabel = (f, extra = '', cls = '') => { const s = score(f.id), r = ready(f.id);
-  return `<button class="flabel ${cls}" style="left:${f.lbl[0]}px;top:${f.lbl[1]}px" data-act="walkFarm" data-farm="${f.id}"><span class="a">${img('sprout',14,14)}Farm ${f.id}: ${f.owner} · ${cropName(f.crop)}${r ? '<i class="pinTag">Review ready</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b>${!r ? ` · check in ${until(S.rv[f.id].readyAt)}` : ''}</span>${extra}</button>`; };
+  return `<button class="flabel ${cls}" style="left:${f.lbl[0]}px;top:${f.lbl[1]}px" data-act="walkFarm" data-farm="${f.id}"><span class="a">${img('sprout',14,14)}Farm ${f.id}: ${f.owner} · ${cropName(f.crop)}${S.onboarded ? `<i class="rtag">${roundTag(f.id)}</i>` : ''}${r ? '<i class="pinTag">Ready</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b>${!r ? ` · ready in ${live(S.rv[f.id].readyAt)}` : ''}</span>${extra}</button>`; };
 
 V.home = () => {
   const ph = S.phase;
@@ -1136,6 +1203,7 @@ V.home = () => {
   const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
   w += meEl(p[0], p[1], S.look);
   if (ph === 'free') w += nextChip();
+  if (ui.waiting && ph === 'free' && !ui.walk){ const id = ui.waiting, rv = S.rv[id]; w += `<div class="hint">${owner(id)} is getting ready. ${rv.n < NROUNDS ? `Round ${rv.n + 1} of ${NROUNDS}` : 'Next round'} starts in ${live(rv.readyAt)}</div>`; }
   if (ui.news && ph === 'free'){ w += `<div class="banner news">${esc(ui.news)}</div>`; ui.news = null; }
   if (DEV) w += devGraph();
   return {world:w};
@@ -1151,7 +1219,7 @@ function nextChip(){
   if (id) return `<button class="nextchip" data-act="walkFarm" data-farm="${id}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>Next: review ${owner(id)}'s ${cropName(FARMS[id - 1].crop)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
   const soon = Math.min(...[1,2,3,4].map(i => S.rv[i].readyAt)), nt = tasks()[0];
   if (nt && gTs(nt.x.s) < soon) return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>Next: ${actLine(nt.x.act, nt.r).replace(/^\w/, c => c.toLowerCase())} at ${gTime(nt.x.s)}</b><span>In ${until(gTs(nt.x.s))} · ${thriving()}/4 farms at ${GOAL}+</span></span></button>`;
-  return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>All farms checked. Next review in ${until(soon)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span></button>`;
+  return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>All farms checked. Next review in ${live(soon)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span></button>`;
 }
 
 /* Map view: farm labels, selection and actions */
@@ -1180,8 +1248,8 @@ V.task = () => {
     const f = FARMS[id - 1], r = ready(id), last = S.rv[id].last, key = 'task' + id;
     scenes[key] = last ? {...last.sc} : {...reviewFor(id)};
     return `<div class="row trow">${canvas(key, 'layout', 64, 40, `data-t="${last && last.ok ? 1 : 0}"`)}
-      <div class="col sp" style="gap:2px"><span class="t10">${fname(id)} · ${cropName(f.crop)}</span><span style="font:400 9px var(--ui);opacity:.75">Success score ${score(id)}/100${last ? ` · last review ${last.ok ? 'passed' : 'missed'}` : ''}</span></div>
-      ${r ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button>` : `<span class="tag no" style="font-size:9px">Check in ${until(S.rv[id].readyAt)}</span>`}</div>`; }).join('');
+      <div class="col sp" style="gap:2px"><span class="t10">${fname(id)} · ${cropName(f.crop)} · ${roundTag(id)}</span><span style="font:400 9px var(--ui);opacity:.75">Success score ${score(id)}/100${last ? ` · last review ${last.ok ? 'passed' : 'missed'}` : ''}</span></div>
+      ${r ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button>` : `<span class="tag no" style="font-size:9px">Ready in ${live(S.rv[id].readyAt)}</span>`}</div>`; }).join('');
   return {view:backBtn(163,40) + `<div class="panel" style="left:215px;top:22px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
     <div class="ttl">${img('hdr-task',25,25)}Tasks<span class="clockin">${img('clock',13,13)}Day ${gDay(m)} · ${gTime(m)}</span></div>
     <div class="tscroll">${care}<span class="tsec">Farm reviews</span>${rows}</div>
@@ -1191,10 +1259,17 @@ V.task = () => {
 /* ---------- the review: Look, Spot, Judge, Result ---------- */
 function openReview(id){
   const sc = reviewFor(id);
-  ui.rv = {id, sc, step:'look', seen:[], zoom:null, miss:null, call:null, ok:null, t:0, hint:!!sc.hint, start:Date.now(), wrongSpot:0};
+  ui.rv = {id, sc, step:'look', seen:[], zoom:null, miss:null, call:null, ok:null, t:0, hint:!!sc.hint, start:Date.now(), wrongSpot:0, round:S.rv[id].n};
   scenes.rv = sc;
-  track(S.phase === 'review2' ? 'review2_started' : S.phase === 'retryReview' ? 'retry_review_started' : S.phase === 'review' ? 'review_started' : 'review_started_free', {farm:id, problem:sc.problem});
+  track(S.phase === 'review2' ? 'review2_started' : S.phase === 'retryReview' ? 'retry_review_started' : S.phase === 'review' ? 'review_started' : 'review_started_free', {farm:id, problem:sc.problem, round:S.rv[id].n + 1});
   hist = []; view = 'review'; render();
+}
+/* The farmer's summary of the current issues, shown while the agent looks around. */
+const farmerFace = (id, sz = 34) => `<span class="fface" style="width:${sz}px;height:${sz}px">${faceSVG(FOLK[id])}</span>`;
+function farmerSays(id, sc){
+  const nt = tasks().find(t => t.r.farm === id && !t.x.opt);
+  const plan = nt ? ` We are still on the plan: ${ACTS[nt.x.act].name.toLowerCase()} ${nt.now ? 'is due now' : 'at ' + gTime(nt.x.s)}.` : '';
+  return `<div class="fsay">${farmerFace(id)}<div class="fbub"><b>${owner(id)}:</b> ${esc(sc.say || SAY[sc.problem])}${plan}</div></div>`;
 }
 const STEPS = [['look','Look'],['spot','Spot'],['judge','Judge'],['result','Result'],['care','Care']];
 V.review = () => {
@@ -1204,7 +1279,7 @@ V.review = () => {
   let body = '';
   if (R.step === 'look'){
     const next = PARTS.find(p => !R.seen.includes(p[0]));
-    body = `<p class="rprompt">${R.hint ? `Tap each picture to look closer, ${nm}.` : `Look at each part of ${o}'s farm.`}</p>
+    body = `${farmerSays(id, sc)}<p class="rprompt">${R.hint ? `Tap each picture to look closer, ${nm}.` : `Look at each part of ${o}'s farm.`}</p>
       <div class="parts">${PARTS.map(p => { const seen = R.seen.includes(p[0]), nx = R.hint && next && next[0] === p[0];
         return `<button class="part ${seen ? 'seen' : ''} ${nx ? 'next' : ''}" data-act="zoom" data-p="${p[0]}">${pslot('rv', p[0], 134, 98)}<span>${seen ? '✓ ' : ''}${p[1]}</span>${nx ? FINGER : ''}</button>`; }).join('')}</div>`;
   } else if (R.step === 'spot'){
@@ -1254,11 +1329,12 @@ V.review = () => {
   }
   const zname = R.zoom && PARTS.find(p => p[0] === R.zoom)[1];
   const zoom = R.zoom ? `<div class="zoomfull" role="dialog" aria-label="${zname}"><div class="panel" style="left:157px;top:6px;width:560px"><div class="pin" style="padding:8px 12px 10px">
-      <div class="row" style="margin-bottom:6px"><b class="sp" style="font:600 13px var(--ui)">${zname}</b><button class="zx" data-act="unzoom" aria-label="Close">${X.replace(/#fff/g, '#6b402b')}</button></div>
+      <div class="row" style="margin-bottom:6px;gap:10px"><b style="font:600 13px var(--ui)">${zname}</b><span class="fline sp">${farmerFace(id, 22)}<b>${o}:</b> ${remark(sc, R.zoom)}</span><button class="zx" data-act="unzoom" aria-label="Close">${X.replace(/#fff/g, '#6b402b')}</button></div>
       ${pslot('rv', R.zoom, 522, 280)}
       <div class="row" style="margin-top:8px;gap:10px"><span class="col sp" style="gap:2px"><span style="font:600 12px var(--ui)">${R.hint ? GUIDE[R.zoom] : ''}</span><span class="credit">${credit(sc, R.zoom)}</span></span><button class="btn" style="padding:7px 26px" data-act="unzoom">${R.step === 'look' ? 'Done looking' : 'Close'}</button></div></div></div></div>` : '';
-  const top = R.step === 'look' ? 72 : 8;
-  return {view:`<div class="panel" style="left:104px;top:${top}px;width:666px"><div class="pin rpanel"><div class="row" style="gap:10px"><span class="ttl" style="justify-content:flex-start">${img('hdr-analyze',22,22)}Review ${o}'s ${crop}</span><span class="sp"></span>${steps}</div>${body}</div></div>${zoom}`};
+  const top = R.step === 'look' ? 30 : 8;
+  const rt = R.round < NROUNDS ? `Round ${R.round + 1} of ${NROUNDS}` : 'Extra round';
+  return {view:`<div class="panel" style="left:104px;top:${top}px;width:666px"><div class="pin rpanel"><div class="row" style="gap:10px"><span class="ttl" style="justify-content:flex-start">${img('hdr-analyze',22,22)}Review ${o}'s ${crop}<i class="rtag dark">${rt}</i></span><span class="sp"></span>${steps}</div>${body}</div></div>${zoom}`};
 };
 /* ---------- care tasks: short hands-on actions at the farm ---------- */
 function openCare(rid, i, from){
@@ -1349,6 +1425,11 @@ function animateRecovery(){
   };
   setTimeout(() => requestAnimationFrame(step), 450);
 }
+function roundDone(id){
+  if (S.rv[id].n !== NROUNDS) return;
+  earn(0, 25, 0); logAdd('trophy', `All ${NROUNDS} rounds done at ${fname(id)}. +25 gems.`); track('rounds_complete', {farm:id});
+  if ([1,2,3,4].every(i => S.rv[i].n >= NROUNDS)){ ui.news = `All ${NROUNDS} rounds done on every farm!`; logAdd('trophy', 'Every farm finished all its rounds.'); }
+}
 function judge(call){
   const R = ui.rv, sc = R.sc, ok = call === sc.problem, id = R.id;
   R.call = call; R.ok = ok; R.step = 'result';
@@ -1356,7 +1437,7 @@ function judge(call){
   rv.last = {sc:{...sc}, ok, at:Date.now()};
   track(S.phase === 'review2' ? 'review2_result' : 'review_result', {farm:id, ok, call, problem:sc.problem, sec_in_review:Math.round((Date.now() - R.start) / 1000)});
   if (ok){
-    S.passed++; rv.n++; delete rv.ret;
+    S.passed++; rv.n++; delete rv.ret; roundDone(id);
     R.cf = careFor(sc);
     if (R.cf){ let k = sc.seed; R.opts = R.cf.opts.slice().sort(() => ((k = (k * 9301 + 49297) % 233280) / 233280) - .5); R.tried = []; R.lesson = null; R.rid = null; R.tries = 0; }
     const diff = 1 - sc.sev; R.reward = {c:Math.round(80 + 120 * diff), g:Math.round(10 + 20 * diff), w:10};
@@ -1365,6 +1446,7 @@ function judge(call){
   } else {
     logAdd('hdr-task', `Reviewed ${fname(id)}: the farm needed ${sc.problem === 'healthy' ? 'nothing' : callName(sc.problem).toLowerCase()}.`);
   }
+  if (S.onboarded && !ok){ rv.n++; delete rv.ret; roundDone(id); }
   if (S.onboarded || ok){ rv.readyAt = tomorrow(); }
   render(); if (ok && !R.cf) animateRecovery();
 }
@@ -1394,13 +1476,14 @@ function hookOverlay(){
       ${pslot('hook', ACTS[x.act].part, 300, 150, `data-t="${recOf(r)}"`, {single:1, t:recOf(r)})}
       <p class="rline" style="margin:0;max-width:340px">${owner(r.farm)}'s ${cropName(r.crop)} ${NEEDS[x.act]} ${same ? 'this ' + partOfDay(x.s) : partOfDay(x.s) === 'morning' && gDay(x.s) === gDay(gNow()) + 1 ? 'tomorrow morning' : 'on day ' + gDay(x.s)}, ${esc(agentName())}.</p>
       <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}${gTime(x.s)} game time · in about ${until(gTs(x.s))}</span>
-      <div class="row" style="gap:8px">${canRemind ? `<button class="btn soft" style="padding:7px 16px" data-act="remindOn">Remind me</button>` : ''}<button class="btn" style="padding:7px 30px" data-act="hookDone">See you then</button></div></div></div>`;
+      <span class="credit" style="font-size:10px;opacity:.8">Meanwhile, every farm has ${NROUNDS} rounds to play. Each farm is ready again 30 seconds after a review.</span>
+      <div class="row" style="gap:8px">${canRemind ? `<button class="btn soft" style="padding:7px 16px" data-act="remindOn">Remind me</button>` : ''}<button class="btn" style="padding:7px 30px" data-act="hookDone">Keep going</button></div></div></div>`;
   }
   const id = HOOK, f = FARMS[id - 1];
   scenes.hook = {...reviewFor(id)};
   return `<div class="dimmer"></div><div class="panel" style="left:242px;top:58px;width:390px" role="dialog" aria-label="See you tomorrow"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
     ${canvas('hook', 'layout', 300, 150, 'data-t="0"')}
-    <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} will be ready to check tomorrow, ${esc(agentName())}.</p>
+    <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} will be ready to check soon, ${esc(agentName())}.</p>
     <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}Ready in ${until(S.rv[id].readyAt)}</span>
     <button class="btn" style="padding:7px 36px" data-act="hookDone">See you tomorrow</button></div></div>`;
 }
@@ -1437,7 +1520,7 @@ V.farms = () => {
       <span style="font:600 11px var(--ui);margin-top:4px">${f.owner ? f.owner + "'s Farm" : 'Wakala Farm'}</span>
       <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${cropName(f.crop)}</span>
       <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A ${f.acres} ${cropName(f.crop)} farm. Review it to keep its crops healthy and its score rising.</span>
-      ${!fs ? `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>` : ready(f.id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${f.id}">Review this farm</button>` : `<button class="btn wide ghost" tabindex="-1">Ready in ${until(S.rv[f.id].readyAt)}</button>`}</div>`
+      ${!fs ? `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>` : ready(f.id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${f.id}">Review this farm</button>` : `<button class="btn wide ghost" tabindex="-1">Ready in ${live(S.rv[f.id].readyAt)}</button>`}</div>`
     : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span>${tag}</button>`).join('')}</div>`;
   return {view:`<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
     `<div class="panel thin" style="left:262px;top:48px;width:348px"><div class="pin" style="padding:6px"><div class="row" style="border:1px solid rgba(107,64,43,.15);border-radius:8px;padding:6px 8px;gap:0">
@@ -1699,7 +1782,8 @@ const ACT = {
   walkFarm: d => {
     const id = +d.farm;
     if (S.phase === 'walk2'){ if (id !== SECOND){ toast(`Start with ${owner(SECOND)}'s beans, ${agentName()}.`); return; } ui.walk.target = ui.walk.L; if (!ui.walk.moved){ ui.walk.moved = true; ui.walk.firstMove(); } return; }
-    if (!ready(id)){ toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); return; }
+    // Walk there anyway: a farm is ready again 30 seconds after its last review.
+    if (!ready(id) && S.phase !== 'free'){ toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); return; }
     startWalkTo(id, true);
   },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
@@ -1737,7 +1821,7 @@ const ACT = {
       if (ph === 'review' || ph === 'retryReview'){
         // First review passed: onboarding is done for good.
         S.onboarded = true; S.phase = 'walk2'; S.pos = [...FARMS[R.id - 1].gate];
-        S.rv[RETRY].n = Math.max(1, S.rv[RETRY].n); S.rv[FIRST].n = Math.max(1, S.rv[FIRST].n);
+        S.rv[FIRST].n = Math.max(1, S.rv[FIRST].n);
         S.rv[RETRY].readyAt = tomorrow(); S.rv[HOOK].readyAt = tomorrow(); S.rv[FIRST].readyAt = tomorrow();
         ui.rv = null; ui.walk = null; ui.unlockAnim = true; view = 'home'; hist = [];
         track('map_unlocked'); render(); setTimeout(() => { ui.unlockAnim = false; }, 2600); return;
@@ -1751,7 +1835,7 @@ const ACT = {
     if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = [...FARMS[R.id - 1].gate]; S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
     S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; render();
   },
-  hookDone: () => { ui.overlay = null; track('session_closed'); render(); toast(`See you soon, ${agentName()}.`); },
+  hookDone: () => { ui.overlay = null; track('session_closed'); render(); },
   credits: () => { ui.overlay = 'credits'; render(); },
   remindOn: () => {
     if (!('Notification' in window)){ toast('This browser cannot show reminders. Keep the game open to get them as messages.'); return; }
@@ -1896,7 +1980,17 @@ function fit(){
 addEventListener('resize', () => { fit(); paint(); }); fit();
 
 /* the game clock ticks: missed tasks, reminders and unlocks */
-setInterval(() => { if (careTick()){ save(); if (['home','task','settings'].includes(view) && !ui.overlay) render(); } else clockChip(); if (view === 'home' && S.phase === 'free' && !ui.walk){ const c = stage.querySelector('.nextchip'); if (c && !document.hidden) { const tmp = document.createElement('div'); tmp.innerHTML = nextChip(); c.replaceWith(tmp.firstElementChild); } } }, 5000);
+let readyKey = '';
+setInterval(() => {
+  if (ui.waiting && (ui.walk || view !== 'home')) ui.waiting = null;
+  if (ui.waiting && ready(ui.waiting) && !ui.overlay){ const id = ui.waiting; ui.waiting = null; return openReview(id); }
+  const rk = [1,2,3,4].map(id => +ready(id)).join('');
+  const changed = careTick();
+  if (changed) save();
+  if ((changed || rk !== readyKey) && ['home','map','task','settings','farms'].includes(view) && !ui.overlay){ readyKey = rk; render(); return; }
+  readyKey = rk; clockChip();
+  stage.querySelectorAll('[data-until]').forEach(e => { e.textContent = until(+e.dataset.until); });
+}, 1000);
 if (!S.clock0 && S.phase !== 'create'){ S.clock0 = Date.now(); S.unlockAt = Date.now() + UNLOCK_MS; }
 careTick();
 
