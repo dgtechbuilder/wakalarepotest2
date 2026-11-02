@@ -723,7 +723,7 @@ const PH = {
   maizeField:{src:CM + 'd/de/Maize_plantation.jpg/960px-Maize_plantation.jpg', f:'Maize_plantation.jpg', by:'Chebasa 3069', lic:'CC BY-SA 4.0'},
   maizeField2:{src:CM + '2/20/Maize_Planation.jpg/960px-Maize_Planation.jpg', f:'Maize_Planation.jpg', by:'Samuel Kiongo', lic:'CC BY-SA 4.0'},
   maizeLeaf:{src:CM + '3/3a/Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_%2822735175163%29.jpg/960px-Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_%2822735175163%29.jpg', f:'Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_(22735175163).jpg', by:'Forest and Kim Starr', lic:'CC BY 2.0'},
-  maizeDry:{src:CM + '6/67/Maize_farming_in_drought_areas.jpg/960px-Maize_farming_in_drought_areas.jpg', f:'Maize_farming_in_drought_areas.jpg', by:'Hannahlongole', lic:'CC BY-SA 4.0', fit:'scale(2.7)', origin:'100% 65%'},
+  maizeDry:{src:CM + '6/67/Maize_farming_in_drought_areas.jpg/960px-Maize_farming_in_drought_areas.jpg', f:'Maize_farming_in_drought_areas.jpg', by:'Hannahlongole', lic:'CC BY-SA 4.0', fit:'scale(2.7)', origin:'100% 65%', pos:'100% 50%'},
   soilDry:{src:CM + '7/74/Cracked_Earth_%28Unsplash%29.jpg/960px-Cracked_Earth_%28Unsplash%29.jpg', f:'Cracked_Earth_(Unsplash).jpg', by:'Dan Gold', lic:'CC0', clue:[.5,.5,.4]},
   soilWet:{src:'https://upload.wikimedia.org/wikipedia/commons/f/fc/Flood_irrigation_1.jpg', f:'Flood_irrigation_1.jpg', by:'abhiriksh', lic:'CC BY-SA 3.0'},
   fawWhorl:{src:CM + 'a/a6/Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg/960px-Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg', f:'Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg', by:'Wee Hong', lic:'CC BY-SA 4.0', clue:[.47,.58,.2]},
@@ -922,7 +922,7 @@ function paint(){
 }
 
 /* ---------- photos in the review: a real photo over the drawn picture (the drawing shows if the photo can't load) ---------- */
-const pimg = (k, pos, cls = '', op) => { const p = PH[k]; return `<span class="pwrap ${cls}" style="${pos}${op != null ? `;opacity:${op}` : ''}"><img src="${p.src}" alt="" draggable="false" referrerpolicy="no-referrer" onerror="this.parentNode.remove()" style="${p.fit ? `transform:${p.fit};transform-origin:${p.origin}` : ''}"></span>`; };
+const pimg = (k, pos, cls = '', op) => { const p = PH[k]; return `<span class="pwrap ${cls}" style="${pos}${op != null ? `;opacity:${op}` : ''}"><img src="${p.src}" alt="" draggable="false" referrerpolicy="no-referrer" onerror="this.parentNode.remove()" style="${p.pos ? `object-position:${p.pos};` : ''}${p.fit ? `transform:${p.fit};transform-origin:${p.origin}` : ''}"></span>`; };
 function pslot(key, part, w, h, extra = '', o = {}){
   const sc = scenes[key], ph = sc && !o.draw && photosFor(sc, part), cv = canvas(key, part, w, h, extra);
   if (!ph) return o.clue ? canvas(key, part, w, h, extra + ' data-clue="1"') : cv;
