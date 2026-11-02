@@ -1124,13 +1124,19 @@ function walkTap(e){
   const nw = makeWalk(path, 90, () => { if (ui.walk === nw){ ui.walk = null; render(); } });
   nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; ui.waiting = null; render();
 }
-const pathTo = id => { const g = FARMS[id - 1].gate; return S.hub > 0 ? [S.pos, g] : route(S.pos, g); };
-function startWalkTo(id, auto){
-  preload(reviewFor(id)); ui.waiting = null;
+/* Where the agent stands to check a farm. The upgraded hub maps have no traced roads, so the agent walks straight to the farm there. */
+const onHubMap = () => S.hub > 0 && S.onboarded && view !== 'map';
+const gateOf = id => { if (!onHubMap()) return FARMS[id - 1].gate; const b = FARMS[id - 1].hub; return [Math.round((b[0] + b[2]) / 2), Math.round((b[1] + b[3]) / 2 + 12)]; };
+const pathTo = id => onHubMap() ? [S.pos, gateOf(id)] : route(S.pos, gateOf(id));
+/* Clicking a farm (Home, Map, Task or Farms screen) walks the agent there; on arrival the review opens. stay = keep the current screen (the Map). */
+function startWalkTo(id, auto, stay){
+  preload(reviewFor(id)); ui.waiting = null; ui.overlay = null;
+  if (!stay){ hist = []; view = 'home'; }
   ui.walk = makeWalk(pathTo(id), 90, () => arrive(id));
   ui.walk.keepGoing = `Keep going to ${owner(id)}'s farm.`;
   if (auto){ ui.walk.target = ui.walk.L; ui.walk.moved = true; }
-  hist = []; view = 'home'; render();
+  track('walk_to_farm', {farm:id, from:stay ? view : 'home'});
+  render();
 }
 function arrive(id){
   ui.walk = null;
@@ -1227,9 +1233,13 @@ V.map = () => {
   const sel = S.sel, f = FARMS[(sel || 2) - 1];
   let w = '';
   if (sel){ const b = f.box; w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`; }
-  w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="selFarm" data-farm="${x.id}" aria-label="Select ${fname(x.id)}"></button>`).join('');
-  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => farmLabel(x).replace('data-act="walkFarm"', 'data-act="selFarm"')).join('');
-  w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${sel ? f.acres + ' · tap an action below' : 'Tap a farm to select it'}</span></div>`;
+  w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="mapFarm" data-farm="${x.id}" aria-label="Walk to ${fname(x.id)}"></button>`).join('');
+  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => farmLabel(x).replace('data-act="walkFarm"', 'data-act="mapFarm"')).join('');
+  if (ui.walk) w += pathSVG(ui.walk.path);
+  const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
+  w += meEl(p[0], p[1], S.look);
+  const going = ui.walk && sel ? `walking there now` : ui.waiting === sel && sel ? `getting ready: round starts in ${live(S.rv[sel].readyAt)}` : sel ? f.acres + ' · tap an action below' : 'Tap a farm to walk there';
+  w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${going}</span></div>`;
   const acts = [['review','Review','act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
   w += `<div class="actbar">${acts.map(a => `<button class="act" data-act="farmAct" data-a="${a[0]}">${img(a[2],32,32)}<span>${a[1]}</span></button>`).join('')}</div>`;
   return {world:w + nextChip()};
@@ -1787,9 +1797,14 @@ const ACT = {
     startWalkTo(id, true);
   },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
+  mapFarm: d => {
+    const id = +d.farm; S.sel = id;
+    if (S.phase !== 'free'){ render(); return; }
+    startWalkTo(id, true, true);
+  },
   farmAct: d => {
     const id = S.sel || 2;
-    if (d.a === 'review') return ACT.walkFarm({farm:id});
+    if (d.a === 'review') return S.phase === 'free' ? startWalkTo(id, true, true) : ACT.walkFarm({farm:id});
     if (d.a === 'route') go('route');
     if (d.a === 'calendar') go('calendar');
     if (d.a === 'quote'){ S.shopTab = 'loans'; S.loanTab = 'calc'; ui.calc.farm = String(Math.min(id, 4)); go('shop'); }
@@ -1820,20 +1835,20 @@ const ACT = {
     if (R.ok){
       if (ph === 'review' || ph === 'retryReview'){
         // First review passed: onboarding is done for good.
-        S.onboarded = true; S.phase = 'walk2'; S.pos = [...FARMS[R.id - 1].gate];
+        S.onboarded = true; S.phase = 'walk2'; S.pos = gateOf(R.id);
         S.rv[FIRST].n = Math.max(1, S.rv[FIRST].n);
         S.rv[RETRY].readyAt = tomorrow(); S.rv[HOOK].readyAt = tomorrow(); S.rv[FIRST].readyAt = tomorrow();
         ui.rv = null; ui.walk = null; ui.unlockAnim = true; view = 'home'; hist = [];
         track('map_unlocked'); render(); setTimeout(() => { ui.unlockAnim = false; }, 2600); return;
       }
-      if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; ui.overlay = 'hook'; S.pos = [...FARMS[R.id - 1].gate]; view = 'home'; track('return_hook_shown', {after:'pass'}); render(); return; }
-      S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; hist = []; render(); return;
+      if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; ui.overlay = 'hook'; S.pos = gateOf(R.id); view = 'home'; track('return_hook_shown', {after:'pass'}); render(); return; }
+      S.pos = gateOf(R.id); ui.rv = null; view = 'home'; hist = []; render(); return;
     }
     // wrong call
-    if (ph === 'review'){ S.retryUsed = true; S.phase = 'retryWalk'; S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; ui.walk = null; view = 'home'; track('retry_started'); render(); return; }
+    if (ph === 'review'){ S.retryUsed = true; S.phase = 'retryWalk'; S.pos = gateOf(R.id); ui.rv = null; ui.walk = null; view = 'home'; track('retry_started'); render(); return; }
     if (ph === 'retryReview'){ track('retry_review_again'); return openReview(RETRY); }
-    if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = [...FARMS[R.id - 1].gate]; S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
-    S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; render();
+    if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = gateOf(R.id); S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
+    S.pos = gateOf(R.id); ui.rv = null; view = 'home'; render();
   },
   hookDone: () => { ui.overlay = null; track('session_closed'); render(); },
   credits: () => { ui.overlay = 'credits'; render(); },
@@ -1854,7 +1869,7 @@ const ACT = {
   doTask: d => {
     const r = rOf(d.r), i = +d.i; if (!r || r.steps[i].st !== 'todo'){ render(); return; }
     if (S.phase !== 'free' || S.hub > 0) return openCare(r.id, i, 'task');
-    const g = FARMS[r.farm - 1].gate;
+    const g = gateOf(r.farm);
     if (Math.hypot(S.pos[0] - g[0], S.pos[1] - g[1]) < 6) return openCare(r.id, i, 'task');
     ui.goTask = {r:r.id, i}; ui.overlay = null; startWalkTo(r.farm, true);
   },
@@ -1982,7 +1997,7 @@ addEventListener('resize', () => { fit(); paint(); }); fit();
 /* the game clock ticks: missed tasks, reminders and unlocks */
 let readyKey = '';
 setInterval(() => {
-  if (ui.waiting && (ui.walk || view !== 'home')) ui.waiting = null;
+  if (ui.waiting && (ui.walk || (view !== 'home' && view !== 'map'))) ui.waiting = null;
   if (ui.waiting && ready(ui.waiting) && !ui.overlay){ const id = ui.waiting; ui.waiting = null; return openReview(id); }
   const rk = [1,2,3,4].map(id => +ready(id)).join('');
   const changed = careTick();

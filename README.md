@@ -31,11 +31,12 @@ python3 -m http.server 8000
 
 **After that**
 
+- **Click a farm to visit it.** Click any farm (or its label) on the Home screen or the Map, and the agent walks there along the roads and the farm's review opens on arrival. If the farm's next round isn't ready yet, the agent waits there and the review starts on its own (never more than 30 seconds). The Task and Farms screens' Review buttons do the same. On the Map the agent walks on the map itself, so the farm actions stay in reach.
 - **7 rounds per farm, back to back.** Every farm has 7 written rounds and can be checked again 30 seconds after a review. Labels count down; if you arrive early, the agent waits and the round starts on its own. After round 7, rounds are random.
 - **Problems to spot:** needs water, pests and healthy fields from the start; low nutrients and weeds from round 5 on any farm (or 2 hours after you start).
 - **Farmers talk:** on arrival the farmer sums up what they have seen, and comments on each picture. From round 4 they sometimes guess wrong.
 - **Care routines on a game clock:** 1 game day = 1 real hour, with morning and evening windows. Tasks are hands-on: hold to water or spray, tap off pests, hoe weeds, add CAN fertilizer, mulch. Spraying needs the safety kit and the right product (generic names: emamectin benzoate, lambda-cyhalothrin). Missed tasks set a field back; 3 misses in a row bring the problem back. The Task screen lists Due now, Later and Missed.
-- **Walking:** tap anywhere on the map to walk the roads (shortest route). Open with `?dev` to see the traced road graph.
+- **Walking:** tap anywhere on the Home map to walk the roads (shortest route); a new tap changes course. Open with `?dev` to see the traced road graph. After a storage upgrade the hub maps have no traced roads, so the agent walks straight to the farm there.
 - **Reminders:** messages in the game, and browser notifications while the game is open in a background tab (turn on in Settings).
 - **Real photos:** reviews use photos from Wikimedia Commons, with the drawn picture as a fallback. Credits are in Settings.
 
@@ -50,6 +51,7 @@ python3 tools/playtest/fs.py right      # first session, right answers (HUMAN=1 
 python3 tools/playtest/fs.py wrong      # first session with a wrong call and the retry
 python3 tools/playtest/free.py          # road walking, tasks, spraying, misses, settings
 python3 tools/playtest/rounds.py        # all 7 rounds on every farm, back to back
+python3 tools/playtest/clicks.py        # click each farm on Home, Map and a hub map: the agent walks there and the review opens
 ```
 
 Screenshots go to `tools/playtest/out/`.
