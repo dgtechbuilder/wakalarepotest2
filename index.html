@@ -651,14 +651,14 @@ const FOLKS = [
   {id:'f-brian', shirt:'#3f7fa0', trim:'#2a5a74', skin:'#6b4127', hat:'straw', hatC:'#d9b65e'},
   {id:'f-vincent', shirt:'#6f7b86', trim:'#4d5660', skin:'#563420', hat:'cap', hatC:'#2f6b3a'},
 ];
+/* The two player characters are painted art (assets/agent-girl.png, assets/agent-boy.png), not drawn shapes. */
 const LOOKS = [
-  {id:'cap',   shirt:'#3f8f3a', trim:'#2c6b28', skin:'#7a4a2c', hat:'cap',   hatC:'#e9822a', label:'Field cap'},
-  {id:'check', shirt:'#d23b3b', trim:'#f3f0ea', skin:'#5b3620', hat:'hair',  hatC:'#1d140c', label:'Check shirt'},
-  {id:'wrap',  shirt:'#2f7fc0', trim:'#1e5d92', skin:'#8a5634', hat:'wrap',  hatC:'#f2b53b', label:'Head wrap'},
-  {id:'straw', shirt:'#ef8a2b', trim:'#b85f12', skin:'#6b4127', hat:'straw', hatC:'#e2c069', label:'Straw hat'},
+  {id:'girl', img:'agent-girl', label:'Girl'},
+  {id:'boy',  img:'agent-boy',  label:'Boy'},
 ];
 function charSVG(lookId, pose = 'stand', cls = ''){
   const L = LOOKS.find(l => l.id === lookId) || FOLKS.find(l => l.id === lookId) || LOOKS[0];
+  if (L.img) return `<svg class="ch ${cls}" viewBox="0 0 40 60" aria-hidden="true"><ellipse cx="20" cy="58" rx="12" ry="2.2" fill="rgba(0,0,0,.28)"/><image href="${A(L.img)}" x="0" y="0" width="40" height="60" preserveAspectRatio="xMidYMax meet"/></svg>`;
   const arms = pose === 'cheer'
     ? `<rect x="3" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(28 6 26)"/><rect x="31" y="12" width="6" height="15" rx="3" fill="${L.shirt}" transform="rotate(-28 34 26)"/><circle cx="2.5" cy="12" r="3" fill="${L.skin}"/><circle cx="37.5" cy="12" r="3" fill="${L.skin}"/>`
     : `<rect class="armL" x="5" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><rect class="armR" x="29" y="26" width="6" height="15" rx="3" fill="${L.shirt}"/><circle cx="8" cy="41" r="2.8" fill="${L.skin}"/><circle cx="32" cy="41" r="2.8" fill="${L.skin}"/>`;
@@ -678,7 +678,7 @@ function charSVG(lookId, pose = 'stand', cls = ''){
     <path d="${pose === 'cheer' ? 'M16 18.5q4 4.2 8 0z' : 'M17 19q3 2 6 0'}" fill="${pose === 'cheer' ? '#fff' : 'none'}" stroke="#1b120b" stroke-width="1.1" stroke-linecap="round"/>
     ${hats[L.hat]}</svg>`;
 }
-const faceSVG = look => charSVG(look).replace('viewBox="0 0 40 60"', 'viewBox="5 1 30 30"');
+const faceSVG = look => charSVG(look).replace('viewBox="0 0 40 60"', LOOKS.some(l => l.id === look) ? 'viewBox="7 0 28 28"' : 'viewBox="5 1 30 30"');
 
 /* ---------- farms ---------- */
 const FARMS = [
@@ -924,7 +924,7 @@ const NAME_IDEAS = ['Amani','Wanjiru','Otieno'];
 const tomorrow = () => Date.now() + CHECK_MS;
 const nextGameMorning = () => { if (S && S.clock0) return gTs(Math.floor(gNow() / 1440) * 1440 + 1440 + 360); const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
 const FRESH = () => ({
-  phase:'create', name:'', look:'cap', onboarded:false, pos:[...HUB], t0:0,
+  phase:'create', name:'', look:'girl', onboarded:false, pos:[...HUB], t0:0,
   coins:100, gems:40, water:20, reviews:0, passed:0,
   farms:{1:{score:45}, 2:{score:52}, 3:{score:58}, 4:{score:61}},
   rv:{1:{n:0, readyAt:0, last:null}, 2:{n:0, readyAt:0, last:null}, 3:{n:0, readyAt:0, last:null}, 4:{n:0, readyAt:0, last:null}},
@@ -937,6 +937,7 @@ const FRESH = () => ({
 const SAVE_KEY = 'wakala-save-v3';
 let S;
 try { S = Object.assign(FRESH(), JSON.parse(localStorage.getItem(SAVE_KEY) || '{}')); } catch (e) { S = FRESH(); }
+if (!LOOKS.some(l => l.id === S.look)) S.look = LOOKS[0].id; /* saves from before the Girl/Boy characters */
 const save = () => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) {} };
 
 /* Event log for playtests: one entry per first-session moment, timed from the start. */

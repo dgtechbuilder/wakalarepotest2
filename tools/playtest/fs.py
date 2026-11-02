@@ -17,7 +17,7 @@ async def main():
     async def tapstage(x,y):  # tap at stage coords
       box=await pg.locator('#stage').bounding_box(); await pg.mouse.click(box['x']+x*box['width']/874, box['y']+y*box['height']/402)
     await pg.goto(URL); await pg.wait_for_timeout(500); await shot('create')
-    await think(pg,4); await pg.click('[data-n="Amani"]'); await think(pg,3); await pg.click('[data-l="wrap"]'); await think(pg,2); await pg.wait_for_timeout(150); await shot('create-picked')
+    await think(pg,4); await pg.click('[data-n="Amani"]'); await think(pg,3); await pg.click('[data-l="boy"]'); await think(pg,2); await pg.wait_for_timeout(150); await shot('create-picked')
     await pg.click('[data-act="createDone"]'); await pg.wait_for_timeout(300); await shot('walk-start')
     async def walk(target):
       for i in range(40):

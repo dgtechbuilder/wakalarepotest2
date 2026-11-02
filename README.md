@@ -8,6 +8,7 @@ A playable web recreation of the **29 Oct Wakala Game** Figma design: a farm-age
 
 - `index.html`: the whole game (HTML, CSS and vanilla JavaScript, no build step)
 - `assets/`: art exported from the Figma file (backgrounds, icons, characters)
+  - `agent-girl.png` and `agent-boy.png` are the two player characters
 - `tools/build_standalone.py`: builds a single-file copy with every asset embedded (`dist/wakala-game.html`)
 - `tools/playtest/`: Playwright playtests (see below)
 
@@ -23,7 +24,7 @@ python3 -m http.server 8000
 
 **First session (about 2.5 minutes)**
 
-1. **Create your agent:** pick a name and a look.
+1. **Create your agent:** pick a name and a character (Girl or Boy).
 2. **Walk to June's farm** along the dirt roads.
 3. **Review the farm:** June tells you what she has noticed. Look at the crops, a leaf up close, the soil and water, and the whole farm from above. Spot the field that looks wrong and say what it needs.
 4. **Plan the care and do the first task:** pick the right fix (a wrong pick costs coins and teaches a lesson), then hold to water.
