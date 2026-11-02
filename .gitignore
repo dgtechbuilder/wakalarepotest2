@@ -1,0 +1,3 @@
+tools/playtest/out/
+__pycache__/
+dist/
