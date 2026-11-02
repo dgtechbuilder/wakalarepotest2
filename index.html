@@ -298,6 +298,49 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .trow canvas{border-radius:4px;flex:none}
 @media (prefers-reduced-motion:reduce){.finger,.part.next,.wpath path,.cheer .ch,.banner,.flabel.pop,#me.walking .ch,#me.walking .legL,#me.walking .legR{animation:none!important}.fog.lift{animation-duration:.01s}}
 
+/* ---------- photos, clock and care ---------- */
+.pslot{position:relative;display:block;overflow:hidden;border-radius:6px;flex:none;background:#c9dcae}
+.pslot canvas{position:absolute;left:0;top:0}
+.pwrap{position:absolute;top:0;height:100%;overflow:hidden}
+.pwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.pwrap.heal{transition:opacity 1.6s ease}
+.pdiv{position:absolute;left:calc(50% - 2px);top:0;width:4px;height:100%;background:#6b4a2b}
+.pclue{position:absolute;inset:0;width:100%;height:100%}
+.pslot.wet::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(79,163,212,.0),rgba(79,163,212,.45));animation:wet .5s ease-in-out infinite alternate}
+@keyframes wet{to{opacity:.5}}
+.credit{font:500 8.5px var(--ui);color:var(--brown);opacity:.65}
+.credit a,.trow a{color:inherit}
+.clockchip{position:absolute;left:26px;top:80px;display:flex;align-items:center;gap:5px;padding:3px 9px 3px 5px;border-radius:10px;border:1px solid rgba(255,255,255,.55);background:rgba(30,18,6,.62);color:#fff;font:500 10px var(--ui);pointer-events:auto;text-shadow:1px 1px 0 #000}
+.clockchip b{font-weight:700}
+.clockchip .sun{width:12px;height:12px;border-radius:50%;background:#ffd34d;box-shadow:0 0 6px #ffd34d}
+.clockchip .sun.evening{background:#ff9a3d;box-shadow:0 0 6px #ff9a3d}
+.clockchip .sun.night{background:#dfe6ff;box-shadow:inset -4px -1px 0 #4a5a8a}
+.clockchip .due{font-style:normal;font:700 9px var(--ui);background:#e5484d;border-radius:8px;padding:0 5px;margin-left:2px}
+.clockin{display:inline-flex;align-items:center;gap:4px;margin-left:auto;font:500 10px var(--ui);color:var(--brown);opacity:.8}
+.tscroll{display:flex;flex-direction:column;gap:5px;max-height:318px;overflow:auto;padding-right:2px}
+.tsec{font:700 9.5px var(--ui);color:var(--orange-line,#b85f12);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.tnone{font:400 10px var(--ui);opacity:.7;padding:2px 8px}
+.calls.tight{gap:5px}.calls.tight .call{padding:6px 12px;font-size:12.5px}
+.call.tried{opacity:.5}
+.call.on{border-color:var(--green);background:#eef6dc}
+.call .ok{font-style:normal;margin-left:auto;color:var(--green);font-weight:700}
+.lesson{display:flex;gap:6px;align-items:flex-start;margin:0;padding:6px 9px;border-radius:8px;background:#fff3ef;font:500 11px var(--ui);line-height:1.4;color:var(--brown)}
+.rcard{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-radius:10px;background:#fff7ea;border:1.5px solid rgba(107,64,43,.16);font:500 10.5px var(--ui);color:var(--brown)}
+.rcard b{font:700 12px var(--ui)}
+.carephoto{position:relative;flex:none}
+.tgt{position:absolute;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;border:2px solid #fff;background:rgba(229,72,77,.35);display:grid;place-items:center;box-shadow:0 0 0 3px rgba(229,72,77,.35);animation:glowPulse 1.2s ease-in-out infinite}
+.tgt.row-t{left:50%;width:300px;height:30px;border-radius:8px;background:rgba(201,164,106,.55);font:700 11px var(--ui);color:#fff;text-shadow:1px 1px 0 #000}
+.count{font:600 12px var(--ui);color:var(--brown)}
+.kit{display:flex;flex-direction:column;gap:6px}
+.holdbtn{position:relative;overflow:hidden;border:2px solid var(--orange-line,#b85f12);border-radius:14px;background:#fff7ea;padding:14px 18px;font:700 14px var(--ui);color:var(--brown);touch-action:none;user-select:none;-webkit-user-select:none}
+.holdbtn i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(#7cc3e6,#2f7fb5);opacity:.55}
+.holdbtn span{position:relative;display:flex;align-items:center;justify-content:center;gap:8px}
+.dots{display:flex;gap:5px}.dots i{width:14px;height:14px;border-radius:50%;background:rgba(107,64,43,.15)}
+.dots i.done{background:var(--green)}.dots i.missed{background:#e5484d}
+.pthumb{width:48px;height:34px;border-radius:4px;overflow:hidden;flex:none;background:#c9dcae}.pthumb img{width:100%;height:100%;object-fit:cover}
+.banner.news{top:120px;font-size:15px}
+@media (prefers-reduced-motion:reduce){.tgt,.pslot.wet::after{animation:none!important}}
+
 /* ---------- overlays ---------- */
 .dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
 .confetti{position:absolute;left:314px;top:0}
@@ -325,6 +368,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
         <div class="rpill" id="rGems"><div class="bar"><i style="width:30px;background:#cb89e8"></i><b>8</b></div><img data-src="gem" alt="Gems"></div>
         <div class="rpill" id="rWater"><div class="bar"><i style="width:52px;background:var(--blue)"></i><b>20</b></div><img data-src="water" alt="Water"></div>
       </div>
+      <button class="clockchip" id="clock" data-act="go" data-v="task" hidden></button>
       <div class="sysbtns"><button data-act="go" data-v="activity" aria-label="Activity"><img data-src="mail" alt=""></button><button data-act="go" data-v="settings" aria-label="Settings"><img data-src="settings" alt=""></button></div>
     </div>
     <div id="view" class="layer"></div>
@@ -335,7 +379,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 <script>
 /* ---------- farm renderer ----------
    Every review picture is drawn from farm data: {seed, crop, problem, sev, field}.
-   problem: 'water' | 'pest' | 'healthy'; sev: 0..1 how visible the problem is; field: 0..3 which field has it.
+   problem: 'water' | 'pest' | 'nutrient' | 'weeds' | 'healthy'; sev: 0..1 how visible the problem is; field: 0..3 which field has it.
    t: 0 = as found, 1 = fully recovered. Nothing is a stat panel: colour, height, wilting, holes,
    bugs and dry soil carry the information. */
 const REN = (() => {
@@ -344,7 +388,11 @@ const REN = (() => {
   const hex = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
   const mixC = (c1, c2, t) => { const a = hex(c1), b = hex(c2); t = Math.max(0, Math.min(1, t)); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], t))).join(',')})`; };
   const P = {leaf:'#3c8b2c', leafHi:'#6fb446', dry:'#c9a43e', dryHi:'#e0c56a', tip:'#8a5326', soilWet:'#4b3121', soilDry:'#d0ad72', crack:'#6f4d2a', grass:'#86b24c', water:'#4fa3d4'};
-  const state = (sc, i, t) => (sc.problem === 'healthy' || i !== sc.field) ? {p:'ok', a:0, w:0, b:0} : {p:sc.problem, a:sc.sev * (1 - t), w:sc.problem === 'water' ? sc.sev * (1 - t) : 0, b:sc.problem === 'pest' ? sc.sev * (1 - t) : 0};
+  const state = (sc, i, t) => {
+    if (sc.problem === 'healthy' || i !== sc.field) return {p:'ok', a:0, w:0, b:0, n:0, g:0};
+    const v = sc.sev * (1 - t), p = sc.problem;
+    return {p, a:v, w:p === 'water' ? v : 0, b:p === 'pest' ? v : 0, n:p === 'nutrient' ? v : 0, g:p === 'weeds' ? v : 0};
+  };
 
   function ellipse(ctx, x, y, rx, ry, rot, fill, stroke, lw){ ctx.beginPath(); ctx.ellipse(x, y, Math.max(.1, rx), Math.max(.1, ry), rot || 0, 0, Math.PI * 2); if (fill){ ctx.fillStyle = fill; ctx.fill(); } if (stroke){ ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke(); } }
   function hole(ctx, x, y, r){ ellipse(ctx, x, y, r, r * .8, .4, '#efe6c4', '#6d4a1f', Math.max(.6, r * .28)); }
@@ -354,6 +402,16 @@ const REN = (() => {
     ellipse(ctx, -2.6 * s, 0, 2.2 * s, 2.0 * s, 0, '#3b2a14');
     ellipse(ctx, -3.2 * s, -.6 * s, .5 * s, .5 * s, 0, '#f3e9c8');
     ctx.restore();
+  }
+  /* a Striga-like weed: thin stems with pink flowers */
+  function weed(ctx, x, y, s, R){
+    ctx.lineCap = 'round';
+    for (let k = 0; k < 4; k++){
+      const ang = -Math.PI / 2 + (R() - .5) * 1.1, L = (10 + R() * 12) * s, ex = x + Math.cos(ang) * L, ey = y + Math.sin(ang) * L;
+      ctx.strokeStyle = '#4f7a2a'; ctx.lineWidth = 1.1 * s; ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + (ex - x) * .3 + (R() - .5) * 4 * s, y + (ey - y) * .6, ex, ey); ctx.stroke();
+      ellipse(ctx, x + (ex - x) * .55, y + (ey - y) * .55, 2.6 * s, .9 * s, ang, '#5f8f33');
+      ellipse(ctx, ex, ey, 2.1 * s, 1.7 * s, 0, R() > .4 ? '#d98bd6' : '#f2c8ef', 'rgba(120,40,110,.4)', .4 * s);
+    }
   }
   function frass(ctx, x, y, n, s, R){ for (let i = 0; i < n; i++) ellipse(ctx, x + (R() - .5) * 18 * s, y + (R() - .5) * 8 * s, .9 * s, .7 * s, 0, '#4a3418'); }
   function cracks(ctx, x0, y0, x1, y1, amt, R, u, col){
@@ -379,8 +437,8 @@ const REN = (() => {
     return [cx * .4 + tx * .6, cy * .4 + ty * .6];
   }
   function maize(ctx, x, y, h, st, R, u){
-    const a = st.w, b = st.b, H = h * (1 - .2 * a), lean = a * 8 * u;
-    const col = mixC(P.leaf, P.dry, a * 1.05), hi = mixC(P.leafHi, P.dryHi, a);
+    const a = st.w, b = st.b, n = st.n || 0, H = h * (1 - .2 * a - .22 * n), lean = a * 8 * u;
+    const col = n ? mixC(P.leaf, '#9fb84a', n * .6) : mixC(P.leaf, P.dry, a * 1.05), hi = n ? mixC(P.leafHi, '#c9d46a', n * .6) : mixC(P.leafHi, P.dryHi, a);
     ctx.strokeStyle = mixC('#5c8d2b', '#a8893a', a); ctx.lineWidth = 3.4 * u; ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + lean * .4, y - H * .55, x + lean, y - H); ctx.stroke();
     ctx.strokeStyle = mixC('#dcc56d', '#b39a55', a); ctx.lineWidth = 1.2 * u;
@@ -390,14 +448,15 @@ const REN = (() => {
       const f = .16 + i * .13, sx = x + lean * f, sy = y - H * f, dir = i % 2 ? 1 : -1;
       const len = H * (.52 - i * .05) * (1 + (R() - .5) * .16);
       const droop = .12 + a * 1.0 + (R() - .5) * .08;
-      const mid = leaf(ctx, sx, sy, dir, len, droop, 4.4 * u * (1 - a * .4), col, hi, a > .25 ? P.tip : null, u);
+      const k = n * Math.max(0, 1.3 - i * .35), lc = k ? mixC(P.leaf, '#d2bf3c', Math.min(1, k)) : col, lh = k ? mixC(P.leafHi, '#f0df73', Math.min(1, k)) : hi;
+      const mid = leaf(ctx, sx, sy, dir, len, droop, 4.4 * u * (1 - a * .4), lc, lh, a > .25 ? P.tip : k > .4 ? '#e9d24a' : null, u);
       if (b > 0 && R() < .25 + b * .8){ const n = 1 + Math.round(b * 2.5 * R()); for (let k = 0; k < n; k++) hole(ctx, mid[0] + (R() - .5) * 10 * u, mid[1] + (R() - .5) * 3 * u, (1 + R() * 1.4 * b) * u); }
     }
     if (b > .2 && R() < .5 + b * .5) caterpillar(ctx, x + 4 * u, y - H * .4, u * (.55 + b * .3), -1.2);
   }
   function beans(ctx, x, y, h, st, R, u){
-    const a = st.w, b = st.b, H = h * .62 * (1 - .22 * a);
-    const col = mixC(P.leaf, P.dry, a), hi = mixC('#5aa63c', P.dryHi, a);
+    const a = st.w, b = st.b, n = st.n || 0, H = h * .62 * (1 - .22 * a - .15 * n);
+    const col = n ? mixC(P.leaf, '#c4bd45', n * .85) : mixC(P.leaf, P.dry, a), hi = n ? mixC('#5aa63c', '#e3d86a', n * .85) : mixC('#5aa63c', P.dryHi, a);
     ctx.strokeStyle = mixC('#5a8a2a', '#a0883a', a); ctx.lineWidth = 1.5 * u;
     const pts = [];
     for (let i = 0; i < 11; i++){
@@ -433,18 +492,19 @@ const REN = (() => {
     const h = H * (sc.crop === 'beans' ? .5 : .6);
     [.08, .2, .32, .44].forEach(f => plant(sc.crop, ctx, W * f, ground + 10 * u, h * (.92 + R() * .12), ok, R, u));
     [.58, .7, .82, .94].forEach(f => plant(sc.crop, ctx, W * f, ground + 10 * u, h * (.92 + R() * .12), st, R, u));
-    return st.p === 'water' ? {x:W * .76, y:H * .55, r:W * .2} : st.p === 'pest' ? {x:W * .76, y:H * .42, r:W * .2} : {x:W * .5, y:H * .45, r:W * .42};
+    if (st.g > 0){ const nw = Math.round(5 + st.g * 14); for (let k = 0; k < nw; k++) weed(ctx, W * (.53 + R() * .45), ground + 4 * u + R() * (H - ground - 8 * u), u * (.8 + R() * .5), R); }
+    return st.p === 'ok' ? {x:W * .5, y:H * .45, r:W * .42} : {x:W * .76, y:H * ({water:.55, pest:.42, nutrient:.5, weeds:.78}[st.p]), r:W * .2};
   }
 
   /* 2. Health signs: one leaf from the field, up close. */
   function signs(ctx, W, H, sc, t, R, u){
-    const st = state(sc, sc.field, t), a = st.w, b = st.b;
+    const st = state(sc, sc.field, t), a = st.w, b = st.b, nn = st.n || 0, gw = st.g || 0;
     ctx.fillStyle = '#c9dcae'; ctx.fillRect(0, 0, W, H);
     for (let i = 0; i < 14; i++) ellipse(ctx, W * R(), H * R(), (20 + R() * 40) * u, (20 + R() * 40) * u, 0, `rgba(${60 + R() * 60 | 0},${120 + R() * 60 | 0},${40 + R() * 30 | 0},.22)`);
     let clue;
     if (sc.crop === 'beans'){
       const cx = W * .5, cy = H * .52, rx = W * .36 * (1 - a * .12), ry = H * .34 * (1 - a * .3), rot = -.25 + a * .5;
-      const g = ctx.createRadialGradient(cx - rx * .3, cy - ry * .4, 4 * u, cx, cy, rx); g.addColorStop(0, mixC('#79c04f', P.dryHi, a)); g.addColorStop(1, mixC('#2f7a25', P.dry, a));
+      const g = ctx.createRadialGradient(cx - rx * .3, cy - ry * .4, 4 * u, cx, cy, rx); g.addColorStop(0, nn ? mixC('#79c04f', '#ece27a', nn) : mixC('#79c04f', P.dryHi, a)); g.addColorStop(1, nn ? mixC('#2f7a25', '#c9bf45', nn) : mixC('#2f7a25', P.dry, a));
       ctx.save(); ctx.translate(cx, cy); ctx.rotate(rot);
       ctx.beginPath(); ctx.moveTo(-rx, 0); ctx.bezierCurveTo(-rx * .6, -ry * 1.15, rx * .7, -ry * 1.05, rx, 0); ctx.bezierCurveTo(rx * .7, ry * 1.05, -rx * .6, ry * 1.15, -rx, 0); ctx.fillStyle = g; ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 1.4 * u; ctx.beginPath(); ctx.moveTo(-rx * 1.15, 0); ctx.lineTo(rx * .95, 0); ctx.stroke();
@@ -456,6 +516,7 @@ const REN = (() => {
       holesAt.slice(0, nh).forEach(([fx, fy], i) => hole(ctx, cx + fx * rx, cy + fy * ry, (3 + (i % 3) * 1.6) * u * (.6 + b * .6)));
       if (b > 0){ const bx = cx + rx * .55, by = cy + ry * .45; caterpillar(ctx, bx, by, u * (1.1 + b * 1.2), -.5); frass(ctx, bx - 10 * u, by + 8 * u, Math.round(3 + b * 8), u, R); clue = {x:bx, y:by, r:W * .17}; }
       else if (a > 0) clue = {x:cx + rx * .7, y:cy - ry * .2, r:W * .2};
+      else if (nn > 0) clue = {x:cx, y:cy, r:W * .3};
     } else {
       const B = [W * .02, H * .92], T = a > .1 ? [W * .95, H * (.18 + a * .55)] : [W * .97, H * .14], C = [W * .52, H * (.28 - a * .05)];
       const w0 = 24 * u * (1 - a * .2), w = 30 * u * (1 - a * .22);
@@ -466,11 +527,18 @@ const REN = (() => {
       [-.6, -.3, .3, .6].forEach(k => { ctx.beginPath(); ctx.moveTo(B[0], B[1] + w0 * k); ctx.quadraticCurveTo(C[0], C[1] + w * k, T[0], T[1]); ctx.stroke(); });
       if (a > .2){ ctx.strokeStyle = mixC('#327f25', '#7a5a22', a); ctx.lineWidth = 5 * u * a; ctx.beginPath(); ctx.moveTo(B[0], B[1] - w0); ctx.quadraticCurveTo(C[0], C[1] - w, T[0], T[1]); ctx.stroke(); clue = {x:T[0] - W * .12, y:T[1] - H * .05, r:W * .2}; }
       const at = s => [(1 - s) ** 2 * B[0] + 2 * (1 - s) * s * C[0] + s * s * T[0], (1 - s) ** 2 * B[1] + 2 * (1 - s) * s * C[1] + s * s * T[1]];
+      if (nn > 0){
+        ctx.save(); ctx.beginPath(); ctx.moveTo(B[0], B[1] - w0); ctx.quadraticCurveTo(C[0], C[1] - w, T[0], T[1]); ctx.quadraticCurveTo(C[0], C[1] + w, B[0], B[1] + w0); ctx.closePath(); ctx.clip();
+        ctx.globalAlpha = Math.min(1, nn * 1.3); ctx.strokeStyle = '#e4cf45'; ctx.lineCap = 'round';
+        for (let k = 0; k < 14; k++){ const p0 = at(.5 + k * .035), p1 = at(Math.min(1, .54 + k * .035)); ctx.lineWidth = (2 + k * 2.4) * u; ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke(); }
+        ctx.restore(); clue = {x:T[0] - W * .16, y:T[1] + H * .04, r:W * .22};
+      }
       const nh = b > 0 ? Math.round(2 + b * 6) : 0;
       for (let i = 0; i < nh; i++){ const p = at(.25 + i * .085), off = ((i % 3) - 1) * w * .45; hole(ctx, p[0], p[1] + off, (2.6 + (i % 3) * 1.5) * u * (.6 + b * .6)); }
       if (b > 0){ const p = at(.62); caterpillar(ctx, p[0], p[1] + w * .2, u * (1.1 + b * 1.2), -.35); frass(ctx, p[0] - 16 * u, p[1] + w * .6, Math.round(3 + b * 8), u, R); clue = {x:p[0], y:p[1], r:W * .16}; }
     }
-    if (a < .1 && b < .05) for (let i = 0; i < 6; i++){ const x = W * (.2 + R() * .6), y = H * (.3 + R() * .4); ellipse(ctx, x, y, 2.2 * u, 2 * u, 0, 'rgba(255,255,255,.55)'); ellipse(ctx, x - .7 * u, y - .7 * u, .7 * u, .7 * u, 0, '#fff'); }
+    if (gw > 0){ weed(ctx, W * .8, H * .98, u * (3.2 + gw * 1.5), R); weed(ctx, W * .66, H * 1.02, u * 2.4, R); clue = {x:W * .76, y:H * .74, r:W * .2}; }
+    if (a < .1 && b < .05 && nn < .05) for (let i = 0; i < 6; i++){ const x = W * (.2 + R() * .6), y = H * (.3 + R() * .4); ellipse(ctx, x, y, 2.2 * u, 2 * u, 0, 'rgba(255,255,255,.55)'); ellipse(ctx, x - .7 * u, y - .7 * u, .7 * u, .7 * u, 0, '#fff'); }
     return clue || {x:W * .5, y:H * .5, r:W * .35};
   }
 
@@ -488,10 +556,13 @@ const REN = (() => {
     ctx.restore();
     cracks(ctx, 0, 0, W, fy - 6 * u, a, R, u); cracks(ctx, 0, fy + fh + 6 * u, W, H, a, R, u);
     if (a < .2) for (let k = 0; k < 7; k++) ellipse(ctx, W * R(), (R() > .5 ? fy * R() : fy + fh + (H - fy - fh) * R()), 10 * u, 2 * u, 0, 'rgba(255,255,255,.1)');
-    const ok = {p:'ok', a:0, w:0, b:0}, s2 = {p:st.p, a:st.a, w:a, b:b * .6};
+    const ok = {p:'ok', a:0, w:0, b:0}, s2 = {p:st.p, a:st.a, w:a, b:b * .6, n:st.n, g:0};
+    if (st.g > 0){ const nw = Math.round(6 + st.g * 12); for (let k = 0; k < nw; k++) weed(ctx, W * (.05 + R() * .9), H * (.25 + R() * .7), u * (.9 + R() * .6), R); }
     [.18, .5, .82].forEach((f, i) => plant(sc.crop, ctx, W * f, H * 1.04, H * .5, i === 1 ? s2 : {...s2, b:0}, R, u * .8));
     if (b > .2) for (let k = 0; k < 3; k++){ const x = W * (.25 + R() * .5), y = H * (.1 + R() * .2); ellipse(ctx, x, y, 7 * u, 3.5 * u, R(), '#8a9a3a'); hole(ctx, x, y, 1.6 * u); }
     void ok;
+    if (st.n > 0) return {x:W * .5, y:H * .78, r:W * .3};
+    if (st.g > 0) return {x:W * .5, y:H * .6, r:W * .4};
     return a > .05 ? {x:W * .5, y:fy + fh * .5, r:W * .3} : {x:W * .5, y:fy + fh * .5, r:W * .35};
   }
 
@@ -509,11 +580,12 @@ const REN = (() => {
     const boxes = [];
     for (let i = 0; i < 4; i++){
       const f = FIELD(i), x = f.x * W, y = f.y * H, w = f.w * W, h = f.h * H, s = state(sc, i, t);
-      const base = mixC('#4e8f2c', '#c7a43f', s.w * 1.05), row = mixC('#6cad3c', '#e0c46a', s.w);
+      const base = s.n ? mixC('#4e8f2c', '#b5bf45', s.n) : mixC('#4e8f2c', '#c7a43f', s.w * 1.05), row = s.n ? mixC('#6cad3c', '#e2dc78', s.n) : mixC('#6cad3c', '#e0c46a', s.w);
       ctx.fillStyle = mixC('#5b3c24', '#c9a66c', s.w); ctx.fillRect(x, y, w, h);
       if (sc.crop === 'beans'){ for (let ry = y + 6 * u; ry < y + h - 3 * u; ry += 9 * u) for (let rx = x + 6 * u; rx < x + w - 3 * u; rx += 9 * u) ellipse(ctx, rx + (R() - .5) * 1.5 * u, ry, 4.2 * u * (1 - s.w * .3), 3.6 * u * (1 - s.w * .3), 0, R() > .5 ? base : row); }
       else for (let rx = x + 4 * u; rx < x + w - 2 * u; rx += 7 * u){ ctx.fillStyle = base; ctx.fillRect(rx, y + 3 * u, 4.2 * u * (1 - s.w * .3), h - 6 * u); ctx.fillStyle = row; ctx.fillRect(rx + 1 * u, y + 3 * u, 1.3 * u, h - 6 * u); }
       if (s.b > 0){ const n = Math.round(8 + s.b * 34); for (let k = 0; k < n; k++){ const px = x + w * (.08 + R() * .84), py = y + h * (.08 + R() * .84), r = (1.6 + R() * 2.2 * s.b) * u; ellipse(ctx, px, py, r * 1.6, r * 1.4, 0, 'rgba(214,196,96,.75)'); ellipse(ctx, px, py, r * .7, r * .6, 0, '#6b4420'); } }
+      if (s.g > 0){ const n = Math.round(10 + s.g * 40); for (let k = 0; k < n; k++){ const px = x + w * (.06 + R() * .88), py = y + h * (.06 + R() * .88); ellipse(ctx, px, py, 3.6 * u, 3 * u, 0, '#3f6a22'); ellipse(ctx, px + 1.1 * u, py - 1.1 * u, 1.7 * u, 1.7 * u, 0, '#f0a0ea'); } }
       ctx.strokeStyle = '#7a5230'; ctx.lineWidth = 1.6 * u; ctx.strokeRect(x, y, w, h);
       boxes.push(f);
     }
@@ -595,18 +667,141 @@ const faceSVG = look => charSVG(look).replace('viewBox="0 0 40 60"', 'viewBox="5
 
 /* ---------- farms ---------- */
 const FARMS = [
-  {id:1, owner:'Mark', km:10, acres:'1 acre', crop:'maize', lbl:[175,98], box:[105,0,370,142], hub:[60,20,360,180], gate:[330,140]},
-  {id:2, owner:'June', km:14, acres:'2 acres', crop:'maize', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], gate:[628,228]},
-  {id:3, owner:'Brian', km:19, acres:'1.5 acres', crop:'maize', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], gate:[350,215]},
-  {id:4, owner:'Vincent', km:25, acres:'3 acres', crop:'beans', lbl:[560,86], box:[565,0,775,122], hub:[540,20,815,165], gate:[600,128]},
+  {id:1, owner:'Mark', km:10, acres:'1 acre', crop:'maize', lbl:[175,98], box:[105,0,370,142], hub:[60,20,360,180], gate:[233,137]},
+  {id:2, owner:'June', km:14, acres:'2 acres', crop:'maize', lbl:[646,227], box:[598,200,874,382], hub:[535,240,820,402], gate:[630,226]},
+  {id:3, owner:'Brian', km:19, acres:'1.5 acres', crop:'maize', lbl:[160,236], box:[99,196,377,362], hub:[45,240,330,402], gate:[226,192]},
+  {id:4, owner:'Vincent', km:25, acres:'3 acres', crop:'beans', lbl:[560,86], box:[565,0,775,122], hub:[540,20,815,165], gate:[664,117]},
   {id:5, owner:'', km:31, acres:'2 acres', crop:'maize'},
 ];
 const fname = id => { const f = FARMS[id - 1]; return f.owner ? `Farm ${f.id}: ${f.owner}` : `Farm ${f.id}`; };
 const owner = id => FARMS[id - 1].owner;
 const cropName = c => c === 'beans' ? 'beans' : 'maize';
-const HUB = [455, 172];
 const FIRST = 2, RETRY = 3, SECOND = 4, HOOK = 1;
-const PATHS = { first:[[238,178],[330,198],[420,180],[505,196],[566,214],[628,228]], retry:[[628,228],[545,205],[455,188],[350,215]] };
+
+/* ---------- roads ----------
+   The dirt roads on the home map, traced as a graph. Farm gates are nodes M, Jn, B and V.
+   Open the game with ?dev to see the graph and log tap coordinates. */
+const RN = {L0:[0,43],a1:[73,90],a2:[100,133],a3:[143,180],B:[226,192],M:[233,137],J1:[253,170],w1:[333,175],J2:[409,174],n1:[432,150],n2:[451,100],n3:[461,80],n4:[504,70],n5:[557,40],T:[587,5],
+  s1:[424,187],s2:[444,213],J3:[468,250],d1:[504,240],d2:[551,213],d3:[591,200],J4:[637,180],Jn:[630,226],v1:[651,167],v2:[657,143],V:[664,117],e1:[691,180],e2:[757,167],e3:[824,140],R:[874,113],
+  t1:[457,280],t2:[437,313],J5:[424,337],b1:[491,360],b2:[541,383],Bo:[564,402],c1:[400,347],c2:[333,377],Bl:[260,402]};
+const RE = 'L0-a1 a1-a2 a2-a3 a3-B M-J1 J1-B J1-w1 w1-J2 J2-n1 n1-n2 n2-n3 n3-n4 n4-n5 n5-T J2-s1 s1-s2 s2-J3 J3-d1 d1-d2 d2-d3 d3-J4 J4-Jn J4-v1 v1-v2 v2-V J4-e1 e1-e2 e2-e3 e3-R J3-t1 t1-t2 t2-J5 J5-b1 b1-b2 b2-Bo J5-c1 c1-c2 c2-Bl'.split(' ').map(e => e.split('-'));
+const ADJ = {};
+RE.forEach(([a, b]) => { const d = Math.hypot(RN[a][0] - RN[b][0], RN[a][1] - RN[b][1]); (ADJ[a] = ADJ[a] || []).push([b, d]); (ADJ[b] = ADJ[b] || []).push([a, d]); });
+/* nearest point on any road */
+function snap(x, y){
+  let best = null;
+  RE.forEach(([a, b]) => {
+    const A = RN[a], B = RN[b], dx = B[0] - A[0], dy = B[1] - A[1];
+    const t = Math.max(0, Math.min(1, ((x - A[0]) * dx + (y - A[1]) * dy) / (dx * dx + dy * dy))), p = [A[0] + dx * t, A[1] + dy * t], d = Math.hypot(p[0] - x, p[1] - y);
+    if (!best || d < best.d) best = {a, b, t, p, d};
+  });
+  return best;
+}
+/* shortest road route between two points (Dijkstra over the road graph) */
+function route(from, to){
+  const s = snap(from[0], from[1]), g = snap(to[0], to[1]), r2 = p => [Math.round(p[0]), Math.round(p[1])];
+  const tidy = pts => pts.map(r2).filter((p, i, a) => !i || Math.hypot(p[0] - a[i - 1][0], p[1] - a[i - 1][1]) > 1.5);
+  const head = s.d > 3 ? [from] : [];
+  if ((s.a === g.a && s.b === g.b) || (s.a === g.b && s.b === g.a)) return tidy([...head, s.p, g.p]);
+  const dist = {}, prev = {}, done = new Set(), D = (p, n) => Math.hypot(p[0] - RN[n][0], p[1] - RN[n][1]);
+  dist[s.a] = D(s.p, s.a); dist[s.b] = D(s.p, s.b);
+  for (;;){
+    let u = null; for (const k in dist) if (!done.has(k) && (u === null || dist[k] < dist[u])) u = k;
+    if (u === null) break; done.add(u);
+    (ADJ[u] || []).forEach(([v, d]) => { if (dist[v] === undefined || dist[u] + d < dist[v]){ dist[v] = dist[u] + d; prev[v] = u; } });
+  }
+  const end = dist[g.a] + D(g.p, g.a) <= dist[g.b] + D(g.p, g.b) ? g.a : g.b, nodes = [];
+  for (let n = end; n; n = prev[n]) nodes.unshift(n);
+  return tidy([...head, s.p, ...nodes.map(n => RN[n]), g.p]);
+}
+const HUB = [...RN.J2];
+const PATHS = {first:route(RN.J1, RN.Jn), retry:route(RN.Jn, RN.B)};
+
+/* ---------- real photos (Wikimedia Commons, hotlinked). Missing or blocked photos fall back to the drawn picture. ---------- */
+const CM = 'https://thumb.wikimedia.org/wikipedia/commons/thumb/';
+const PH = {
+  maizeField:{src:CM + 'd/de/Maize_plantation.jpg/960px-Maize_plantation.jpg', f:'Maize_plantation.jpg', by:'Chebasa 3069', lic:'CC BY-SA 4.0'},
+  maizeField2:{src:CM + '2/20/Maize_Planation.jpg/960px-Maize_Planation.jpg', f:'Maize_Planation.jpg', by:'Samuel Kiongo', lic:'CC BY-SA 4.0'},
+  maizeLeaf:{src:CM + '3/3a/Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_%2822735175163%29.jpg/960px-Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_%2822735175163%29.jpg', f:'Starr-110731-8141-Zea_mays-habit_cv_JB_White_backlit_leaf-Hawea_Pl_Olinda-Maui_(22735175163).jpg', by:'Forest and Kim Starr', lic:'CC BY 2.0'},
+  maizeDry:{src:CM + '6/67/Maize_farming_in_drought_areas.jpg/960px-Maize_farming_in_drought_areas.jpg', f:'Maize_farming_in_drought_areas.jpg', by:'Hannahlongole', lic:'CC BY-SA 4.0', fit:'scale(2.7)', origin:'100% 65%'},
+  soilDry:{src:CM + '7/74/Cracked_Earth_%28Unsplash%29.jpg/960px-Cracked_Earth_%28Unsplash%29.jpg', f:'Cracked_Earth_(Unsplash).jpg', by:'Dan Gold', lic:'CC0', clue:[.5,.5,.4]},
+  soilWet:{src:'https://upload.wikimedia.org/wikipedia/commons/f/fc/Flood_irrigation_1.jpg', f:'Flood_irrigation_1.jpg', by:'abhiriksh', lic:'CC BY-SA 3.0'},
+  fawWhorl:{src:CM + 'a/a6/Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg/960px-Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg', f:'Spodoptera_frugiperda_in_stalk_of_Zea_mays.jpg', by:'Wee Hong', lic:'CC BY-SA 4.0', clue:[.47,.58,.2]},
+  beanField:{src:CM + '2/2a/French_Beans.jpg/960px-French_Beans.jpg', f:'French_Beans.jpg', by:'Ponds473', lic:'CC BY-SA 4.0'},
+  beanField2:{src:CM + 'a/a6/Farming_bean%27s.jpg/960px-Farming_bean%27s.jpg', f:"Farming_bean's.jpg", by:'Stive254', lic:'CC BY-SA 4.0'},
+  beanLeaf:{src:CM + '8/81/Starr-081031-0360-Phaseolus_vulgaris-leaves-Makawao-Maui_%2824631143760%29.jpg/960px-Starr-081031-0360-Phaseolus_vulgaris-leaves-Makawao-Maui_%2824631143760%29.jpg', f:'Starr-081031-0360-Phaseolus_vulgaris-leaves-Makawao-Maui_(24631143760).jpg', by:'Forest and Kim Starr', lic:'CC BY 3.0 US'},
+  beanAphid:{src:'https://upload.wikimedia.org/wikipedia/commons/3/39/Aphis_fabae_2005.06.12_15.23.32-p6120057.jpg', f:'Aphis_fabae_2005.06.12_15.23.32-p6120057.jpg', by:'Michael Becker', lic:'CC BY-SA 3.0', clue:[.55,.5,.38]},
+  striga:{src:CM + '7/73/Striga_hermonthica_flowering_among_maize_and_cassava_in_Uganda.jpg/960px-Striga_hermonthica_flowering_among_maize_and_cassava_in_Uganda.jpg', f:'Striga_hermonthica_flowering_among_maize_and_cassava_in_Uganda.jpg', by:'Oliversamson1', lic:'CC0', clue:[.62,.35,.3]},
+};
+const LIC = {'CC BY-SA 4.0':'https://creativecommons.org/licenses/by-sa/4.0/', 'CC BY-SA 3.0':'https://creativecommons.org/licenses/by-sa/3.0/', 'CC BY 2.0':'https://creativecommons.org/licenses/by/2.0/', 'CC BY 3.0 US':'https://creativecommons.org/licenses/by/3.0/us/', 'CC0':'https://creativecommons.org/publicdomain/zero/1.0/'};
+/* Which photo shows each part of a review. pair = healthy neighbour field + the field under review. heal = what it looks like recovered. */
+function photosFor(sc, part){
+  const mz = sc.crop !== 'beans', p = sc.problem;
+  if (part === 'crops'){
+    const r = (mz ? {healthy:'maizeField2', water:'maizeDry', weeds:'striga'} : {healthy:'beanField2'})[p];
+    return r ? {pair:[mz ? 'maizeField' : 'beanField', r], heal:mz ? 'maizeField2' : 'beanField2'} : null;
+  }
+  if (part === 'signs'){
+    const k = (mz ? {healthy:'maizeLeaf', pest:'fawWhorl', weeds:'striga'} : {healthy:'beanLeaf', pest:'beanAphid'})[p];
+    return k ? {one:k, heal:mz ? 'maizeLeaf' : 'beanLeaf'} : null;
+  }
+  if (part === 'land' && p !== 'weeds') return {one:p === 'water' ? 'soilDry' : 'soilWet', heal:'soilWet'};
+  return null;
+}
+const preloaded = new Set();
+function preload(sc){ ['crops','signs','land'].forEach(part => { const ph = photosFor(sc, part); if (!ph) return; [...(ph.pair || [ph.one]), ph.heal].forEach(k => { if (k && !preloaded.has(k)){ preloaded.add(k); const i = new Image(); i.referrerPolicy = 'no-referrer'; i.src = PH[k].src; } }); }); }
+
+/* ---------- game clock: 1 game day = 1 real hour. Day 1 starts at 6:00 am when the agent is created. ---------- */
+const MS_GMIN = 2500;
+const gNow = () => S.clock0 ? 360 + (Date.now() - S.clock0) / MS_GMIN : 360;
+const gTs = gm => S.clock0 + (gm - 360) * MS_GMIN;
+const gDay = gm => Math.floor(gm / 1440) + 1;
+const gTime = gm => { const h = Math.floor(gm % 1440 / 60), m = Math.floor(gm % 60); return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
+const WIN = {am:[360, 600, 'Morning'], pm:[960, 1200, 'Evening'], day:[360, 1200, 'Today']};
+const partOfDay = gm => { const h = gm % 1440 / 60; return h < 6 ? 'night' : h < 12 ? 'morning' : h < 16 ? 'afternoon' : h < 20 ? 'evening' : 'night'; };
+const UNLOCK_MS = 2 * 3600 * 1000;
+const unlocked = () => S.unlockAt && Date.now() >= S.unlockAt;
+
+/* ---------- care routines: what the agent helps the farmer do after a review ---------- */
+const ACTS = {
+  water:{name:'Water', icon:'water', how:'Hold the button to water the rows.', part:'land'},
+  mulch:{name:'Mulch', icon:'leaf', how:'Tap each row to cover the soil with dry grass.', part:'land'},
+  scout:{name:'Scout', icon:'bug', how:'Tap each caterpillar and egg mass to crush it.', part:'signs'},
+  spray:{name:'Spray', icon:'in-insecticides', how:'Put on the safety kit, pick the product, then hold to spray.', part:'signs'},
+  fertilize:{name:'Fertilize', icon:'in-fertilizer', how:'Tap beside each plant to add CAN, then hold to water it in.', part:'crops'},
+  hoe:{name:'Hoe weeds', icon:'eq-hoe', how:'Tap each weed to pull it out before it seeds.', part:'crops'},
+};
+const PRODUCTS = {
+  armyworm:[['emamectin','Emamectin benzoate', 'insecticide for caterpillars', 1], ['glyphosate','Glyphosate', 'weed killer', 0, 'Glyphosate kills plants. It would kill the maize, not the caterpillars.'], ['copper','Copper oxychloride', 'fungicide', 0, 'Copper oxychloride treats leaf disease. It does not kill caterpillars.']],
+  aphid:[['lambda','Lambda-cyhalothrin', 'insecticide for sucking insects', 1], ['glyphosate','Glyphosate', 'weed killer', 0, 'Glyphosate kills plants. It would kill the beans, not the aphids.'], ['mancozeb','Mancozeb', 'fungicide', 0, 'Mancozeb treats leaf disease. It does not kill aphids.']],
+};
+/* Prescriptions: the right routine plus believable wrong answers, each with a one-line lesson. */
+function careFor(sc){
+  const mz = sc.crop !== 'beans', c = cropName(sc.crop);
+  if (sc.problem === 'water') return {kind:'water', title:`Water ${c} for 3 days`, opts:[
+    ['ok', 'Water morning and evening for 3 days', 1], ['x1', 'Spray an insecticide', 0, 'Insecticide kills pests. Dry soil needs water, not spray.'], ['x2', 'Add fertilizer (CAN)', 0, 'Fertilizer burns roots in dry soil. Water first.']],
+    plan:m => [...wins(m, ['am','pm'], 6).map(w => ({act:'water', s:w[0], e:w[1]})), {act:'mulch', ...dayWin(m, 0, 2), opt:1}]};
+  if (sc.problem === 'pest' && mz && sc.sev < .5) return {kind:'scout', title:'Scout for armyworm, twice a week', opts:[
+    ['ok', 'Scout and crush eggs and caterpillars twice a week', 1], ['x1', 'Spray glyphosate', 0, 'Glyphosate is a weed killer. It would kill the maize too.'], ['x2', 'Water more', 0, 'Water does not stop caterpillars. Remove them.']],
+    plan:m => [0, 3, 7].map(d => ({act:'scout', ...dayWin(m, d, 1)}))};
+  if (sc.problem === 'pest' && mz) return {kind:'spray', product:'armyworm', title:'Spray the leaf funnel, again in 7 days', opts:[
+    ['ok', 'Spray emamectin benzoate into the leaf funnel', 1], ['x1', 'Only pick off caterpillars by hand', 0, 'There are too many to pick by hand. Spray the funnel, then scout.'], ['x2', 'Spray glyphosate', 0, 'Glyphosate is a weed killer. It would kill the maize too.']],
+    plan:m => [0, 7].map(d => ({act:'spray', ...dayWin(m, d, 1)}))};
+  if (sc.problem === 'pest') return {kind:'spray', product:'aphid', title:'Spray under the leaves every 7 days', opts:[
+    ['ok', 'Spray lambda-cyhalothrin under the leaves', 1], ['x1', 'Add fertilizer (CAN)', 0, 'Fertilizer feeds the pests too. Deal with the insects first.'], ['x2', 'Water more', 0, 'Water does not stop insects eating the leaves.']],
+    plan:m => [0, 7].map(d => ({act:'spray', ...dayWin(m, d, 1)}))};
+  if (sc.problem === 'nutrient') return {kind:'fertilize', title:'Top-dress with CAN, then water in', opts:[
+    ['ok', 'Add CAN beside each plant, then water it in', 1], ['x1', 'Spray an insecticide', 0, 'There are no pests. Yellow lower leaves mean the soil is short of nitrogen.'], ['x2', 'Hoe the field', 0, 'Hoeing removes weeds, but the plants still lack nitrogen.']],
+    plan:m => [{act:'fertilize', ...dayWin(m, 0, 1)}, {act:'water', ...dayWin(m, 1, 1)}]};
+  if (sc.problem === 'weeds') return {kind:'hoe', title:'Hoe the weeds within 2 days, check weekly', opts:[
+    ['ok', 'Hoe the weeds out within 2 days', 1], ['x1', 'Spray glyphosate over the field', 0, 'Glyphosate would kill the maize too. Pull the weeds before they seed.'], ['x2', 'Water more', 0, 'Water feeds the weeds too. Remove them first.']],
+    plan:m => [{act:'hoe', ...dayWin(m, 0, 2)}, {act:'hoe', ...dayWin(m, 7, 2)}]};
+  return null;
+}
+/* the next `n` windows of the given kinds, starting with one that is open now */
+function wins(m, kinds, n){ const out = []; for (let d = Math.floor(m / 1440); out.length < n; d++) kinds.forEach(k => { const s = d * 1440 + WIN[k][0], e = d * 1440 + WIN[k][1]; if (e > m + 5 && out.length < n) out.push([s, e]); }); return out; }
+/* a window from 6 am on day +d lasting `len` days (until 8 pm) */
+function dayWin(m, d, len){ let base = Math.floor(m / 1440) * 1440; if (m > base + 1190) base += 1440; return {s:base + d * 1440 + 360, e:base + (d + len - 1) * 1440 + 1200}; }
 const GOAL = 80;
 
 /* Review content. Every review uses the same four steps; only this data changes.
@@ -617,23 +812,30 @@ const FIXED = {
   4:[{crop:'beans', problem:'pest', sev:.5, field:0, hint:false}],
   1:[{crop:'maize', problem:'pest', sev:.45, field:3, hint:false}],
 };
-const CALLS = [['healthy','Healthy','leaf'],['water','Needs water','water'],['pest','Pest problem','bug']];
+const CALLS = [['healthy','Healthy','leaf'],['water','Needs water','water'],['pest','Pest problem','bug'],['nutrient','Low nutrients','cat-nutrient'],['weeds','Weeds','cat-weed']];
+const callsNow = () => CALLS.filter(c => unlocked() || !['nutrient','weeds'].includes(c[0]));
+const callName = k => CALLS.find(c => c[0] === k)[1];
 const PARTS = [['crops','Crops'],['signs','Health signs'],['land','Land & water'],['layout','Layout']];
 const GUIDE = {crops:'Compare the plants in the two fields.', signs:'Look closely at one leaf.', land:'Check the soil and the water.', layout:'See the whole farm from above.'};
-const CLUE = {water:['land','See the cracked, dry soil? This field needed water.'], pest:['signs','See the holes and the caterpillar? This field has pests.'], healthy:['crops','These plants are green and upright, so the field was healthy.']};
+const CLUE = {water:['land','See the cracked, dry soil? This field needed water.'], pest:['signs','See the insects and the damage they cause? This field has pests.'],
+  nutrient:['signs','See the yellow stripe on the lower leaves? This field is short of nitrogen.'], weeds:['crops','See the weeds with pink flowers between the crop? This field has weeds.'],
+  healthy:['crops','These plants are green and upright, so the field was healthy.']};
 
 function reviewFor(id){
   const r = S.rv[id], fixed = FIXED[id] && FIXED[id][r.n];
+  if (r.ret) return {...r.ret, seed:id * 97 + r.n * 13 + 5, hint:false};
   if (fixed) return {...fixed, seed:id * 97 + r.n * 13};
   let s = id * 7919 + r.n * 104729; const R = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
   const probs = ['water','pest','healthy','pest','water'];
+  // Low nutrients and weeds unlock 2 hours after the agent starts.
+  if (unlocked()) probs.push('nutrient', 'nutrient', ...(FARMS[id - 1].crop === 'beans' ? [] : ['weeds', 'weeds']));
   return {crop:FARMS[id - 1].crop, problem:probs[Math.floor(R() * probs.length)], sev:.35 + R() * .35, field:Math.floor(R() * 4), seed:id * 97 + r.n * 13, hint:false};
 }
 
 /* ---------- other game data ---------- */
 const CROPS = ['potato','carrot','maize','pepper','tomato','broccoli','spinach','onion'];
 const CROP_NAMES = {potato:'Potato',carrot:'Carrot',maize:'Maize',pepper:'Pepper',tomato:'Tomato',broccoli:'Broccolli',spinach:'Spinach',onion:'Onions'};
-const INPUTS = [['fertilizer','Fertilizer',180],['herbicides','Herbicides',200],['fungicides','Fungicides',160],['nets','Nets',120],['water','Water',60],['insecticides','Insecticides',210]];
+const INPUTS = [['fertilizer','Fertilizer',180],['herbicides','Herbicides',200],['fungicides','Fungicides',160],['nets','Safety kit',120],['water','Water',60],['insecticides','Insecticides',210]];
 const EQUIP = [['shear','Shear'],['hoe','Hoe'],['spade','Spade'],['cart','Cart'],['tractor','Tractor']];
 const TANKS = [['tank','Water tank'],['tank','Spray tank']];
 const LOANS = [['coins','Input loan',200,20,5],['loan-bag','Equipment loan',5000,60,5],['moneybag','Expansion loan',10000,120,0]];
@@ -654,7 +856,8 @@ const ROUTE_STEPS = ['Load tractor','Pickup plough','Service point','Drop off tr
 const NAME_IDEAS = ['Amani','Wanjiru','Otieno'];
 
 /* ---------- state ---------- */
-const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
+/* next review: 6 am the next game day (about an hour of real time) */
+const tomorrow = () => { if (S && S.clock0) return gTs(Math.floor(gNow() / 1440) * 1440 + 1440 + 360); const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
 const FRESH = () => ({
   phase:'create', name:'', look:'cap', onboarded:false, pos:[...HUB], t0:0,
   coins:100, gems:40, water:20, reviews:0, passed:0,
@@ -664,6 +867,7 @@ const FRESH = () => ({
   bookings:{}, trainFarm:{}, calDay:2, tip:0, loans:{}, sales:{},
   storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
   routeApplied:false, stepsOpen:true,
+  clock0:0, unlockAt:0, unlockSeen:false, care:[], careN:0, notified:{}, remind:false,
 });
 const SAVE_KEY = 'wakala-save-v3';
 let S;
@@ -681,7 +885,7 @@ function track(e, data = {}){
 window.wakalaEvents = () => { try { return JSON.parse(localStorage.getItem(EV_KEY) || '[]'); } catch (x) { return []; } };
 
 /* transient UI state */
-let view = 'home', hist = [], ui = {dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
 function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
@@ -715,6 +919,78 @@ function paint(){
     const sc = scenes[cv.dataset.scene]; if (!sc) return;
     REN.draw(cv, sc, cv.dataset.part, {scale:Math.max(1, k * 1.15), t:+(cv.dataset.t || 0), glow:cv.dataset.glow ? +cv.dataset.glow : null, light:+(cv.dataset.light || 0), miss:cv.dataset.miss ? +cv.dataset.miss : null, clue:cv.dataset.clue === '1'});
   });
+}
+
+/* ---------- photos in the review: a real photo over the drawn picture (the drawing shows if the photo can't load) ---------- */
+const pimg = (k, pos, cls = '', op) => { const p = PH[k]; return `<span class="pwrap ${cls}" style="${pos}${op != null ? `;opacity:${op}` : ''}"><img src="${p.src}" alt="" draggable="false" referrerpolicy="no-referrer" onerror="this.parentNode.remove()" style="${p.fit ? `transform:${p.fit};transform-origin:${p.origin}` : ''}"></span>`; };
+function pslot(key, part, w, h, extra = '', o = {}){
+  const sc = scenes[key], ph = sc && !o.draw && photosFor(sc, part), cv = canvas(key, part, w, h, extra);
+  if (!ph) return o.clue ? canvas(key, part, w, h, extra + ' data-clue="1"') : cv;
+  let one = ph.one, pair = ph.pair;
+  if (pair && o.single){ one = pair[1]; pair = null; }
+  const main = pair ? pair.map((k, i) => pimg(k, `left:${i * 50}%;width:50%`)).join('') + '<i class="pdiv"></i>' : pimg(one, 'left:0;width:100%');
+  const shown = pair ? pair[1] : one, t = o.t || 0;
+  const heal = ph.heal && shown !== ph.heal && sc.problem !== 'healthy' ? pimg(ph.heal, pair ? 'left:50%;width:50%' : 'left:0;width:100%', 'heal', t) : '';
+  let clue = '';
+  if (o.clue){ const c = pair ? [.75, .5, .2] : (PH[one].clue || [.5, .5, .32]); clue = `<svg class="pclue" viewBox="0 0 ${w} ${h}" aria-hidden="true"><defs><mask id="cm${w}"><rect width="${w}" height="${h}" fill="#fff"/><circle cx="${c[0] * w}" cy="${c[1] * h}" r="${c[2] * w}" fill="#000"/></mask></defs><rect width="${w}" height="${h}" fill="rgba(20,10,0,.45)" mask="url(#cm${w})"/><circle cx="${c[0] * w}" cy="${c[1] * h}" r="${c[2] * w}" fill="none" stroke="#ffb02e" stroke-width="3.5" stroke-dasharray="9 5"/></svg>`; }
+  return `<span class="pslot ${o.cls || ''}" style="width:${w}px;height:${h}px">${cv}${main}${heal}${clue}</span>`;
+}
+const credit = (sc, part) => { const ph = sc && photosFor(sc, part); if (!ph) return 'Drawn picture'; const ks = ph.pair || [ph.one]; return 'Photo: ' + ks.map(k => `${PH[k].by} (${PH[k].lic})`).filter((v, i, a) => a.indexOf(v) === i).join(', '); };
+
+/* ---------- care engine ---------- */
+const rOf = id => S.care.find(r => r.id === +id);
+const core = r => r.steps.filter(x => !x.opt && x.st !== 'skip');
+const recOf = r => { if (!r) return 0; if (r.status === 'done') return 1; const c = core(r), d = c.filter(x => x.st === 'done').length, m = c.filter(x => x.st === 'missed').length; return Math.max(0, Math.min(1, (d - m) / c.length)); };
+const activeFor = id => S.care.find(r => r.farm === id && r.status === 'active');
+function addRoutine(farm, sc, cf){
+  S.care.filter(x => x.farm === farm && x.status === 'active').forEach(x => x.status = 'replaced');
+  const m = gNow(), r = {id:++S.careN, farm, kind:cf.kind, product:cf.product, crop:sc.crop, problem:sc.problem, sev:sc.sev, field:sc.field, title:cf.title, steps:cf.plan(m).map(x => ({...x, st:'todo'})), streak:0, status:'active', at:Date.now()};
+  r.steps.forEach((x, i) => { if (x.s <= m) S.notified[r.id + '-' + i] = 1; });
+  S.care.push(r); S.care = S.care.slice(-30);
+  logAdd(ACTS[r.steps[0].act].icon, `Care plan for ${fname(farm)}: ${r.title.toLowerCase()}.`);
+  return r;
+}
+function tasks(){ const m = gNow(), out = []; S.care.filter(r => r.status === 'active').forEach(r => r.steps.forEach((x, i) => { if (x.st === 'todo') out.push({r, i, x, now:x.s <= m && m < x.e}); })); return out.sort((a, b) => a.x.s - b.x.s || a.x.e - b.x.e); }
+const dueNow = () => tasks().filter(t => t.now).sort((a, b) => (a.x.opt || 0) - (b.x.opt || 0));
+const actLine = (act, r) => `${ACTS[act].name} ${owner(r.farm)}'s ${cropName(r.crop)}`;
+const whenLabel = x => { const today = gDay(gNow()), d = gDay(x.s); return `${d === today ? 'Today' : d === today + 1 ? 'Tomorrow' : 'Day ' + d}, ${gTime(x.s)} to ${d === gDay(x.e) ? '' : 'day ' + gDay(x.e) + ', '}${gTime(x.e)}`; };
+function finishRoutine(r){
+  r.status = 'done'; earn(100, 0, 0); boostScore(r.farm, 15);
+  logAdd('trophy', `${owner(r.farm)}'s ${cropName(r.crop)} recovered. Care plan complete: +100 coins.`);
+  toast(`${owner(r.farm)}'s ${cropName(r.crop)} recovered. +100 coins`); track('care_complete', {farm:r.farm, kind:r.kind});
+}
+/* Runs every few seconds: marks missed tasks, sends reminders, unlocks new problems. */
+function careTick(){
+  if (!S.clock0) return false;
+  const m = gNow(); let changed = false;
+  S.care.filter(r => r.status === 'active').forEach(r => {
+    r.steps.forEach(x => {
+      if (x.st !== 'todo' || x.e > m) return;
+      changed = true;
+      if (x.opt){ x.st = 'skip'; return; }
+      x.st = 'missed'; r.streak++;
+      logAdd(ACTS[x.act].icon, `Missed: ${actLine(x.act, r).toLowerCase()}. The field slipped back a step.`);
+      track('care_missed', {farm:r.farm, act:x.act, streak:r.streak});
+      if (r.streak >= 3 && r.status === 'active'){
+        r.status = 'failed'; S.farms[r.farm].score = Math.max(0, score(r.farm) - 10); S.rv[r.farm].readyAt = 0; S.rv[r.farm].ret = {crop:r.crop, problem:r.problem, sev:Math.min(.9, (r.sev || .6) + .1), field:r.field || 0};
+        logAdd('cat-' + (r.problem === 'weeds' ? 'weed' : r.problem === 'pest' ? 'pest' : r.problem === 'nutrient' ? 'nutrient' : 'water'), `${owner(r.farm)}'s ${cropName(r.crop)} problem came back after 3 missed tasks. Review the farm again.`);
+        ui.news = `${owner(r.farm)}'s problem came back. Review the farm again.`;
+      }
+    });
+    if (r.status === 'active' && r.steps.every(x => x.st !== 'todo')) finishRoutine(r);
+  });
+  dueNow().forEach(t => { const k = t.r.id + '-' + t.i; if (!S.notified[k]){ S.notified[k] = 1; changed = true; remind(t); } });
+  if (unlocked() && !S.unlockSeen && S.onboarded){ S.unlockSeen = true; changed = true; logAdd('cat-nutrient', 'New: you can now spot low nutrients and weeds.'); ui.news = 'New to spot: low nutrients and weeds.'; track('problems_unlocked'); }
+  return changed;
+}
+/* Reminders: a toast while playing, a system notification when the tab is in the background. */
+function remind(t){
+  const text = `Time to ${actLine(t.x.act, t.r).replace(/^\w/, c => c.toLowerCase())}`;
+  if (S.onboarded && view !== 'care' && view !== 'review') toast(`${text}. Open Task to do it.`);
+  if (S.remind && 'Notification' in window && Notification.permission === 'granted' && document.hidden){
+    try { new Notification('Wakala Agent', {body:`${text}. Do it before ${gTime(t.x.e)} game time.`, tag:'wakala-' + t.r.id}); } catch (e) {}
+  }
+  track('reminder_sent', {farm:t.r.farm, act:t.x.act, system:!!(document.hidden && S.remind)});
 }
 
 /* ---------- walking ---------- */
@@ -764,16 +1040,29 @@ function tick(ts){
   lastTs = ts; requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
+const DEV = /[?&]dev\b/.test(location.search);
 function walkTap(e){
-  const w = ui.walk; if (!w || w.done) return;
-  const [x, y] = toStage(e);
-  w.target = Math.max(w.s, project(w, x, y));
-  if (w.target - w.s < 12) w.target = Math.min(w.L, w.s + 40);
-  if (!w.moved){ w.moved = true; if (w.firstMove) w.firstMove(); const h = $('#walkHint'); if (h) h.innerHTML = w.keepGoing; }
+  const [x, y] = toStage(e), w = ui.walk;
+  if (DEV){ console.log('[dev] tap', Math.round(x), Math.round(y)); toast(`x ${Math.round(x)}, y ${Math.round(y)}`); }
+  // First session: the path is fixed, so a tap moves the agent forward along it.
+  if (['walk','retryWalk','walk2'].includes(S.phase)){
+    if (!w || w.done) return;
+    w.target = Math.max(w.s, project(w, x, y));
+    if (w.target - w.s < 12) w.target = Math.min(w.L, w.s + 40);
+    if (!w.moved){ w.moved = true; if (w.firstMove) w.firstMove(); const h = $('#walkHint'); if (h) h.innerHTML = w.keepGoing; }
+    return;
+  }
+  // Free play: walk along the roads to the nearest road point to the tap. A new tap re-routes from where the agent is.
+  if (view !== 'home' || S.phase !== 'free') return;
+  const path = S.hub > 0 ? [S.pos, [x, y]] : route(S.pos, [x, y]);
+  if (path.length < 2) return;
+  const nw = makeWalk(path, 90, () => { if (ui.walk === nw){ ui.walk = null; render(); } });
+  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; render();
 }
-const pathTo = id => { const g = FARMS[id - 1].gate, p = S.pos; return Math.hypot(p[0] - HUB[0], p[1] - HUB[1]) < 8 ? [p, g] : [p, HUB, g]; };
+const pathTo = id => { const g = FARMS[id - 1].gate; return S.hub > 0 ? [S.pos, g] : route(S.pos, g); };
 function startWalkTo(id, auto){
-  ui.walk = makeWalk(pathTo(id), 70, () => arrive(id));
+  preload(reviewFor(id));
+  ui.walk = makeWalk(pathTo(id), 90, () => arrive(id));
   ui.walk.keepGoing = `Keep going to ${owner(id)}'s farm.`;
   if (auto){ ui.walk.target = ui.walk.L; ui.walk.moved = true; }
   hist = []; view = 'home'; render();
@@ -782,13 +1071,17 @@ function arrive(id){
   ui.walk = null;
   if (S.phase === 'walk' || S.phase === 'retryWalk'){ track('walk_arrived', {farm:id}); S.phase = S.phase === 'walk' ? 'review' : 'retryReview'; return openReview(id); }
   if (S.phase === 'walk2'){ S.phase = 'review2'; return openReview(id); }
+  if (ui.goTask){ const g = ui.goTask; ui.goTask = null; const r = rOf(g.r); if (r && r.steps[g.i].st === 'todo') return openCare(g.r, g.i, 'task'); }
   if (ready(id)) return openReview(id);
-  toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); render();
+  const due = dueNow().find(t => t.r.farm === id);
+  if (due) return openCare(due.r.id, due.i, 'task');
+  const next = tasks().find(t => t.r.farm === id);
+  toast(next ? `${owner(id)}: next task is ${ACTS[next.x.act].name.toLowerCase()} at ${gTime(next.x.s)} (in ${until(gTs(next.x.s))}).` : `${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); render();
 }
 
 /* ---------- views ---------- */
 const CFG = {
-  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1}, review:{bg:'farm',nav:false,noHud:1},
+  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1}, review:{bg:'farm',nav:false,noHud:1}, care:{bg:'farm',nav:false,noHud:1},
   farms:{bg:'farm',nav:'farms',mapDim:1,taskDim:1}, crop:{bg:'farm',nav:false,mapDim:1,taskDim:1},
   shop:{bg:'farm',nav:'shop',mapDim:1,taskDim:1}, sell:{bg:'farm',nav:'shop',mapDim:1,taskDim:1},
   training:{bg:'farm',nav:'training',mapDim:1,taskDim:1}, calendar:{bg:'calendar',nav:'training',mapDim:1,taskDim:1},
@@ -819,7 +1112,7 @@ V.home = () => {
       ui.walk = makeWalk(path, ph === 'walk' ? 27 : 34, () => arrive(goal));
       ui.walk.keepGoing = `Keep going to ${owner(goal)}'s farm, ${esc(agentName())}.`;
       ui.walk.firstMove = () => track(ph === 'walk' ? 'walk_first_move' : 'retry_first_move');
-      S.pos = [...path[0]];
+      S.pos = [...path[0]]; preload(reviewFor(goal));
     }
     const w = ui.walk, p = w ? walkPoint(w, w.s) : path[0], f = FARMS[goal - 1];
     const hintAt = w ? walkPoint(w, Math.min(w.L, w.s + 46)) : path[1];
@@ -837,20 +1130,27 @@ V.home = () => {
   w += FARMS.slice(0, 4).map((f, i) => farmLabel(f, '', anim ? `pop d${i}` : '')).join('');
   if (ph === 'walk2'){
     const path = ui.walk ? ui.walk.path : pathTo(SECOND);
-    if (!ui.walk){ ui.walk = makeWalk(path, 50, () => arrive(SECOND)); ui.walk.keepGoing = `Keep going to ${owner(SECOND)}'s beans.`; ui.walk.firstMove = () => track('walk2_first_move'); }
+    if (!ui.walk){ preload(reviewFor(SECOND)); ui.walk = makeWalk(path, 60, () => arrive(SECOND)); ui.walk.keepGoing = `Keep going to ${owner(SECOND)}'s beans.`; ui.walk.firstMove = () => track('walk2_first_move'); }
     w = (anim ? fog(PATHS.first, [FIRST], true) : '') + w + pathSVG(path) + `<div class="hint" id="walkHint">${ui.walk.moved ? ui.walk.keepGoing : `Walk to ${owner(SECOND)}'s beans, ${esc(agentName())}.`}</div>` + (anim ? `<div class="banner">The map is open, ${esc(agentName())}.</div>` : '');
   } else if (ui.walk) w += pathSVG(ui.walk.path);
   const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
   w += meEl(p[0], p[1], S.look);
   if (ph === 'free') w += nextChip();
+  if (ui.news && ph === 'free'){ w += `<div class="banner news">${esc(ui.news)}</div>`; ui.news = null; }
+  if (DEV) w += devGraph();
   return {world:w};
 };
+/* ?dev: draw the road graph over the map */
+const devGraph = () => `<svg class="wpath" width="874" height="402" style="pointer-events:none">${RE.map(([a, b]) => `<line x1="${RN[a][0]}" y1="${RN[a][1]}" x2="${RN[b][0]}" y2="${RN[b][1]}" stroke="#0cf" stroke-width="2.5"/>`).join('')}${Object.entries(RN).map(([k, p]) => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="red"/><text x="${p[0] + 4}" y="${p[1] - 4}" fill="#fff" font-size="9" stroke="#000" stroke-width=".4">${k}</text>`).join('')}</svg>`;
 
 /* Next-step chip: always tells the player where to go. */
 function nextChip(){
+  const due = dueNow()[0];
+  if (due) return `<button class="nextchip" data-act="doTask" data-r="${due.r.id}" data-i="${due.i}">${img(ACTS[due.x.act].icon,20,20)}<span class="col" style="gap:1px;text-align:left"><b>Now: ${actLine(due.x.act, due.r).replace(/^\w/, c => c.toLowerCase()).replace(/^/, '')}</b><span>Do it before ${gTime(due.x.e)} · ${until(gTs(due.x.e))} left</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
   const id = [1,2,3,4].filter(ready).sort((a, b) => score(a) - score(b))[0];
   if (id) return `<button class="nextchip" data-act="walkFarm" data-farm="${id}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>Next: review ${owner(id)}'s ${cropName(FARMS[id - 1].crop)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
-  const soon = Math.min(...[1,2,3,4].map(i => S.rv[i].readyAt));
+  const soon = Math.min(...[1,2,3,4].map(i => S.rv[i].readyAt)), nt = tasks()[0];
+  if (nt && gTs(nt.x.s) < soon) return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>Next: ${actLine(nt.x.act, nt.r).replace(/^\w/, c => c.toLowerCase())} at ${gTime(nt.x.s)}</b><span>In ${until(gTs(nt.x.s))} · ${thriving()}/4 farms at ${GOAL}+</span></span></button>`;
   return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>All farms checked. Next review in ${until(soon)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span></button>`;
 }
 
@@ -867,16 +1167,24 @@ V.map = () => {
   return {world:w + nextChip()};
 };
 
-/* Task: today's farm reviews */
+/* Task: care tasks (due now, later, missed) and farm reviews */
 V.task = () => {
+  const m = gNow(), all = tasks(), now = all.filter(t => t.now), later = all.filter(t => !t.now).slice(0, 4);
+  const missed = []; S.care.forEach(r => r.steps.forEach((x, i) => { if (x.st === 'missed' && m - x.e < 1440) missed.push({r, i, x}); }));
+  const trow = (t, kind) => { const a = ACTS[t.x.act], c = core(t.r), n = c.indexOf(t.x) + 1;
+    return `<div class="row trow">${img(a.icon, 22, 22)}<div class="col sp" style="gap:2px"><span class="t10">${actLine(t.x.act, t.r)}</span><span style="font:400 9px var(--ui);opacity:.75">${t.x.opt ? 'Optional · ' : n ? `Step ${n} of ${c.length} · ` : ''}${whenLabel(t.x)}</span></div>${kind === 'now' ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="doTask" data-r="${t.r.id}" data-i="${t.i}">Do it</button>` : kind === 'later' ? `<span class="tag" style="font-size:9px">In ${until(gTs(t.x.s))}</span>` : `<span class="tag no" style="font-size:9px">Missed</span>`}</div>`; };
+  const care = `<span class="tsec">Due now</span>${now.length ? now.map(t => trow(t, 'now')).join('') : '<span class="tnone">Nothing due right now.</span>'}
+    ${later.length ? `<span class="tsec">Later</span>${later.map(t => trow(t, 'later')).join('')}` : ''}
+    ${missed.length ? `<span class="tsec">Missed</span>${missed.slice(-3).map(t => trow(t, 'missed')).join('')}` : ''}`;
   const rows = [1,2,3,4].map(id => {
     const f = FARMS[id - 1], r = ready(id), last = S.rv[id].last, key = 'task' + id;
     scenes[key] = last ? {...last.sc} : {...reviewFor(id)};
     return `<div class="row trow">${canvas(key, 'layout', 64, 40, `data-t="${last && last.ok ? 1 : 0}"`)}
       <div class="col sp" style="gap:2px"><span class="t10">${fname(id)} · ${cropName(f.crop)}</span><span style="font:400 9px var(--ui);opacity:.75">Success score ${score(id)}/100${last ? ` · last review ${last.ok ? 'passed' : 'missed'}` : ''}</span></div>
       ${r ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button>` : `<span class="tag no" style="font-size:9px">Check in ${until(S.rv[id].readyAt)}</span>`}</div>`; }).join('');
-  return {view:backBtn(163,40) + `<div class="panel" style="left:215px;top:30px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:8px">
-    <div class="ttl">${img('hdr-task',25,25)}Farm Reviews</div>${rows}
+  return {view:backBtn(163,40) + `<div class="panel" style="left:215px;top:22px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
+    <div class="ttl">${img('hdr-task',25,25)}Tasks<span class="clockin">${img('clock',13,13)}Day ${gDay(m)} · ${gTime(m)}</span></div>
+    <div class="tscroll">${care}<span class="tsec">Farm reviews</span>${rows}</div>
     <span style="font:500 9.5px var(--ui);opacity:.75;text-align:center">Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></div></div>`};
 };
 
@@ -888,7 +1196,7 @@ function openReview(id){
   track(S.phase === 'review2' ? 'review2_started' : S.phase === 'retryReview' ? 'retry_review_started' : S.phase === 'review' ? 'review_started' : 'review_started_free', {farm:id, problem:sc.problem});
   hist = []; view = 'review'; render();
 }
-const STEPS = [['look','Look'],['spot','Spot'],['judge','Judge'],['result','Result']];
+const STEPS = [['look','Look'],['spot','Spot'],['judge','Judge'],['result','Result'],['care','Care']];
 V.review = () => {
   const R = ui.rv, id = R.id, sc = R.sc, o = owner(id), nm = esc(agentName()), crop = cropName(sc.crop);
   const stepIx = STEPS.findIndex(s => s[0] === R.step);
@@ -898,32 +1206,47 @@ V.review = () => {
     const next = PARTS.find(p => !R.seen.includes(p[0]));
     body = `<p class="rprompt">${R.hint ? `Tap each picture to look closer, ${nm}.` : `Look at each part of ${o}'s farm.`}</p>
       <div class="parts">${PARTS.map(p => { const seen = R.seen.includes(p[0]), nx = R.hint && next && next[0] === p[0];
-        return `<button class="part ${seen ? 'seen' : ''} ${nx ? 'next' : ''}" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 134, 98)}<span>${seen ? '✓ ' : ''}${p[1]}</span>${nx ? FINGER : ''}</button>`; }).join('')}</div>`;
+        return `<button class="part ${seen ? 'seen' : ''} ${nx ? 'next' : ''}" data-act="zoom" data-p="${p[0]}">${pslot('rv', p[0], 134, 98)}<span>${seen ? '✓ ' : ''}${p[1]}</span>${nx ? FINGER : ''}</button>`; }).join('')}</div>`;
   } else if (R.step === 'spot'){
     body = `<p class="rprompt">Tap the field that looks wrong, ${nm}.</p>
       <div class="row" style="gap:14px;align-items:flex-start"><div class="spotwrap">${canvas('rv', 'layout', 330, 206, R.miss != null ? `data-miss="${R.miss}"` : '')}
         ${[0,1,2,3].map(i => { const f = REN.FIELD(i); return `<button class="fieldbtn" style="left:${f.x * 100}%;top:${f.y * 100}%;width:${f.w * 100}%;height:${f.h * 100}%" data-act="spot" data-f="${i}" aria-label="Field ${i + 1}"></button>`; }).join('')}</div>
-        <div class="col" style="gap:8px;width:190px"><span style="font:500 9.5px var(--ui);opacity:.75">Look again</span><div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 86, 56)}<span>${p[1]}</span></button>`).join('')}</div>
+        <div class="col" style="gap:8px;width:190px"><span style="font:500 9.5px var(--ui);opacity:.75">Look again</span><div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${pslot('rv', p[0], 86, 56)}<span>${p[1]}</span></button>`).join('')}</div>
         <button class="btn soft" style="padding:6px;font-size:11px" data-act="spot" data-f="none">No field looks wrong</button></div></div>`;
   } else if (R.step === 'judge'){
     body = `<p class="rprompt">What does this field need, ${nm}?</p>
       <div class="row" style="gap:14px;align-items:flex-start"><div class="col" style="gap:6px">${canvas('rv', 'layout', 250, 156, R.spot != null ? `data-glow="${R.spot}"` : '')}
-        <div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${canvas('rv', p[0], 78, 50)}<span>${p[1]}</span></button>`).join('')}</div></div>
-        <div class="calls">${CALLS.map(c => `<button class="call" data-act="judge" data-c="${c[0]}">${img(c[2],26,26)}<b>${c[1]}</b></button>`).join('')}</div></div>`;
-  } else if (R.ok){
+        <div class="minis">${PARTS.slice(0, 3).map(p => `<button class="part mini" data-act="zoom" data-p="${p[0]}">${pslot('rv', p[0], 78, 50)}<span>${p[1]}</span></button>`).join('')}</div></div>
+        <div class="calls ${callsNow().length > 3 ? 'tight' : ''}">${callsNow().map(c => `<button class="call" data-act="judge" data-c="${c[0]}">${img(c[2],26,26)}<b>${c[1]}</b></button>`).join('')}</div></div>`;
+  } else if (R.ok && R.step === 'result'){
     const first = S.passed === 1 && R.hint;
     const f = FARMS[id - 1];
-    body = `<div class="row" style="gap:14px;align-items:center"><div class="col" style="gap:6px">${canvas('rv', 'layout', 290, 176, `data-glow="${sc.problem === 'healthy' ? '' : sc.field}" data-light="1" data-t="${R.t}" data-anim="1"`)}${canvas('rv', 'crops', 290, 100, `data-t="${R.t}" data-anim="1"`)}</div>
+    const fix = !!R.cf;
+    body = `<div class="row" style="gap:14px;align-items:center"><div class="col" style="gap:6px">${canvas('rv', 'layout', 290, 176, `data-glow="${sc.problem === 'healthy' ? '' : sc.field}" data-light="1" data-t="${R.t}" data-anim="1"`)}${pslot('rv', 'crops', 290, 100, `data-t="${R.t}" data-anim="1"`)}</div>
       <div class="col" style="gap:10px;align-items:center;flex:1;text-align:center">
         <div class="bubble2"><b>${f.owner}:</b> Thank you, ${nm}!</div>
         <div class="cheer">${charSVG(S.look, 'cheer')}</div>
-        <p class="rline">${first ? 'You can read a farm now, and other farms need you.' : `${o}'s ${crop} ${sc.problem === 'healthy' ? 'are doing well' : 'are recovering'}.`}</p>
+        <p class="rline">${fix ? `You found it${first ? ', ' + nm : ''}. Now help ${o} fix it.` : first ? 'You can read a farm now, and other farms need you.' : `${o}'s ${crop} are doing well.`}</p>
         ${first ? '' : `<div class="row" style="gap:10px;justify-content:center">${rewardRow(R.reward)}</div>`}
-        <button class="btn" style="padding:7px 40px" data-act="rvContinue">Continue</button></div></div>`;
+        <button class="btn" style="padding:7px 40px" data-act="rvContinue">${fix ? 'Plan the care' : 'Continue'}</button></div></div>`;
+  } else if (R.step === 'care'){
+    const cf = R.cf, r = R.rid && rOf(R.rid);
+    if (!r){
+      body = `<div class="row" style="gap:16px;align-items:center">${pslot('rv', CLUE[sc.problem][0], 300, 196, '', {single:1})}
+        <div class="col" style="gap:9px;flex:1"><p class="rprompt">How should ${o} fix this, ${nm}?</p>
+        <div class="calls">${R.opts.map(op => `<button class="call ${R.tried.includes(op[0]) ? 'tried' : ''}" data-act="prescribe" data-k="${op[0]}">${img('checklist', 24, 24)}<b>${op[1]}</b></button>`).join('')}</div>
+        ${R.lesson ? `<p class="lesson">${img('bulb',16,16)}<span>${R.lesson}</span></p>` : ''}</div></div>`;
+    } else {
+      const first = r.steps.findIndex(x => x.st === 'todo' && x.s <= gNow()), tut = S.phase === 'review' || S.phase === 'retryReview';
+      body = `<div class="row" style="gap:16px;align-items:center">${pslot('rv', CLUE[sc.problem][0], 300, 196, '', {single:1})}
+        <div class="col" style="gap:9px;flex:1"><div class="bubble2" style="align-self:flex-start"><b>${o}:</b> I'll do it with you, ${nm}.</div>
+        <div class="rcard"><b>${esc(r.title)}</b>${core(r).slice(0, 4).map(x => `<span class="row" style="gap:6px">${img(ACTS[x.act].icon,14,14)}${ACTS[x.act].name} · ${whenLabel(x)}</span>`).join('')}${core(r).length > 4 ? `<span style="opacity:.7">and ${core(r).length - 4} more</span>` : ''}</div>
+        <div class="row" style="gap:8px">${first >= 0 ? `<button class="btn sp" style="padding:7px 10px" data-act="startCare">${ACTS[r.steps[first].act].name} now</button>${tut ? '' : `<button class="btn soft" style="padding:7px 14px" data-act="rvContinue">Later</button>`}` : `<button class="btn sp" style="padding:7px" data-act="rvContinue">Got it</button>`}</div></div></div>`;
+    }
   } else {
     const [part, line] = CLUE[sc.problem];
     const retryNext = S.phase === 'review';
-    body = `<div class="row" style="gap:16px;align-items:center">${canvas('rv', part, 380, 238, 'data-clue="1"')}
+    body = `<div class="row" style="gap:16px;align-items:center">${pslot('rv', part, 380, 238, '', {clue:1, single:1})}
       <div class="col" style="gap:12px;flex:1;text-align:center;align-items:center">
         <div class="bubble2 sad"><b>${o}:</b> Not quite, ${nm}.</div>
         <p class="rline">${line}</p>
@@ -932,11 +1255,89 @@ V.review = () => {
   const zname = R.zoom && PARTS.find(p => p[0] === R.zoom)[1];
   const zoom = R.zoom ? `<div class="zoomfull" role="dialog" aria-label="${zname}"><div class="panel" style="left:157px;top:6px;width:560px"><div class="pin" style="padding:8px 12px 10px">
       <div class="row" style="margin-bottom:6px"><b class="sp" style="font:600 13px var(--ui)">${zname}</b><button class="zx" data-act="unzoom" aria-label="Close">${X.replace(/#fff/g, '#6b402b')}</button></div>
-      ${canvas('rv', R.zoom, 522, 280)}
-      <div class="row" style="margin-top:8px;gap:10px"><span class="sp" style="font:600 12px var(--ui)">${R.hint ? GUIDE[R.zoom] : ''}</span><button class="btn" style="padding:7px 26px" data-act="unzoom">${R.step === 'look' ? 'Done looking' : 'Close'}</button></div></div></div></div>` : '';
+      ${pslot('rv', R.zoom, 522, 280)}
+      <div class="row" style="margin-top:8px;gap:10px"><span class="col sp" style="gap:2px"><span style="font:600 12px var(--ui)">${R.hint ? GUIDE[R.zoom] : ''}</span><span class="credit">${credit(sc, R.zoom)}</span></span><button class="btn" style="padding:7px 26px" data-act="unzoom">${R.step === 'look' ? 'Done looking' : 'Close'}</button></div></div></div></div>` : '';
   const top = R.step === 'look' ? 72 : 8;
   return {view:`<div class="panel" style="left:104px;top:${top}px;width:666px"><div class="pin rpanel"><div class="row" style="gap:10px"><span class="ttl" style="justify-content:flex-start">${img('hdr-analyze',22,22)}Review ${o}'s ${crop}</span><span class="sp"></span>${steps}</div>${body}</div></div>${zoom}`};
 };
+/* ---------- care tasks: short hands-on actions at the farm ---------- */
+function openCare(rid, i, from){
+  const r = rOf(rid), x = r.steps[i];
+  scenes.care = {seed:r.farm * 97 + i * 7, crop:r.crop, problem:r.problem, sev:Math.max(.55, r.sev || .6), field:r.field || 0};
+  let k = r.id * 31 + i * 7; const rnd = () => (k = (k * 9301 + 49297) % 233280) / 233280;
+  const n = {scout:5, hoe:6, fertilize:6, mulch:4}[x.act] || 0;
+  const spots = Array.from({length:n}, (_, j) => x.act === 'mulch' ? [.5, .14 + j * .24] : [.12 + rnd() * .76, .16 + rnd() * .7]);
+  ui.care = {rid:r.id, i, from, ph:x.act === 'spray' ? 'kit' : 'act', spots, hit:[], kit:[], hold:0, lesson:null, rec0:recOf(r), start:Date.now()};
+  track('care_started', {farm:r.farm, act:x.act, from});
+  if (from === 'task' || view !== 'review') hist = [];
+  view = 'care'; render();
+}
+const KIT = [['gloves','Gloves'],['mask','Face mask'],['boots','Boots']];
+V.care = () => {
+  const C = ui.care, r = rOf(C.rid), x = r.steps[C.i], a = ACTS[x.act], o = owner(r.farm), crop = cropName(r.crop), nm = esc(agentName());
+  const part = a.part, rec = C.ph === 'done' ? C.rec0 : recOf(r);
+  const photo = pslot('care', part, 360, 230, `data-t="${rec}"`, {single:1, t:rec, cls:C.holding ? 'wet' : ''});
+  const targets = C.ph === 'act' && C.spots.length ? C.spots.map((p, j) => C.hit.includes(j) ? '' : x.act === 'mulch'
+      ? `<button class="tgt row-t" style="top:${p[1] * 100}%" data-act="tapTarget" data-j="${j}" aria-label="Mulch row ${j + 1}">Tap to mulch</button>`
+      : `<button class="tgt" style="left:${p[0] * 100}%;top:${p[1] * 100}%" data-act="tapTarget" data-j="${j}" aria-label="Target ${j + 1}">${img(x.act === 'scout' ? 'bug' : x.act === 'hoe' ? 'cat-weed' : 'in-fertilizer', 22, 22)}</button>`).join('') : '';
+  const need = x.act === 'water' || (x.act === 'fertilize' && C.ph === 'hold');
+  const holdLabel = x.act === 'spray' ? 'Hold to spray' : x.act === 'fertilize' ? 'Hold to water it in' : 'Hold to water';
+  let side = '';
+  if (C.ph === 'kit') side = `<p class="rprompt">Safety first, ${nm}. Put on the safety kit.</p>
+    <div class="kit">${KIT.map(k => `<button class="call ${C.kit.includes(k[0]) ? 'on' : ''}" data-act="kitOn" data-k="${k[0]}" aria-pressed="${C.kit.includes(k[0])}">${img('in-nets',22,22)}<b>${k[1]}</b>${C.kit.includes(k[0]) ? '<i class="ok">✓</i>' : ''}</button>`).join('')}</div>
+    <span class="credit">Spray drifts onto skin and into lungs. Wear the kit every time.</span>`;
+  else if (C.ph === 'product') side = `<p class="rprompt">Which product goes in the sprayer?</p>
+    <div class="calls">${PRODUCTS[r.product].map(p => `<button class="call ${C.tried && C.tried.includes(p[0]) ? 'tried' : ''}" data-act="pickProduct" data-k="${p[0]}">${img('in-insecticides',22,22)}<span class="col" style="gap:1px"><b>${p[1]}</b><span style="font:500 9.5px var(--ui);opacity:.7">${p[2]}</span></span></button>`).join('')}</div>
+    ${C.lesson ? `<p class="lesson">${img('bulb',16,16)}<span>${C.lesson}</span></p>` : ''}`;
+  else if (C.ph === 'act' && C.spots.length) side = `<p class="rprompt">${a.how}</p><span class="count">${C.hit.length} of ${C.spots.length} done</span>`;
+  else if (C.ph === 'act' || C.ph === 'hold'){
+    const dry = need && S.water < 5;
+    side = `<p class="rprompt">${C.ph === 'hold' ? 'Now water the fertilizer in so it reaches the roots.' : a.how}</p>
+      ${dry ? `<p class="lesson">${img('water',16,16)}<span>Your water tank is empty.</span></p><button class="btn" style="padding:7px" data-act="refill">Refill tank · 10 coins</button>`
+        : `<button class="holdbtn" data-hold="1" aria-label="${holdLabel}"><i style="width:${C.hold * 100}%"></i><span>${img(x.act === 'spray' ? 'in-insecticides' : 'water',20,20)}${holdLabel}</span></button>${need ? `<span class="credit">Uses 5 water · you have ${S.water}</span>` : ''}`}`;
+  } else {
+    const c = core(r), nx = r.status === 'active' ? r.steps.find(y => y.st === 'todo') : null;
+    side = `<div class="bubble2" style="align-self:flex-start"><b>${o}:</b> ${r.status === 'done' ? `My ${crop} are healthy again. Thank you, ${nm}!` : `That helps a lot, ${nm}.`}</div>
+      <div class="row" style="gap:8px">${img('coin-sm',16,16)}<b style="font:700 13px var(--ui);color:var(--brown)">+20 coins</b>${r.status === 'done' ? `<b style="font:700 13px var(--ui);color:var(--green)">+100 bonus</b>` : ''}</div>
+      <div class="dots">${c.map(y => `<i class="${y.st}"></i>`).join('')}</div>
+      <span class="rline" style="font-size:11.5px">${nx ? `Next: ${ACTS[nx.act].name.toLowerCase()} · ${whenLabel(nx)}` : 'Care plan complete.'}</span>
+      <button class="btn" style="padding:7px 36px;align-self:flex-start" data-act="careContinue">Continue</button>`;
+  }
+  return {view:`<div class="panel" style="left:104px;top:30px;width:666px"><div class="pin rpanel">
+    <div class="row" style="gap:10px"><span class="ttl" style="justify-content:flex-start">${img(a.icon,22,22)}${a.name} ${o}'s ${crop}</span><span class="sp"></span><span class="clockin">${img('clock',13,13)}${gTime(gNow())} · until ${gTime(x.e)}</span></div>
+    <div class="row" style="gap:16px;align-items:center"><div class="carephoto">${photo}${targets}</div><div class="col" style="gap:10px;flex:1">${side}</div></div>
+    <span class="credit">${credit(scenes.care, part)}</span></div></div>`};
+};
+function completeStep(){
+  const C = ui.care, r = rOf(C.rid), x = r.steps[C.i];
+  if (x.st !== 'todo'){ C.ph = 'done'; return render(); }
+  if (x.act === 'water' || x.act === 'fertilize'){ S.water = Math.max(0, S.water - 5); bump('#rWater'); }
+  x.st = 'done'; r.streak = 0; earn(20, 0, 0); boostScore(r.farm, 3);
+  // Mulch keeps the soil wet, so the evening waterings are no longer needed.
+  if (x.act === 'mulch') r.steps.forEach(y => { if (y.st === 'todo' && y.act === 'water' && y.s % 1440 >= 900) y.st = 'skip'; });
+  logAdd(ACTS[x.act].icon, `${actLine(x.act, r)}: done. +20 coins.`);
+  track('care_done', {farm:r.farm, act:x.act, care_sec:Math.round((Date.now() - C.start) / 1000), from:C.from});
+  if (r.steps.every(y => y.st !== 'todo')) finishRoutine(r);
+  C.ph = 'done'; C.holding = false; render();
+  const to = recOf(r); requestAnimationFrame(() => setTimeout(() => { stage.querySelectorAll('.carephoto .pwrap.heal').forEach(e => e.style.opacity = to); const cv = stage.querySelector('.carephoto canvas'); if (cv){ cv.dataset.t = to; paint(); } }, 60));
+}
+/* hold-to-act button */
+let holdRaf = 0;
+function holdStart(){
+  const C = ui.care; if (!C || C.holding) return; C.holding = true;
+  stage.querySelector('.carephoto .pslot')?.classList.add('wet');
+  let last = performance.now();
+  const step = now => {
+    if (!ui.care || !C.holding) return;
+    C.hold = Math.min(1, C.hold + (now - last) / 1600); last = now;
+    const bar = stage.querySelector('.holdbtn i'); if (bar) bar.style.width = C.hold * 100 + '%';
+    if (C.hold >= 1){ C.holding = false; if (C.ph === 'act' || C.ph === 'hold') return completeStep(); }
+    holdRaf = requestAnimationFrame(step);
+  };
+  holdRaf = requestAnimationFrame(step);
+}
+function holdStop(){ const C = ui.care; if (!C || !C.holding) return; C.holding = false; cancelAnimationFrame(holdRaf); stage.querySelector('.carephoto .pslot')?.classList.remove('wet'); }
+
 const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}+${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}+${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}+${r.w}</span>`;
 function animateRecovery(){
   const t0 = performance.now();
@@ -955,15 +1356,17 @@ function judge(call){
   rv.last = {sc:{...sc}, ok, at:Date.now()};
   track(S.phase === 'review2' ? 'review2_result' : 'review_result', {farm:id, ok, call, problem:sc.problem, sec_in_review:Math.round((Date.now() - R.start) / 1000)});
   if (ok){
-    S.passed++; rv.n++;
+    S.passed++; rv.n++; delete rv.ret;
+    R.cf = careFor(sc);
+    if (R.cf){ let k = sc.seed; R.opts = R.cf.opts.slice().sort(() => ((k = (k * 9301 + 49297) % 233280) / 233280) - .5); R.tried = []; R.lesson = null; R.rid = null; R.tries = 0; }
     const diff = 1 - sc.sev; R.reward = {c:Math.round(80 + 120 * diff), g:Math.round(10 + 20 * diff), w:10};
     earn(R.reward.c, R.reward.g, R.reward.w); boostScore(id, sc.problem === 'healthy' ? 8 : 22);
-    logAdd('hdr-task', `Reviewed ${fname(id)}: ${CALLS.find(c => c[0] === call)[1].toLowerCase()} was right. Score now ${score(id)}.`);
+    logAdd('hdr-task', `Reviewed ${fname(id)}: ${callName(call).toLowerCase()} was right. Score now ${score(id)}.`);
   } else {
-    logAdd('hdr-task', `Reviewed ${fname(id)}: the farm needed ${sc.problem === 'healthy' ? 'nothing' : CALLS.find(c => c[0] === sc.problem)[1].toLowerCase()}.`);
+    logAdd('hdr-task', `Reviewed ${fname(id)}: the farm needed ${sc.problem === 'healthy' ? 'nothing' : callName(sc.problem).toLowerCase()}.`);
   }
   if (S.onboarded || ok){ rv.readyAt = tomorrow(); }
-  render(); if (ok) animateRecovery();
+  render(); if (ok && !R.cf) animateRecovery();
 }
 
 /* ---------- character creation (first thing a new player sees) ---------- */
@@ -980,7 +1383,19 @@ function createOverlay(){
 }
 
 /* Session close: a reason to come back */
+const NEEDS = {water:'needs water again', spray:'needs spraying again', scout:'needs scouting again', fertilize:'needs fertilizer', hoe:'needs weeding again', mulch:'needs mulch'};
 function hookOverlay(){
+  const nt = tasks().filter(t => !t.now && !t.x.opt)[0];
+  if (nt){
+    const r = nt.r, x = nt.x, same = gDay(x.s) === gDay(gNow());
+    scenes.hook = {seed:r.farm * 97, crop:r.crop, problem:r.problem, sev:.7, field:r.field || 0};
+    const canRemind = 'Notification' in window && !(S.remind && Notification.permission === 'granted');
+    return `<div class="dimmer"></div><div class="panel" style="left:242px;top:40px;width:390px" role="dialog" aria-label="Come back later"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
+      ${pslot('hook', ACTS[x.act].part, 300, 150, `data-t="${recOf(r)}"`, {single:1, t:recOf(r)})}
+      <p class="rline" style="margin:0;max-width:340px">${owner(r.farm)}'s ${cropName(r.crop)} ${NEEDS[x.act]} ${same ? 'this ' + partOfDay(x.s) : partOfDay(x.s) === 'morning' && gDay(x.s) === gDay(gNow()) + 1 ? 'tomorrow morning' : 'on day ' + gDay(x.s)}, ${esc(agentName())}.</p>
+      <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}${gTime(x.s)} game time · in about ${until(gTs(x.s))}</span>
+      <div class="row" style="gap:8px">${canRemind ? `<button class="btn soft" style="padding:7px 16px" data-act="remindOn">Remind me</button>` : ''}<button class="btn" style="padding:7px 30px" data-act="hookDone">See you then</button></div></div></div>`;
+  }
   const id = HOOK, f = FARMS[id - 1];
   scenes.hook = {...reviewFor(id)};
   return `<div class="dimmer"></div><div class="panel" style="left:242px;top:58px;width:390px" role="dialog" aria-label="See you tomorrow"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
@@ -988,6 +1403,14 @@ function hookOverlay(){
     <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} will be ready to check tomorrow, ${esc(agentName())}.</p>
     <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}Ready in ${until(S.rv[id].readyAt)}</span>
     <button class="btn" style="padding:7px 36px" data-act="hookDone">See you tomorrow</button></div></div>`;
+}
+
+/* Photo credits (Settings) */
+function creditsOverlay(){
+  return `<div class="dimmer"></div><div class="panel" style="left:182px;top:16px;width:510px" role="dialog" aria-label="Photo credits"><div class="pin" style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+    <div class="row"><b class="sp ttl" style="justify-content:flex-start">Photo credits</b><button class="zx" data-act="closeOverlay" aria-label="Close">${X.replace(/#fff/g, '#6b402b')}</button></div>
+    <span class="credit">Photos from Wikimedia Commons, cropped and zoomed for the game. Tap a name to see the original.</span>
+    <div class="tscroll" style="max-height:290px">${Object.values(PH).map(p => `<div class="row trow" style="gap:8px"><span class="pthumb"><img src="${p.src}" alt="" referrerpolicy="no-referrer" onerror="this.remove()"></span><span class="col sp" style="gap:1px;font:500 9.5px var(--ui)"><a href="https://commons.wikimedia.org/wiki/File:${encodeURIComponent(p.f)}" target="_blank" rel="noopener">${esc(p.f.replace(/_/g, ' ').replace(/\.jpg$/i, ''))}</a><span>By ${esc(p.by)} · <a href="${LIC[p.lic]}" target="_blank" rel="noopener">${p.lic}</a></span></span></div>`).join('')}</div></div></div>`;
 }
 
 /* How a review works (Settings) */
@@ -1193,12 +1616,14 @@ V.route = () => {
 };
 
 /* ---------- Settings & activity ---------- */
-V.settings = () => ({view:backBtn(163,22) + `<div class="panel" style="left:218px;top:14px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
-  <div class="ttl">${img('settings',20,20)}Settings</div>
+V.settings = () => ({view:backBtn(163,22) + `<div class="panel" style="left:218px;top:8px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:6px;padding:8px 12px">
+  <div class="ttl">${img('settings',20,20)}Settings<span class="clockin">${img('clock',13,13)}Day ${gDay(gNow())} · ${gTime(gNow())}</span></div>
   <div class="box row" style="gap:10px">${portrait(40, 46)}<div class="col sp" style="gap:6px"><div class="row"><input id="nameIn" class="fld sp" maxlength="16" placeholder="Your name" value="${esc(S.name)}" aria-label="Your name"><button class="btn sm" style="padding:6px 14px;font-size:11px" data-act="saveName">Save</button></div>
     <div class="looks small">${LOOKS.map(l => `<button class="look ${S.look === l.id ? 'on' : ''}" data-act="pickLook" data-l="${l.id}" aria-label="${l.label}">${charSVG(l.id)}</button>`).join('')}</div></div></div>
   <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How a review works</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
-  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:10.5px" data-act="readyAll">Playtest: make all farms ready now</button></div>
+  <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="remindOn">${S.remind && 'Notification' in window && Notification.permission === 'granted' ? 'Reminders are on' : 'Turn on reminders'}</button><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="credits">Photo credits</button></div>
+  <span class="credit" style="text-align:center">Reminders show while the game is open in a browser tab. Reminders with the game closed need a push service (not built yet).</span>
+  <div class="row" style="gap:6px"><span class="credit" style="white-space:nowrap">Playtest:</span><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="readyAll">Farms ready</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="skipTime">+2 game hours</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockNow">Unlock new problems</button></div>
   <div class="box" style="background:rgba(229,72,77,.06)">${ui.confirmReset
     ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your character, farms and rewards on this device.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
     : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from character creation.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
@@ -1210,6 +1635,15 @@ V.activity = () => {
   return {view:backBtn(163,30) + `<div class="panel" style="left:218px;top:22px;width:437px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:10px 12px">
     <div class="ttl">${img('mail',20,20)}Activity</div><div class="box" style="padding:2px 10px;max-height:290px;overflow:auto">${rows}</div></div></div>`};
 };
+
+/* HUD clock: game day and time; a dot when a care task is due */
+function clockChip(){
+  const el = $('#clock'); if (!el) return;
+  const m = gNow(), due = S.clock0 && dueNow().length, pod = partOfDay(m);
+  el.hidden = !S.clock0 || onb();
+  el.innerHTML = `<span class="sun ${pod}"></span><b>Day ${gDay(m)}</b><span>${gTime(m)}</span>${due ? `<i class="due">${due}</i>` : ''}`;
+  el.setAttribute('aria-label', `Day ${gDay(m)}, ${gTime(m)}${due ? `, ${due} task due` : ''}. Open tasks`);
+}
 
 /* ---------- render ---------- */
 let lastBg = '';
@@ -1228,10 +1662,11 @@ function render(){
   $('#nav').innerHTML = NAV.map(n => `<button class="nb ${cfg.nav === n[0] ? 'on' : ''}" data-act="nav" data-v="${n[0]}"><span class="o"><span class="i"><img src="${A(n[2])}" alt=""></span></span><span>${n[1]}</span></button>`).join('');
   [['#rCoins',S.coins],['#rGems',S.gems],['#rWater',S.water]].forEach(([id, v]) => $(id + ' b').textContent = fmt(v));
   $('#aname').textContent = agentName(); $('#trophies').textContent = S.passed; $('#hudFace').innerHTML = faceSVG(S.look);
+  clockChip();
   const out = V[view]();
   $('#world').innerHTML = out.world || '';
   $('#view').innerHTML = ui.overlay ? '' : (out.view || '');
-  $('#overlay').innerHTML = S.phase === 'create' ? createOverlay() : ui.overlay === 'hook' ? hookOverlay() : ui.overlay === 'how' ? howOverlay() : '';
+  $('#overlay').innerHTML = S.phase === 'create' ? createOverlay() : ui.overlay === 'hook' ? hookOverlay() : ui.overlay === 'how' ? howOverlay() : ui.overlay === 'credits' ? creditsOverlay() : '';
   if (view === 'shop' && S.shopTab === 'loans' && S.loanTab === 'calc') calcOut();
   if (view === 'sell') sellOut();
   paint(); save(); void firstSession;
@@ -1258,7 +1693,7 @@ const ACT = {
     const v = ($('#nameIn0') || {}).value; if (v != null) S.name = v.trim().slice(0, 16);
     if (!S.name){ toast('Type a name or tap one of the suggestions'); return; }
     track('character_created', {look:S.look, named:NAME_IDEAS.includes(S.name) ? 'suggested' : 'typed'});
-    S.phase = 'walk'; ui.walk = null; save(); render();
+    S.phase = 'walk'; ui.walk = null; S.clock0 = Date.now(); S.unlockAt = Date.now() + UNLOCK_MS; save(); render();
   },
   /* walking */
   walkFarm: d => {
@@ -1297,6 +1732,7 @@ const ACT = {
   judge: d => judge(d.c),
   rvContinue: () => {
     const R = ui.rv, ph = S.phase;
+    if (R.ok && R.step === 'result' && R.cf){ R.step = 'care'; track('care_step_shown', {farm:R.id}); return render(); }
     if (R.ok){
       if (ph === 'review' || ph === 'retryReview'){
         // First review passed: onboarding is done for good.
@@ -1315,7 +1751,42 @@ const ACT = {
     if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = [...FARMS[R.id - 1].gate]; S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
     S.pos = [...FARMS[R.id - 1].gate]; ui.rv = null; view = 'home'; render();
   },
-  hookDone: () => { ui.overlay = null; track('session_closed'); render(); toast(`See you tomorrow, ${agentName()}.`); },
+  hookDone: () => { ui.overlay = null; track('session_closed'); render(); toast(`See you soon, ${agentName()}.`); },
+  credits: () => { ui.overlay = 'credits'; render(); },
+  remindOn: () => {
+    if (!('Notification' in window)){ toast('This browser cannot show reminders. Keep the game open to get them as messages.'); return; }
+    Notification.requestPermission().then(p => { S.remind = p === 'granted'; track('reminders', {permission:p}); toast(p === 'granted' ? 'Reminders are on while the game is open in a tab' : 'Reminders are off. You can turn them on in your browser settings.'); render(); }).catch(() => toast('Reminders could not be turned on here'));
+  },
+  skipTime: () => { S.clock0 -= 120 * MS_GMIN; careTick(); toast(`Skipped ahead. It is now ${gTime(gNow())}, day ${gDay(gNow())}.`); render(); },
+  unlockNow: () => { S.unlockAt = Date.now(); careTick(); toast('Low nutrients and weeds are now in the reviews'); render(); },
+  /* care */
+  prescribe: d => {
+    const R = ui.rv, op = R.opts.find(o => o[0] === d.k); R.tries++;
+    if (!op[2]){ if (!R.tried.includes(op[0])) R.tried.push(op[0]); const c = Math.min(10, S.coins); S.coins -= c; bump('#rCoins'); R.lesson = op[3] + (c ? ` (−${c} coins)` : ''); track('prescribe', {farm:R.id, ok:false, pick:op[1]}); return render(); }
+    const r = addRoutine(R.id, R.sc, R.cf); R.rid = r.id; R.lesson = null;
+    track('prescribe', {farm:R.id, ok:true, tries:R.tries, kind:r.kind}); render();
+  },
+  startCare: () => { const r = rOf(ui.rv.rid), i = r.steps.findIndex(x => x.st === 'todo' && x.s <= gNow()); if (i >= 0) openCare(r.id, i, 'review'); },
+  doTask: d => {
+    const r = rOf(d.r), i = +d.i; if (!r || r.steps[i].st !== 'todo'){ render(); return; }
+    if (S.phase !== 'free' || S.hub > 0) return openCare(r.id, i, 'task');
+    const g = FARMS[r.farm - 1].gate;
+    if (Math.hypot(S.pos[0] - g[0], S.pos[1] - g[1]) < 6) return openCare(r.id, i, 'task');
+    ui.goTask = {r:r.id, i}; ui.overlay = null; startWalkTo(r.farm, true);
+  },
+  kitOn: d => { const C = ui.care; if (!C.kit.includes(d.k)) C.kit.push(d.k); if (C.kit.length === KIT.length){ C.ph = 'product'; C.tried = []; track('care_kit_on'); } render(); },
+  pickProduct: d => {
+    const C = ui.care, r = rOf(C.rid), p = PRODUCTS[r.product].find(x => x[0] === d.k);
+    if (!p[3]){ if (!C.tried.includes(p[0])) C.tried.push(p[0]); const c = Math.min(10, S.coins); S.coins -= c; bump('#rCoins'); C.lesson = p[4] + (c ? ` (−${c} coins)` : ''); track('care_product', {ok:false, pick:p[1]}); return render(); }
+    C.ph = 'act'; C.lesson = null; track('care_product', {ok:true}); render();
+  },
+  tapTarget: d => { const C = ui.care, r = rOf(C.rid), x = r.steps[C.i]; if (!C.hit.includes(+d.j)) C.hit.push(+d.j); if (C.hit.length === C.spots.length){ if (x.act === 'fertilize'){ C.ph = 'hold'; C.hold = 0; return render(); } return completeStep(); } render(); },
+  refill: () => { if (!spend('coins', 10)) return; S.water += 20; bump('#rWater'); toast('Tank refilled: +20 water'); render(); },
+  careContinue: () => {
+    const C = ui.care; ui.care = null;
+    if (C.from === 'review' && ui.rv){ view = 'review'; return ACT.rvContinue(); }
+    hist = []; view = 'home'; render();
+  },
   closeOverlay: () => { ui.overlay = null; render(); },
   /* farms, shop and the rest */
   dd: d => { ui.dd = ui.dd === d.k ? null : d.k; render(); },
@@ -1386,7 +1857,7 @@ const ACT = {
   readyAll: () => { [1,2,3,4].forEach(id => S.rv[id].readyAt = 0); toast('All farms are ready to review'); render(); },
   askReset: () => { ui.confirmReset = true; render(); },
   cancelReset: () => { ui.confirmReset = false; render(); },
-  doReset: () => { S = FRESH(); hist = []; view = 'home'; ui = {...ui, confirmReset:false, overlay:null, rv:null, walk:null, unlockAnim:false}; S.t0 = Date.now(); track('character_shown'); render(); },
+  doReset: () => { S = FRESH(); hist = []; view = 'home'; ui = {...ui, confirmReset:false, overlay:null, rv:null, walk:null, care:null, goTask:null, news:null, unlockAnim:false}; S.t0 = Date.now(); track('character_shown'); render(); },
 };
 
 stage.addEventListener('click', e => {
@@ -1396,7 +1867,9 @@ stage.addEventListener('click', e => {
   if (ui.dd && d.act !== 'dd' && d.act !== 'ddpick') ui.dd = null;
   (ACT[d.act] || (() => {}))(d);
 });
-stage.addEventListener('pointerdown', e => { if (e.target.closest('[data-walk]')) walkTap(e); });
+stage.addEventListener('pointerdown', e => { if (e.target.closest('[data-walk]')) walkTap(e); if (e.target.closest('[data-hold]')){ e.preventDefault(); holdStart(); } });
+['pointerup','pointercancel','pointerleave'].forEach(t => stage.addEventListener(t, holdStop));
+stage.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && e.target.closest('[data-hold]') && ui.care){ e.preventDefault(); ui.care.hold = Math.min(1, ui.care.hold + .34); if (ui.care.hold >= 1) completeStep(); else { const b = stage.querySelector('.holdbtn i'); if (b) b.style.width = ui.care.hold * 100 + '%'; } } });
 stage.addEventListener('input', e => {
   const id = e.target.id;
   if (id === 'nameIn0'){ S.name = e.target.value.trim().slice(0, 16); save(); const b = stage.querySelector('[data-act="createDone"]'); if (b){ b.textContent = S.name ? `Start as ${S.name}` : 'Pick a name to start'; b.classList.toggle('ghost-soft', !S.name); } stage.querySelectorAll('.chipbtn').forEach(c => c.classList.toggle('on', c.dataset.n === S.name)); }
@@ -1422,8 +1895,14 @@ function fit(){
 }
 addEventListener('resize', () => { fit(); paint(); }); fit();
 
+/* the game clock ticks: missed tasks, reminders and unlocks */
+setInterval(() => { if (careTick()){ save(); if (['home','task','settings'].includes(view) && !ui.overlay) render(); } else clockChip(); if (view === 'home' && S.phase === 'free' && !ui.walk){ const c = stage.querySelector('.nextchip'); if (c && !document.hidden) { const tmp = document.createElement('div'); tmp.innerHTML = nextChip(); c.replaceWith(tmp.firstElementChild); } } }, 5000);
+if (!S.clock0 && S.phase !== 'create'){ S.clock0 = Date.now(); S.unlockAt = Date.now() + UNLOCK_MS; }
+careTick();
+
 /* resume where the player left off */
 if (S.phase === 'create'){ if (!S.t0) S.t0 = Date.now(); track('character_shown'); }
+if (view === 'care') view = 'home';
 if (S.phase === 'review' || S.phase === 'retryReview' || S.phase === 'review2'){ const id = S.phase === 'review' ? FIRST : S.phase === 'retryReview' ? RETRY : SECOND; render(); openReview(id); }
 else {
   if (S.phase === 'unlock') S.phase = 'walk2';
