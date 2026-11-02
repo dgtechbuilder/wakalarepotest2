@@ -39,8 +39,8 @@ If your first call is wrong, you walk to Brian's farm and try again, so no one i
 
 **After the first session**
 
-- **Click a farm to visit it.** Click a farm or its label on the Home screen or the Map, and your agent walks there along the roads. The review opens when you arrive. If the farm isn't ready yet, your agent waits and the review starts on its own.
-- **Seven rounds per farm, back to back.** Every farm has 7 written rounds and can be checked again 30 seconds after a review, so you can move from farm to farm without waiting. After round 7, rounds are random.
+- **Click a farm to visit it.** Click a farm or its label on the Home screen or the Map, and your agent walks there along the roads. The review opens when you arrive. There is no timer: you can walk to any farm at any time and check it.
+- **Seven rounds per farm, back to back.** Every farm has 7 written rounds. You can play them in any order, on one farm after another or several in a row on the same farm. After round 7, rounds are random.
 - **Five problems to spot:** needs water, pests and healthy fields from the start. Low nutrients and weeds are added from round 5 on any farm (or 2 hours after you start).
 - **Care routines on a game clock.** One game day is one real hour, with a morning and an evening window. Tasks are hands-on: hold to water or spray, tap off caterpillars, hoe out weeds, add CAN fertilizer and water it in, or mulch. Missed tasks set a field back, and three misses in a row bring the problem back.
 - **Tasks and reminders.** The Task screen lists what is due now, later and missed. Reminders appear in the game, and as browser notifications while the game is open in a background tab (turn them on in Settings).
@@ -80,7 +80,7 @@ Then open http://localhost:8000.
 
 ## Playtesting
 
-Settings has three playtest buttons: make all farms ready, skip 2 game hours, and unlock the new problems.
+Settings has two playtest buttons: skip 2 game hours, and unlock the new problems.
 
 The automated playtests need `pip install playwright` and a Chromium browser. Set `CHROME=/path/to/chrome` to use your own.
 
@@ -88,7 +88,7 @@ The automated playtests need `pip install playwright` and a Chromium browser. Se
 python3 tools/playtest/fs.py right      # first session, right answers (HUMAN=1 for human pacing)
 python3 tools/playtest/fs.py wrong      # first session with a wrong call and the retry
 python3 tools/playtest/free.py          # road walking, tasks, spraying, misses, settings
-python3 tools/playtest/rounds.py        # all 7 rounds on every farm, back to back
+python3 tools/playtest/rounds.py        # all 7 rounds on each farm, back to back
 python3 tools/playtest/clicks.py        # click each farm on Home, Map and a hub map
 ```
 
@@ -101,7 +101,7 @@ GitHub Pages publishes the `main` branch from the root folder. Every push to `ma
 ## Open questions
 
 - **Farm advice.** The product names are generic active ingredients (for example emamectin benzoate for armyworm, and lambda-cyhalothrin for bean pests). The bean product is a placeholder until an agronomist confirms it.
-- **Care plans with fast rounds.** Care plans run on game days while rounds come every 30 seconds, so tasks can pile up during long sessions. One option is a single "fix it now" action within each round.
+- **Care plans with fast rounds.** Care plans run on game days while rounds can be played back to back, so tasks can pile up during long sessions. One option is a single "fix it now" action within each round.
 - **Missing photos.** Low nutrients and dry bean leaves still use the drawn pictures.
 - **Reminders with the game closed** need a push service, which isn't built yet.
 - **Hub maps** (after a storage upgrade) have no traced roads, so the agent walks straight to each farm there.

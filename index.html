@@ -822,7 +822,7 @@ const GOAL = 80;
 
 /* Review content. Every review uses the same four steps; only this data changes.
    problem: what is wrong; sev: how visible (1 = obvious); field: where; hint: guided first time. */
-/* Seven rounds per farm, played back to back (a farm can be checked again 30 seconds after a review).
+/* Seven rounds per farm, played back to back: every farm can be checked at any time, with no waiting.
    say: what the farmer tells the agent on arrival. The farmer describes what they see; from round 4 on they sometimes guess wrong.
    Rounds 1 to 4 use water, pests and healthy fields. Low nutrients and weeds arrive from round 5. */
 const ROUNDS = {
@@ -859,7 +859,7 @@ const ROUNDS = {
     {problem:'nutrient', sev:.5, field:3, say:'The old leaves at the bottom are yellow in a V shape.'},
     {problem:'healthy', sev:.5, field:0, say:'I followed all your advice. How does it look now?'}],
 };
-const NROUNDS = 7, CHECK_MS = 30 * 1000;
+const NROUNDS = 7;
 const round = id => Math.min(S.rv[id].n, NROUNDS);
 const roundTag = id => S.rv[id].n < NROUNDS ? `Round ${S.rv[id].n + 1}/${NROUNDS}` : 'Extra round';
 /* After the 7 rounds, the farmer reports in general terms. */
@@ -921,13 +921,12 @@ const NAME_IDEAS = ['Amani','Wanjiru','Otieno'];
 
 /* ---------- state ---------- */
 /* next review: 6 am the next game day (about an hour of real time) */
-const tomorrow = () => Date.now() + CHECK_MS;
 const nextGameMorning = () => { if (S && S.clock0) return gTs(Math.floor(gNow() / 1440) * 1440 + 1440 + 360); const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(6, 0, 0, 0); return d.getTime(); };
 const FRESH = () => ({
   phase:'create', name:'', look:'girl', onboarded:false, pos:[...HUB], t0:0,
   coins:100, gems:40, water:20, reviews:0, passed:0,
   farms:{1:{score:45}, 2:{score:52}, 3:{score:58}, 4:{score:61}},
-  rv:{1:{n:0, readyAt:0, last:null}, 2:{n:0, readyAt:0, last:null}, 3:{n:0, readyAt:0, last:null}, 4:{n:0, readyAt:0, last:null}},
+  rv:{1:{n:0, last:null}, 2:{n:0, last:null}, 3:{n:0, last:null}, 4:{n:0, last:null}},
   retryUsed:false, log:[], hub:0, sel:null, farmIdx:0, statFarm:0, cardMode:0,
   bookings:{}, trainFarm:{}, calDay:2, tip:0, loans:{}, sales:{},
   storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
@@ -951,7 +950,7 @@ function track(e, data = {}){
 window.wakalaEvents = () => { try { return JSON.parse(localStorage.getItem(EV_KEY) || '[]'); } catch (x) { return []; } };
 
 /* transient UI state */
-let view = 'home', hist = [], ui = {waiting:null, care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
 function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
@@ -966,7 +965,6 @@ const agentName = () => S.name || 'Agent';
 const level = () => 1 + Math.floor(S.passed / 2);
 const score = id => S.farms[id].score;
 const boostScore = (id, n) => { S.farms[id].score = Math.min(100, S.farms[id].score + n); };
-const ready = id => S.rv[id] && Date.now() >= S.rv[id].readyAt;
 const thriving = () => [1,2,3,4].filter(id => score(id) >= GOAL).length;
 const onb = () => !S.onboarded;
 function dd(key, value, placeholder, options, iconName){
@@ -1038,7 +1036,7 @@ function careTick(){
       logAdd(ACTS[x.act].icon, `Missed: ${actLine(x.act, r).toLowerCase()}. The field slipped back a step.`);
       track('care_missed', {farm:r.farm, act:x.act, streak:r.streak});
       if (r.streak >= 3 && r.status === 'active'){
-        r.status = 'failed'; S.farms[r.farm].score = Math.max(0, score(r.farm) - 10); S.rv[r.farm].readyAt = 0; S.rv[r.farm].ret = {crop:r.crop, problem:r.problem, sev:Math.min(.9, (r.sev || .6) + .1), field:r.field || 0};
+        r.status = 'failed'; S.farms[r.farm].score = Math.max(0, score(r.farm) - 10); S.rv[r.farm].ret = {crop:r.crop, problem:r.problem, sev:Math.min(.9, (r.sev || .6) + .1), field:r.field || 0};
         logAdd('cat-' + (r.problem === 'weeds' ? 'weed' : r.problem === 'pest' ? 'pest' : r.problem === 'nutrient' ? 'nutrient' : 'water'), `${owner(r.farm)}'s ${cropName(r.crop)} problem came back after 3 missed tasks. Review the farm again.`);
         ui.news = `${owner(r.farm)}'s problem came back. Review the farm again.`;
       }
@@ -1123,7 +1121,7 @@ function walkTap(e){
   const path = S.hub > 0 ? [S.pos, [x, y]] : route(S.pos, [x, y]);
   if (path.length < 2) return;
   const nw = makeWalk(path, 90, () => { if (ui.walk === nw){ ui.walk = null; render(); } });
-  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; ui.waiting = null; render();
+  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; render();
 }
 /* Where the agent stands to check a farm. The upgraded hub maps have no traced roads, so the agent walks straight to the farm there. */
 const onHubMap = () => S.hub > 0 && S.onboarded && view !== 'map';
@@ -1131,7 +1129,7 @@ const gateOf = id => { if (!onHubMap()) return FARMS[id - 1].gate; const b = FAR
 const pathTo = id => onHubMap() ? [S.pos, gateOf(id)] : route(S.pos, gateOf(id));
 /* Clicking a farm (Home, Map, Task or Farms screen) walks the agent there; on arrival the review opens. stay = keep the current screen (the Map). */
 function startWalkTo(id, auto, stay){
-  preload(reviewFor(id)); ui.waiting = null; ui.overlay = null;
+  preload(reviewFor(id)); ui.overlay = null;
   if (!stay){ hist = []; view = 'home'; }
   ui.walk = makeWalk(pathTo(id), 90, () => arrive(id));
   ui.walk.keepGoing = `Keep going to ${owner(id)}'s farm.`;
@@ -1144,13 +1142,8 @@ function arrive(id){
   if (S.phase === 'walk' || S.phase === 'retryWalk'){ track('walk_arrived', {farm:id}); S.phase = S.phase === 'walk' ? 'review' : 'retryReview'; return openReview(id); }
   if (S.phase === 'walk2'){ S.phase = 'review2'; return openReview(id); }
   if (ui.goTask){ const g = ui.goTask; ui.goTask = null; const r = rOf(g.r); if (r && r.steps[g.i].st === 'todo') return openCare(g.r, g.i, 'task'); }
-  if (ready(id)) return openReview(id);
-  // A farm is never more than 30 seconds away from its next round, so the agent waits there.
-  if (S.rv[id].readyAt - Date.now() <= CHECK_MS + 1000){ ui.waiting = id; track('waited_at_farm', {farm:id, sec:Math.ceil((S.rv[id].readyAt - Date.now()) / 1000)}); render(); return; }
-  const due = dueNow().find(t => t.r.farm === id);
-  if (due) return openCare(due.r.id, due.i, 'task');
-  const next = tasks().find(t => t.r.farm === id);
-  toast(next ? `${owner(id)}: next task is ${ACTS[next.x.act].name.toLowerCase()} at ${gTime(next.x.s)} (in ${until(gTs(next.x.s))}).` : `${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); render();
+  // Every farm can be checked at any time: arriving opens its next round.
+  openReview(id);
 }
 
 /* ---------- views ---------- */
@@ -1174,8 +1167,8 @@ function fog(path, farms, lift){
 }
 const pathSVG = path => `<svg class="wpath" width="874" height="402" aria-hidden="true"><path d="${path.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ')}" fill="none" stroke="rgba(255,230,150,.95)" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/></svg>`;
 const meEl = (x, y, look) => `<div id="me" style="left:${x}px;top:${y}px">${charSVG(look)}</div>`;
-const farmLabel = (f, extra = '', cls = '') => { const s = score(f.id), r = ready(f.id);
-  return `<button class="flabel ${cls}" style="left:${f.lbl[0]}px;top:${f.lbl[1]}px" data-act="walkFarm" data-farm="${f.id}"><span class="a">${img('sprout',14,14)}Farm ${f.id}: ${f.owner} · ${cropName(f.crop)}${S.onboarded ? `<i class="rtag">${roundTag(f.id)}</i>` : ''}${r ? '<i class="pinTag">Ready</i>' : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b>${!r ? ` · ready in ${live(S.rv[f.id].readyAt)}` : ''}</span>${extra}</button>`; };
+const farmLabel = (f, extra = '', cls = '') => { const s = score(f.id);
+  return `<button class="flabel ${cls}" style="left:${f.lbl[0]}px;top:${f.lbl[1]}px" data-act="walkFarm" data-farm="${f.id}"><span class="a">${img('sprout',14,14)}Farm ${f.id}: ${f.owner} · ${cropName(f.crop)}${S.onboarded ? `<i class="rtag">${roundTag(f.id)}</i>` : ''}</span><span class="b">${img('target',14,14)}Success score: <b style="color:${s >= GOAL ? '#b9f27c' : s >= 50 ? '#ffd27a' : '#ff9a8a'}">${s}/100</b></span>${extra}</button>`; };
 
 V.home = () => {
   const ph = S.phase;
@@ -1210,7 +1203,6 @@ V.home = () => {
   const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
   w += meEl(p[0], p[1], S.look);
   if (ph === 'free') w += nextChip();
-  if (ui.waiting && ph === 'free' && !ui.walk){ const id = ui.waiting, rv = S.rv[id]; w += `<div class="hint">${owner(id)} is getting ready. ${rv.n < NROUNDS ? `Round ${rv.n + 1} of ${NROUNDS}` : 'Next round'} starts in ${live(rv.readyAt)}</div>`; }
   if (ui.news && ph === 'free'){ w += `<div class="banner news">${esc(ui.news)}</div>`; ui.news = null; }
   if (DEV) w += devGraph();
   return {world:w};
@@ -1222,11 +1214,8 @@ const devGraph = () => `<svg class="wpath" width="874" height="402" style="point
 function nextChip(){
   const due = dueNow()[0];
   if (due) return `<button class="nextchip" data-act="doTask" data-r="${due.r.id}" data-i="${due.i}">${img(ACTS[due.x.act].icon,20,20)}<span class="col" style="gap:1px;text-align:left"><b>Now: ${actLine(due.x.act, due.r).replace(/^\w/, c => c.toLowerCase()).replace(/^/, '')}</b><span>Do it before ${gTime(due.x.e)} · ${until(gTs(due.x.e))} left</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
-  const id = [1,2,3,4].filter(ready).sort((a, b) => score(a) - score(b))[0];
-  if (id) return `<button class="nextchip" data-act="walkFarm" data-farm="${id}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>Next: review ${owner(id)}'s ${cropName(FARMS[id - 1].crop)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
-  const soon = Math.min(...[1,2,3,4].map(i => S.rv[i].readyAt)), nt = tasks()[0];
-  if (nt && gTs(nt.x.s) < soon) return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>Next: ${actLine(nt.x.act, nt.r).replace(/^\w/, c => c.toLowerCase())} at ${gTime(nt.x.s)}</b><span>In ${until(gTs(nt.x.s))} · ${thriving()}/4 farms at ${GOAL}+</span></span></button>`;
-  return `<button class="nextchip calm" data-act="go" data-v="task">${img('clock',18,18)}<span class="col" style="gap:1px;text-align:left"><b>All farms checked. Next review in ${live(soon)}</b><span>Goal: all 4 farms at ${GOAL}+ · ${thriving()}/4 there</span></span></button>`;
+  const id = [1,2,3,4].sort((a, b) => S.rv[a].n - S.rv[b].n || score(a) - score(b))[0];
+  return `<button class="nextchip" data-act="walkFarm" data-farm="${id}">${img('hdr-task',20,20)}<span class="col" style="gap:1px;text-align:left"><b>Next: review ${owner(id)}'s ${cropName(FARMS[id - 1].crop)}</b><span>${roundTag(id)} · ${thriving()}/4 farms at ${GOAL}+ · or tap any farm</span></span>${ARR(180).replace('width="24" height="24"', 'width="14" height="14"')}</button>`;
 }
 
 /* Map view: farm labels, selection and actions */
@@ -1239,7 +1228,7 @@ V.map = () => {
   if (ui.walk) w += pathSVG(ui.walk.path);
   const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
   w += meEl(p[0], p[1], S.look);
-  const going = ui.walk && sel ? `walking there now` : ui.waiting === sel && sel ? `getting ready: round starts in ${live(S.rv[sel].readyAt)}` : sel ? f.acres + ' · tap an action below' : 'Tap a farm to walk there';
+  const going = ui.walk && sel ? `walking there now` : sel ? f.acres + ' · tap an action below' : 'Tap a farm to walk there';
   w += `<div class="center-lbl"><b>Farm ${f.owner}</b><span>${going}</span></div>`;
   const acts = [['review','Review','act-analyze'],['route','Support<br>Farm','act-support'],['calendar','Calendar','act-calendar'],['quote','Quote','act-quote'],['info','Farm info','act-info']];
   w += `<div class="actbar">${acts.map(a => `<button class="act" data-act="farmAct" data-a="${a[0]}">${img(a[2],32,32)}<span>${a[1]}</span></button>`).join('')}</div>`;
@@ -1256,11 +1245,11 @@ V.task = () => {
     ${later.length ? `<span class="tsec">Later</span>${later.map(t => trow(t, 'later')).join('')}` : ''}
     ${missed.length ? `<span class="tsec">Missed</span>${missed.slice(-3).map(t => trow(t, 'missed')).join('')}` : ''}`;
   const rows = [1,2,3,4].map(id => {
-    const f = FARMS[id - 1], r = ready(id), last = S.rv[id].last, key = 'task' + id;
+    const f = FARMS[id - 1], last = S.rv[id].last, key = 'task' + id;
     scenes[key] = last ? {...last.sc} : {...reviewFor(id)};
     return `<div class="row trow">${canvas(key, 'layout', 64, 40, `data-t="${last && last.ok ? 1 : 0}"`)}
       <div class="col sp" style="gap:2px"><span class="t10">${fname(id)} · ${cropName(f.crop)} · ${roundTag(id)}</span><span style="font:400 9px var(--ui);opacity:.75">Success score ${score(id)}/100${last ? ` · last review ${last.ok ? 'passed' : 'missed'}` : ''}</span></div>
-      ${r ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button>` : `<span class="tag no" style="font-size:9px">Ready in ${live(S.rv[id].readyAt)}</span>`}</div>`; }).join('');
+      <button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="walkFarm" data-farm="${id}">Review</button></div>`; }).join('');
   return {view:backBtn(163,40) + `<div class="panel" style="left:215px;top:22px;width:438px"><div class="pin" style="padding:10px 12px;display:flex;flex-direction:column;gap:6px">
     <div class="ttl">${img('hdr-task',25,25)}Tasks<span class="clockin">${img('clock',13,13)}Day ${gDay(m)} · ${gTime(m)}</span></div>
     <div class="tscroll">${care}<span class="tsec">Farm reviews</span>${rows}</div>
@@ -1458,7 +1447,6 @@ function judge(call){
     logAdd('hdr-task', `Reviewed ${fname(id)}: the farm needed ${sc.problem === 'healthy' ? 'nothing' : callName(sc.problem).toLowerCase()}.`);
   }
   if (S.onboarded && !ok){ rv.n++; delete rv.ret; roundDone(id); }
-  if (S.onboarded || ok){ rv.readyAt = tomorrow(); }
   render(); if (ok && !R.cf) animateRecovery();
 }
 
@@ -1487,16 +1475,15 @@ function hookOverlay(){
       ${pslot('hook', ACTS[x.act].part, 300, 150, `data-t="${recOf(r)}"`, {single:1, t:recOf(r)})}
       <p class="rline" style="margin:0;max-width:340px">${owner(r.farm)}'s ${cropName(r.crop)} ${NEEDS[x.act]} ${same ? 'this ' + partOfDay(x.s) : partOfDay(x.s) === 'morning' && gDay(x.s) === gDay(gNow()) + 1 ? 'tomorrow morning' : 'on day ' + gDay(x.s)}, ${esc(agentName())}.</p>
       <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}${gTime(x.s)} game time · in about ${until(gTs(x.s))}</span>
-      <span class="credit" style="font-size:10px;opacity:.8">Meanwhile, every farm has ${NROUNDS} rounds to play. Each farm is ready again 30 seconds after a review.</span>
+      <span class="credit" style="font-size:10px;opacity:.8">Meanwhile, every farm has ${NROUNDS} rounds to play. Walk to any farm to check it.</span>
       <div class="row" style="gap:8px">${canRemind ? `<button class="btn soft" style="padding:7px 16px" data-act="remindOn">Remind me</button>` : ''}<button class="btn" style="padding:7px 30px" data-act="hookDone">Keep going</button></div></div></div>`;
   }
   const id = HOOK, f = FARMS[id - 1];
   scenes.hook = {...reviewFor(id)};
-  return `<div class="dimmer"></div><div class="panel" style="left:242px;top:58px;width:390px" role="dialog" aria-label="See you tomorrow"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
+  return `<div class="dimmer"></div><div class="panel" style="left:242px;top:58px;width:390px" role="dialog" aria-label="Keep going"><div class="pin" style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center">
     ${canvas('hook', 'layout', 300, 150, 'data-t="0"')}
-    <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} will be ready to check soon, ${esc(agentName())}.</p>
-    <span class="row" style="gap:6px;font:500 10px var(--ui);opacity:.8">${img('clock',14,14)}Ready in ${until(S.rv[id].readyAt)}</span>
-    <button class="btn" style="padding:7px 36px" data-act="hookDone">See you tomorrow</button></div></div>`;
+    <p class="rline" style="margin:0">${f.owner}'s ${cropName(f.crop)} is waiting for you, ${esc(agentName())}. Tap any farm to check it.</p>
+    <button class="btn" style="padding:7px 36px" data-act="hookDone">Keep going</button></div></div>`;
 }
 
 /* Photo credits (Settings) */
@@ -1531,7 +1518,7 @@ V.farms = () => {
       <span style="font:600 11px var(--ui);margin-top:4px">${f.owner ? f.owner + "'s Farm" : 'Wakala Farm'}</span>
       <span class="row" style="gap:4px;font:600 8px var(--ui)">${img('crop-maize',14,11)}<span style="opacity:.7;font-weight:500">Crop:</span>${cropName(f.crop)}</span>
       <span style="font:400 8px var(--ui);opacity:.7;line-height:1.6">A ${f.acres} ${cropName(f.crop)} farm. Review it to keep its crops healthy and its score rising.</span>
-      ${!fs ? `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>` : ready(f.id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${f.id}">Review this farm</button>` : `<button class="btn wide ghost" tabindex="-1">Ready in ${live(S.rv[f.id].readyAt)}</button>`}</div>`
+      ${!fs ? `<button class="btn wide ghost" tabindex="-1">No farmer yet</button>` : `<button class="btn wide" data-act="walkFarm" data-farm="${f.id}">Review this farm</button>`}</div>`
     : `<div class="pin" style="padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px">${CROPS.map(c => `<button data-act="crop" data-c="${c}" style="border:1px solid rgba(107,64,43,.12);border-radius:8px;background:#fff6e8;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;color:var(--brown)">${img('crop-' + c,31,23)}<span style="font:600 11px var(--ui)">${CROP_NAMES[c]}</span>${tag}</button>`).join('')}</div>`;
   return {view:`<div class="screen-title" style="top:20px">Crops and Livestock</div>` + farmSide(134, 46, 'farmIdx') +
     `<div class="panel thin" style="left:262px;top:48px;width:348px"><div class="pin" style="padding:6px"><div class="row" style="border:1px solid rgba(107,64,43,.15);border-radius:8px;padding:6px 8px;gap:0">
@@ -1543,7 +1530,7 @@ V.crop = () => {
   const id = S.farmIdx + 1, last = S.rv[id] && S.rv[id].last;
   if (!last) return {view:backBtn(204,35) + `<div class="panel" style="left:260px;top:70px;width:352px"><div class="pin" style="display:flex;flex-direction:column;gap:12px;padding:12px">
     <div class="empty">${img('checklist',22,23)}<span>${FARMS[id - 1].owner ? `<b>Not reviewed yet.</b> Review ${fname(id)} to see its crops here.` : `<b>No farmer on this plot yet.</b>`}</span></div>
-    ${FARMS[id - 1].owner && ready(id) ? `<button class="btn wide" data-act="walkFarm" data-farm="${id}">Review this farm</button>` : ''}</div></div>`};
+    ${FARMS[id - 1].owner ? `<button class="btn wide" data-act="walkFarm" data-farm="${id}">Review this farm</button>` : ''}</div></div>`};
   scenes.crop = {...last.sc};
   return {view:backBtn(204,35) + `<div class="panel" style="left:248px;top:24px;width:378px"><div class="pin" style="display:flex;flex-direction:column;gap:8px;padding:8px 10px 10px">
     <div class="row"><span class="t10 sp">${fname(id)} · last review</span><span class="tag ${last.ok ? 'ok' : 'hi'}">${last.ok ? 'Recovering' : 'Needs help'}</span></div>
@@ -1717,7 +1704,7 @@ V.settings = () => ({view:backBtn(163,22) + `<div class="panel" style="left:218p
   <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How a review works</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
   <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="remindOn">${S.remind && 'Notification' in window && Notification.permission === 'granted' ? 'Reminders are on' : 'Turn on reminders'}</button><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="credits">Photo credits</button></div>
   <span class="credit" style="text-align:center">Reminders show while the game is open in a browser tab. Reminders with the game closed need a push service (not built yet).</span>
-  <div class="row" style="gap:6px"><span class="credit" style="white-space:nowrap">Playtest:</span><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="readyAll">Farms ready</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="skipTime">+2 game hours</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockNow">Unlock new problems</button></div>
+  <div class="row" style="gap:6px"><span class="credit" style="white-space:nowrap">Playtest:</span><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="skipTime">+2 game hours</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockNow">Unlock new problems</button></div>
   <div class="box" style="background:rgba(229,72,77,.06)">${ui.confirmReset
     ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your character, farms and rewards on this device.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
     : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from character creation.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
@@ -1793,8 +1780,7 @@ const ACT = {
   walkFarm: d => {
     const id = +d.farm;
     if (S.phase === 'walk2'){ if (id !== SECOND){ toast(`Start with ${owner(SECOND)}'s beans, ${agentName()}.`); return; } ui.walk.target = ui.walk.L; if (!ui.walk.moved){ ui.walk.moved = true; ui.walk.firstMove(); } return; }
-    // Walk there anyway: a farm is ready again 30 seconds after its last review.
-    if (!ready(id) && S.phase !== 'free'){ toast(`${owner(id)}'s farm is ready to check again in ${until(S.rv[id].readyAt)}.`); return; }
+    if (S.phase !== 'free') return;
     startWalkTo(id, true);
   },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
@@ -1838,7 +1824,6 @@ const ACT = {
         // First review passed: onboarding is done for good.
         S.onboarded = true; S.phase = 'walk2'; S.pos = gateOf(R.id);
         S.rv[FIRST].n = Math.max(1, S.rv[FIRST].n);
-        S.rv[RETRY].readyAt = tomorrow(); S.rv[HOOK].readyAt = tomorrow(); S.rv[FIRST].readyAt = tomorrow();
         ui.rv = null; ui.walk = null; ui.unlockAnim = true; view = 'home'; hist = [];
         track('map_unlocked'); render(); setTimeout(() => { ui.unlockAnim = false; }, 2600); return;
       }
@@ -1848,7 +1833,7 @@ const ACT = {
     // wrong call
     if (ph === 'review'){ S.retryUsed = true; S.phase = 'retryWalk'; S.pos = gateOf(R.id); ui.rv = null; ui.walk = null; view = 'home'; track('retry_started'); render(); return; }
     if (ph === 'retryReview'){ track('retry_review_again'); return openReview(RETRY); }
-    if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = gateOf(R.id); S.rv[HOOK].readyAt = tomorrow(); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
+    if (ph === 'review2'){ S.phase = 'free'; ui.rv = null; S.pos = gateOf(R.id); ui.overlay = 'hook'; view = 'home'; track('return_hook_shown', {after:'miss'}); render(); return; }
     S.pos = gateOf(R.id); ui.rv = null; view = 'home'; render();
   },
   hookDone: () => { ui.overlay = null; track('session_closed'); render(); },
@@ -1954,7 +1939,6 @@ const ACT = {
   openSteps: () => { S.stepsOpen = true; render(); },
   howTo: () => { ui.overlay = 'how'; render(); },
   saveName: () => { const n = ($('#nameIn').value || '').trim().slice(0, 16); if (!n){ toast('Type a name first'); return; } S.name = n; toast('Name saved'); render(); },
-  readyAll: () => { [1,2,3,4].forEach(id => S.rv[id].readyAt = 0); toast('All farms are ready to review'); render(); },
   askReset: () => { ui.confirmReset = true; render(); },
   cancelReset: () => { ui.confirmReset = false; render(); },
   doReset: () => { S = FRESH(); hist = []; view = 'home'; ui = {...ui, confirmReset:false, overlay:null, rv:null, walk:null, care:null, goTask:null, news:null, unlockAnim:false}; S.t0 = Date.now(); track('character_shown'); render(); },
@@ -1996,15 +1980,11 @@ function fit(){
 addEventListener('resize', () => { fit(); paint(); }); fit();
 
 /* the game clock ticks: missed tasks, reminders and unlocks */
-let readyKey = '';
 setInterval(() => {
-  if (ui.waiting && (ui.walk || (view !== 'home' && view !== 'map'))) ui.waiting = null;
-  if (ui.waiting && ready(ui.waiting) && !ui.overlay){ const id = ui.waiting; ui.waiting = null; return openReview(id); }
-  const rk = [1,2,3,4].map(id => +ready(id)).join('');
   const changed = careTick();
   if (changed) save();
-  if ((changed || rk !== readyKey) && ['home','map','task','settings','farms'].includes(view) && !ui.overlay){ readyKey = rk; render(); return; }
-  readyKey = rk; clockChip();
+  if (changed && ['home','map','task','settings','farms'].includes(view) && !ui.overlay){ render(); return; }
+  clockChip();
   stage.querySelectorAll('[data-until]').forEach(e => { e.textContent = until(+e.dataset.until); });
 }, 1000);
 if (!S.clock0 && S.phase !== 'create'){ S.clock0 = Date.now(); S.unlockAt = Date.now() + UNLOCK_MS; }

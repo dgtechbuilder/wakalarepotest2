@@ -59,7 +59,7 @@ async def main():
     await pg.click('[data-act="back"]'); await pg.click('#btnTask'); await pg.wait_for_timeout(300); await shot('tasks-after-skip')
     s=await S(); print('routines', [(r['farm'], r['status'], r['streak'], [x['st'] for x in r['steps']]) for r in s['care']])
     # unlock new problems and review all farms
-    await pg.click('[data-act="back"]'); await pg.click('[data-v="settings"]'); await pg.click('[data-act="unlockNow"]'); await pg.click('[data-act="readyAll"]')
+    await pg.click('[data-act="back"]'); await pg.click('[data-v="settings"]'); await pg.click('[data-act="unlockNow"]')
     await pg.click('[data-act="back"]'); await pg.wait_for_timeout(300); await shot('home-unlocked')
     probs=await pg.evaluate("""(()=>{const s=JSON.parse(localStorage.getItem('wakala-save-v3'));return s.rv})()""")
     print('rv', json.dumps(probs)[:300])

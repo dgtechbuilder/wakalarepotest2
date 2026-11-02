@@ -1,4 +1,5 @@
-# Plays the first session, then all 7 rounds on every farm back to back.
+# Plays the first session, then all 7 rounds on every farm back to back. Farms have no ready timer,
+# so each farm's rounds are played one after another without leaving it.
 import asyncio, json, os, time
 from playwright.async_api import async_playwright
 OUT=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'out', '')+'rounds/'; os.makedirs(OUT,exist_ok=True)
@@ -25,7 +26,6 @@ async def main():
     async def S(): return await pg.evaluate("JSON.parse(localStorage.getItem('wakala-save-v3'))")
     async def waitrv():
       for i in range(200):
-        if i==30 and not snapped[0]: snapped[0]=1; await shot("waiting")
         if await pg.evaluate("!!document.querySelector('.rpanel .rsteps')"): return True
         await pg.wait_for_timeout(250)
       return False
@@ -53,19 +53,18 @@ async def main():
     await walk((664,117)); await review('pest',0); await pg.click('[data-act="rvContinue"]')
     await pg.click('.call:has-text("lambda-cyhalothrin")'); await pg.click('.rpanel button[data-act="rvContinue"] >> nth=-1'); await shot('hook'); await pg.click('[data-act="hookDone"]')
     await pg.wait_for_timeout(400); await shot('free-home')
-    t0=time.time(); played=0; waited=0
-    for cycle in range(9):
-      s=await S()
-      for farm in [1,3,2,4]:
-        k=s['rv'][str(farm)]['n'] if False else (await S())['rv'][str(farm)]['n']
-        if k>=7: continue
+    t0=time.time(); played=0
+    for farm in [1,3,2,4]:
+      for _ in range(8):
+        k=(await S())['rv'][str(farm)]['n']
+        if k>=7: break
         prob,field=R[farm][k]
-        st=await S(); left=st['rv'][str(farm)]['readyAt']/1000-time.time()
-        if left>0: waited+=left
+        t1=time.time()
         await pg.click(f'.flabel[data-farm="{farm}"]')
         ok=await waitrv()
         if not ok: print('stuck at', farm, k); await shot(f'stuck-{farm}-{k}'); break
         if k==0 and farm==1: await shot('mark-r1-look')
+        if farm==1 and k==1: print('same farm again: review opened', round(time.time()-t1,1), 's after the click')
         if farm==2 and k==4: await shot('june-r5-look')
         snap = f'june-r{k+1}' if (farm==2 and k==4) else (f'brian-r{k+1}' if farm==3 and k==5 else None)
         wrong = (farm==3 and k==3)
@@ -75,11 +74,9 @@ async def main():
           await pg.click(f'.call:has-text("{rx(farm,k,prob)}")')
           await pg.click('.rpanel button[data-act="rvContinue"] >> nth=-1')
         await pg.wait_for_timeout(200); played+=1
-      ss=await S()
-      if all(ss['rv'][str(f)]['n']>=7 for f in [1,2,3,4]): break
     await shot('all-done')
     s=await S()
-    print('played',played,'rounds in',round(time.time()-t0),'s; waited for cooldown ~',round(waited),'s')
+    print('played',played,'rounds in',round(time.time()-t0),'s')
     print('n', {k:v['n'] for k,v in s['rv'].items()}, 'passed', s['passed'], 'coins', s['coins'], 'gems', s['gems'])
     print('routines', len(s['care']), [ (r['farm'],r['kind'],r['status']) for r in s['care']][-8:])
     ev=[e['e'] for e in await pg.evaluate("window.wakalaEvents()")]
