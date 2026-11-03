@@ -34,6 +34,17 @@ async def main():
     await pg.wait_for_timeout(300); await shot('home-no-badges')
     # unlock for testing
     await pg.click('[data-v="settings"]'); await pg.click('[data-act="unlockJobs"]'); await pg.click('[data-act="back"]'); await pg.wait_for_timeout(300); await shot('home-badges')
+    # the Home tractor button (above Map) opens a job straight away, and Back leaves the agent where it was
+    assert await pg.evaluate("(()=>{const b=document.querySelector('#btnTractor');return !b.hidden && !b.classList.contains('dim')})()"), 'Home tractor button is hidden or dimmed'
+    pos0=(await S())['pos']
+    await pg.click('#btnTractor')
+    for i in range(20):
+      if await pg.evaluate("!!document.querySelector('#tcv')"): break
+      await pg.wait_for_timeout(250)
+    assert await pg.evaluate("!!document.querySelector('#tcv')"), 'Home tractor button did not open a job'
+    await shot('home-button-job'); await pg.click('[data-act="jobBack"]'); await pg.wait_for_timeout(300)
+    assert (await S())['pos']==pos0, 'Back from a Home-button job moved the agent'
+    print('home tractor button: ok')
     results=[]
     async def until_done(limit=150):
       for i in range(limit*4):

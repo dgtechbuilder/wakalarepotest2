@@ -72,6 +72,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .bigbtn img{position:relative;width:40px;height:40px}
 .bigbtn .lb{font:700 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;margin-top:1px}
 #btnMap{left:35px}#btnMap .i{background:var(--green-btn)}#btnMap .i::before{background:linear-gradient(var(--green-hi),rgba(156,196,60,0))}
+#btnTractor{left:35px;top:233px}#btnTractor .i{background:#2f86cf}#btnTractor .i::before{background:linear-gradient(#8ccaf5,rgba(140,202,245,0))}#btnTractor img{width:44px;height:44px}
 #btnTask{left:783px}#btnTask .i{background:#eda024}#btnTask .i::before{background:linear-gradient(var(--orange-hi),rgba(251,180,64,0))}
 .bigbtn.dim{opacity:.5}
 .bigbtn:hover:not(.dim) .i{filter:brightness(1.08)}
@@ -206,7 +207,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 @media (prefers-reduced-motion:reduce){.nextchip{animation:none}}
 
 /* ---------- first session: walking, fog, character ---------- */
-#view{z-index:6}#overlay{z-index:8}#hud,#nav,#btnMap,#btnTask{z-index:4}
+#view{z-index:6}#overlay{z-index:8}#hud,#nav,#btnMap,#btnTask,#btnTractor{z-index:4}
 .walkpad{position:absolute;inset:0;cursor:pointer;touch-action:manipulation}
 .fog,.wpath,.goal,.hint,.tapme,#me,.banner{pointer-events:none!important}
 .fog,.wpath{position:absolute;left:0;top:0}
@@ -217,9 +218,9 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 #me{position:absolute;width:34px;height:51px;transform:translate(-50%,-94%);filter:drop-shadow(0 2px 2px rgba(0,0,0,.35));z-index:3}
 #me .ch{width:100%;height:100%;display:block}
 #me.flip .ch{transform:scaleX(-1)}
-#me.walking .ch{animation:bob .32s ease-in-out infinite alternate}
-#me.walking .legL{animation:stepL .32s ease-in-out infinite alternate;transform-origin:16px 41px}
-#me.walking .legR{animation:stepL .32s ease-in-out infinite alternate-reverse;transform-origin:24px 41px}
+#me.walking .ch{animation:bob .2s ease-in-out infinite alternate}
+#me.walking .legL{animation:stepL .2s ease-in-out infinite alternate;transform-origin:16px 41px}
+#me.walking .legR{animation:stepL .2s ease-in-out infinite alternate-reverse;transform-origin:24px 41px}
 @keyframes bob{to{translate:0 -2px}}
 @keyframes stepL{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
 .goal{position:absolute;display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;background:rgba(0,0,0,.45);font:600 12px var(--ui);color:#fff;text-shadow:1px 1px 0 #000;white-space:nowrap}
@@ -232,9 +233,9 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .flabel.pop{animation:popIn .5s cubic-bezier(.2,1.6,.4,1) both}
 .flabel.pop.d0{animation-delay:.5s}.flabel.pop.d1{animation-delay:.75s}.flabel.pop.d2{animation-delay:1s}.flabel.pop.d3{animation-delay:1.25s}
 @keyframes popIn{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-#hud.enter,#nav.enter,#btnMap.enter,#btnTask.enter{animation:slideIn .7s .9s ease both}
+#hud.enter,#nav.enter,#btnMap.enter,#btnTask.enter,#btnTractor.enter{animation:slideIn .7s .9s ease both}
 @keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
-#nav.enter,#btnMap.enter,#btnTask.enter{animation-name:slideUp}
+#nav.enter,#btnMap.enter,#btnTask.enter,#btnTractor.enter{animation-name:slideUp}
 @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 #hudFace{display:block;width:100%;height:100%;border-radius:50%;overflow:hidden;background:#f4efe8}
 #hudFace svg{width:100%;height:100%;display:block}
@@ -393,6 +394,7 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
     <div class="scrim-t"></div><div class="scrim-b"></div>
     <div id="world" class="layer"></div>
     <button id="btnMap" class="bigbtn" data-act="go" data-v="map" aria-label="Map"><span class="o"><span class="i"><img data-src="ic-map" alt=""></span></span><span class="lb">Map</span></button>
+    <button id="btnTractor" class="bigbtn" data-act="tractorHome" aria-label="Tractor jobs" hidden><span class="o"><span class="i"><img data-src="tractor" alt=""></span></span><span class="lb">Tractor</span></button>
     <button id="btnTask" class="bigbtn" data-act="go" data-v="task" aria-label="Task"><span class="o"><span class="i"><img data-src="ic-task" alt=""></span></span><span class="lb">Task</span></button>
     <nav id="nav" aria-label="Main"></nav>
     <div id="hud">
@@ -1088,10 +1090,11 @@ function remind(t){
 
 /* ---------- walking ---------- */
 // The character walks along a path. Tapping anywhere moves it to the nearest point on the path.
+const WALK_X = 3; /* every walk is this many times faster than the base speeds set where each walk starts */
 function makeWalk(path, speed, onArrive){
   let L = 0; const seg = [];
   for (let i = 1; i < path.length; i++){ const d = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]); seg.push(d); L += d; }
-  return {path, seg, L, s:0, target:0, speed, onArrive, moved:false, done:false};
+  return {path, seg, L, s:0, target:0, speed:speed * WALK_X, onArrive, moved:false, done:false};
 }
 function walkPoint(w, s){
   let acc = 0;
@@ -1787,6 +1790,18 @@ function tractorFarm(id){
   if (Math.hypot(S.pos[0] - g[0], S.pos[1] - g[1]) < 6 && (view === 'home' || view === 'map')) return openJob(id);
   ui.goJob = id; startWalkTo(id, true, view === 'map');
 }
+/* The Home tractor button: opens the job on an open farm that still has stars to earn, the nearest one to the agent first. */
+function tractorHome(){
+  const open = [1,2,3,4].filter(id => jobLevels(id).length);
+  if (!open.length){ toast(`Tractor jobs open after ${LV_ROUNDS[0]} reviews of a farm.`); return; }
+  const todo = open.filter(id => jobLevels(id).some(L => S.tractor.best[id][L - 1] < 3)), pool = todo.length ? todo : open;
+  const dist = id => { const g = gateOf(id); return Math.hypot(S.pos[0] - g[0], S.pos[1] - g[1]); };
+  pool.sort((a, b) => dist(a) - dist(b));
+  ui.goJob = ui.goTask = null;
+  track('tractor_home_open', {farm:pool[0]});
+  openJob(pool[0]);
+  if (ui.job) ui.job.fromHome = true; /* the agent never walked to this farm, so leaving the job must not move it there */
+}
 const jobBadge = f => S.phase === 'free' && jobLevels(f.id).length ? `<button class="tbadge" style="left:${f.lbl[0] - 34}px;top:${f.lbl[1] + 2}px" data-act="tractorFarm" data-farm="${f.id}" aria-label="Tractor job at ${fname(f.id)}" title="Tractor job">${img('tractor',24,24)}</button>` : '';
 
 const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}+${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}+${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}+${r.w}</span>`;
@@ -2113,8 +2128,10 @@ function render(){
   $('#btnMap').hidden = $('#btnTask').hidden = !!cfg.noHud || onb();
   $('#btnMap').classList.toggle('dim', !!cfg.mapDim);
   $('#btnTask').classList.toggle('dim', !!cfg.taskDim);
+  $('#btnTractor').hidden = view !== 'home' || S.phase !== 'free' || !!cfg.noHud || onb();
+  $('#btnTractor').classList.toggle('dim', ![1,2,3,4].some(id => jobLevels(id).length));
   $('#nav').hidden = !cfg.nav || !!ui.overlay || onb();
-  ['#hud','#nav','#btnMap','#btnTask'].forEach(s => $(s).classList.toggle('enter', !!ui.unlockAnim));
+  ['#hud','#nav','#btnMap','#btnTask','#btnTractor'].forEach(s => $(s).classList.toggle('enter', !!ui.unlockAnim));
   $('#nav').innerHTML = NAV.map(n => `<button class="nb ${cfg.nav === n[0] ? 'on' : ''}" data-act="nav" data-v="${n[0]}"><span class="o"><span class="i"><img src="${A(n[2])}" alt=""></span></span><span>${n[1]}</span></button>`).join('');
   [['#rCoins',S.coins],['#rGems',S.gems],['#rWater',S.water]].forEach(([id, v]) => $(id + ' b').textContent = fmt(v));
   $('#aname').textContent = agentName(); $('#trophies').textContent = S.passed; $('#hudFace').innerHTML = faceSVG(S.look);
@@ -2221,6 +2238,7 @@ const ACT = {
   unlockNow: () => { S.unlockAt = Date.now(); careTick(); toast('Low nutrients and weeds are now in the reviews'); render(); },
   /* tractor jobs */
   tractorFarm: d => tractorFarm(+d.farm),
+  tractorHome: () => tractorHome(),
   unlockJobs: () => { S.tractor.all = true; toast('Every tractor job is open for testing'); render(); },
   jobLevel: d => { const J = ui.job; if (!J || !jobOpen(J.farm, +d.l)) return; openJob(J.farm, +d.l); },
   jobReady: () => { ui.job.phase = 'check'; track('tractor_ready', {farm:ui.job.farm, level:ui.job.L}); render(); },
@@ -2244,7 +2262,7 @@ const ACT = {
   jobFinish: () => jobFinish('player'),
   jobRetry: () => openJob(ui.job.farm, ui.job.L),
   jobNext: () => openJob(ui.job.farm, ui.job.L + 1),
-  jobBack: () => { const id = ui.job ? ui.job.farm : 1; ui.job = null; S.pos = gateOf(id); hist = []; view = 'home'; render(); },
+  jobBack: () => { const id = ui.job ? ui.job.farm : 1, stay = ui.job && ui.job.fromHome; ui.job = null; if (!stay) S.pos = gateOf(id); hist = []; view = 'home'; render(); },
   /* care */
   prescribe: d => {
     const R = ui.rv, op = R.opts.find(o => o[0] === d.k); R.tries++;

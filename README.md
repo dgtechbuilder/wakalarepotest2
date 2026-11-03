@@ -39,7 +39,7 @@ If your first call is wrong, you walk to Brian's farm and try again, so no one i
 
 **After the first session**
 
-- **Click a farm to visit it.** Click a farm or its label on the Home screen or the Map, and your agent walks there along the roads. The review opens when you arrive. There is no timer: you can walk to any farm at any time and check it.
+- **Click a farm to visit it.** Click a farm or its label on the Home screen or the Map, and your agent walks there along the roads (about 270 px/s on the 874 px-wide stage, three times the original pace; change `WALK_X` in `index.html` to tune it). The review opens when you arrive. There is no timer: you can walk to any farm at any time and check it.
 - **Seven rounds per farm, back to back.** Every farm has 7 written rounds. You can play them in any order, on one farm after another or several in a row on the same farm. After round 7, rounds are random.
 - **Five problems to spot:** needs water, pests and healthy fields from the start. Low nutrients and weeds are added from round 5 on any farm (or 2 hours after you start).
 - **Care routines on a game clock.** One game day is one real hour, with a morning and an evening window. Tasks are hands-on: hold to water or spray, tap off caterpillars, hoe out weeds, add CAN fertilizer and water it in, or mulch. Missed tasks set a field back, and three misses in a row bring the problem back.
@@ -58,7 +58,7 @@ Each farm has a short tractor job where you drive across a field seen from above
 | Brian, maize | Plant straight rows with a planter that drops seed and fertilizer, through a wet patch that slows you down | Even rows are easier to weed and spray, and fertilizer at planting feeds pale maize |
 | Vincent, beans | Spray the beans with a boom sprayer, in wind, without drifting into the dashed zones around the house, tank and pond | Leave a strip unsprayed beside water and houses, mind the wind, and wear the safety kit |
 
-- **Getting there.** A farm with an open job shows a tractor button beside its label. Tap it and the agent walks to the farm and the job opens. Jobs are also listed on the Task screen, and the Support Farm screen (Map, then Support Farm) starts the selected farm's job.
+- **Getting there.** On the Home screen, the **Tractor** button above Map opens a job straight away: the nearest farm that still has stars to earn. It is dimmed until a farm's job is open (your 2nd review of that farm), and tapping it then explains why. A farm with an open job also shows a tractor button beside its label. Tap it and the agent walks to the farm and the job opens. Jobs are also listed on the Task screen, and the Support Farm screen (Map, then Support Farm) starts the selected farm's job.
 - **Levels.** Each job has three levels. Level 1 opens after your 2nd review of the farm and shows a suggested route. Level 2 opens after the 4th review (and 1 star on Level 1) and adds obstacles. Level 3 opens after the 6th review and adds a twist: a time limit, or stronger wind for spraying.
 - **Before you drive.** Tick the checklist: hitch the tool, fill the fuel tank, and for spraying put on the safety kit. Fuel costs 15 coins per job; the first fill is free.
 - **Driving.** Tap where to drive and hold to keep steering, or use the arrow keys / WASD. Slow turns tighter; Fast saves time but burns more fuel. Autopilot drives the rows for you.
