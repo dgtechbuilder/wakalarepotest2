@@ -350,6 +350,34 @@ img{max-width:none;user-select:none;-webkit-user-drag:none}
 .rtag{font-style:normal;font:600 8px var(--ui);background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);border-radius:4px;padding:1px 4px;margin-left:5px}
 .rtag.dark{font-size:10px;background:#fff1dc;border-color:rgba(237,131,36,.5);color:#b85f12;padding:2px 7px;margin-left:8px;text-shadow:none}
 
+/* ---------- tractor jobs ---------- */
+.tcv{position:absolute;left:12px;top:16px;width:580px;height:370px;border-radius:12px;box-shadow:0 0 0 3px #f6e2bf,0 6px 16px rgba(0,0,0,.45);touch-action:none;cursor:crosshair;background:#86ad4e}
+.tside .ttl span{display:flex;align-items:center;flex-wrap:wrap}
+.tsm{font-size:11px!important}
+.fbub.tsm{padding:6px 10px}
+.lvls{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.lvl{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:9px;border:1.5px solid rgba(107,64,43,.2);background:#fff7ea;color:var(--brown);font:500 9px var(--ui)}
+.lvl b{font:700 11px var(--ui)}
+.lvl span{color:#c88900;letter-spacing:1px}
+.lvl.on{border-color:var(--orange);background:#ffe9c9;box-shadow:0 0 0 3px rgba(237,131,36,.2)}
+.lvl:disabled{opacity:.55}.lvl:disabled span{color:var(--brown);letter-spacing:0}
+.tinfo{display:flex;flex-direction:column;gap:5px;font:500 10.5px var(--ui);color:var(--brown);line-height:1.35}
+.tinfo span{display:flex;align-items:center;gap:6px}
+.tinfo img{flex:none}
+.tcall{padding:6px 10px;font-size:12px}
+.tstat{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 8px;font:500 11px var(--ui);color:var(--brown)}
+.tstat b{font:700 12px var(--ui)}
+.tbar{grid-column:1/-1;display:block;height:7px;border-radius:4px;background:rgba(107,64,43,.15);overflow:hidden}
+.tbar i{display:block;height:100%;width:0;background:var(--green);border-radius:4px;transition:width .15s}
+.tbar.fuel i{background:#e0902a}
+.seg{flex:1;border:1.5px solid rgba(107,64,43,.25);background:#fff7ea;border-radius:9px;padding:6px 4px;font:600 11px var(--ui);color:var(--brown)}
+.seg.on{background:var(--orange);color:#fff;border-color:var(--orange-line);text-shadow:1px 1px 0 rgba(0,0,0,.3)}
+.stars i{font-style:normal;color:#d9cbb5}.stars i.on{color:#f5b300}
+.tstars{font-size:30px;line-height:1;text-align:center;letter-spacing:4px}.tstars .on{text-shadow:0 2px 0 #a86f00}
+.tbadge{position:absolute;width:32px;height:32px;border-radius:50%;border:2px solid #fbb440;background:rgba(30,18,6,.7);display:grid;place-items:center;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.4);animation:glowPulse 1.6s ease-in-out infinite}
+.tbadge img{width:22px;height:22px}
+@media (prefers-reduced-motion:reduce){.tbadge{animation:none}}
+
 /* ---------- overlays ---------- */
 .dimmer{position:absolute;inset:0;background:rgba(0,0,0,.6);animation:fade .25s}
 .confetti{position:absolute;left:314px;top:0}
@@ -931,6 +959,7 @@ const FRESH = () => ({
   bookings:{}, trainFarm:{}, calDay:2, tip:0, loans:{}, sales:{},
   storage:'medium', shopTab:'market', sellTab:'equip', loanTab:'offers', loanFarm:{},
   routeApplied:false, stepsOpen:true,
+  tractor:{best:{1:[0,0,0], 2:[0,0,0], 3:[0,0,0], 4:[0,0,0]}, fuelFree:true, all:false},
   clock0:0, unlockAt:0, unlockSeen:false, care:[], careN:0, notified:{}, remind:false,
 });
 const SAVE_KEY = 'wakala-save-v3';
@@ -950,7 +979,7 @@ function track(e, data = {}){
 window.wakalaEvents = () => { try { return JSON.parse(localStorage.getItem(EV_KEY) || '[]'); } catch (x) { return []; } };
 
 /* transient UI state */
-let view = 'home', hist = [], ui = {care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
+let view = 'home', hist = [], ui = {job:null, goJob:null, care:null, goTask:null, news:null, dd:null, rv:null, overlay:null, sellItem:null, sellFarm:null, confirmReset:false, walk:null, unlockAnim:false, calc:{type:null,tenure:12,farm:null}};
 
 /* ---------- helpers ---------- */
 function toast(msg){ stage.querySelectorAll('.toast').forEach(t => t.remove()); const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg; stage.appendChild(t); setTimeout(() => t.remove(), 2700); }
@@ -1121,7 +1150,7 @@ function walkTap(e){
   const path = S.hub > 0 ? [S.pos, [x, y]] : route(S.pos, [x, y]);
   if (path.length < 2) return;
   const nw = makeWalk(path, 90, () => { if (ui.walk === nw){ ui.walk = null; render(); } });
-  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; render();
+  nw.target = nw.L; nw.moved = true; ui.walk = nw; ui.goTask = null; ui.goJob = null; render();
 }
 /* Where the agent stands to check a farm. The upgraded hub maps have no traced roads, so the agent walks straight to the farm there. */
 const onHubMap = () => S.hub > 0 && S.onboarded && view !== 'map';
@@ -1141,6 +1170,7 @@ function arrive(id){
   ui.walk = null;
   if (S.phase === 'walk' || S.phase === 'retryWalk'){ track('walk_arrived', {farm:id}); S.phase = S.phase === 'walk' ? 'review' : 'retryReview'; return openReview(id); }
   if (S.phase === 'walk2'){ S.phase = 'review2'; return openReview(id); }
+  if (ui.goJob){ const j = ui.goJob; ui.goJob = null; return openJob(j); }
   if (ui.goTask){ const g = ui.goTask; ui.goTask = null; const r = rOf(g.r); if (r && r.steps[g.i].st === 'todo') return openCare(g.r, g.i, 'task'); }
   // Every farm can be checked at any time: arriving opens its next round.
   openReview(id);
@@ -1148,7 +1178,7 @@ function arrive(id){
 
 /* ---------- views ---------- */
 const CFG = {
-  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1}, review:{bg:'farm',nav:false,noHud:1}, care:{bg:'farm',nav:false,noHud:1},
+  home:{nav:'home'}, map:{nav:false}, task:{bg:'farm',nav:false,mapDim:1}, review:{bg:'farm',nav:false,noHud:1}, care:{bg:'farm',nav:false,noHud:1}, tractor:{bg:'farm',nav:false,noHud:1},
   farms:{bg:'farm',nav:'farms',mapDim:1,taskDim:1}, crop:{bg:'farm',nav:false,mapDim:1,taskDim:1},
   shop:{bg:'farm',nav:'shop',mapDim:1,taskDim:1}, sell:{bg:'farm',nav:'shop',mapDim:1,taskDim:1},
   training:{bg:'farm',nav:'training',mapDim:1,taskDim:1}, calendar:{bg:'calendar',nav:'training',mapDim:1,taskDim:1},
@@ -1195,6 +1225,7 @@ V.home = () => {
   w = `<div class="walkpad" data-walk></div>` + w;
   const anim = ui.unlockAnim;
   w += FARMS.slice(0, 4).map((f, i) => farmLabel(f, '', anim ? `pop d${i}` : '')).join('');
+  if (ph === 'free') w += FARMS.slice(0, 4).map(jobBadge).join('');
   if (ph === 'walk2'){
     const path = ui.walk ? ui.walk.path : pathTo(SECOND);
     if (!ui.walk){ preload(reviewFor(SECOND)); ui.walk = makeWalk(path, 60, () => arrive(SECOND)); ui.walk.keepGoing = `Keep going to ${owner(SECOND)}'s beans.`; ui.walk.firstMove = () => track('walk2_first_move'); }
@@ -1224,7 +1255,7 @@ V.map = () => {
   let w = '';
   if (sel){ const b = f.box; w += `<div class="focus" style="left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px"></div>`; }
   w += FARMS.slice(0, 4).map(x => `<button class="hot" style="left:${x.box[0]}px;top:${x.box[1]}px;width:${x.box[2]-x.box[0]}px;height:${x.box[3]-x.box[1]}px" data-act="mapFarm" data-farm="${x.id}" aria-label="Walk to ${fname(x.id)}"></button>`).join('');
-  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => farmLabel(x).replace('data-act="walkFarm"', 'data-act="mapFarm"')).join('');
+  w += FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(x => farmLabel(x).replace('data-act="walkFarm"', 'data-act="mapFarm"')).join('') + FARMS.slice(0, 4).filter(x => !sel || x.id === sel).map(jobBadge).join('');
   if (ui.walk) w += pathSVG(ui.walk.path);
   const p = ui.walk ? walkPoint(ui.walk, ui.walk.s) : S.pos;
   w += meEl(p[0], p[1], S.look);
@@ -1243,7 +1274,8 @@ V.task = () => {
     return `<div class="row trow">${img(a.icon, 22, 22)}<div class="col sp" style="gap:2px"><span class="t10">${actLine(t.x.act, t.r)}</span><span style="font:400 9px var(--ui);opacity:.75">${t.x.opt ? 'Optional · ' : n ? `Step ${n} of ${c.length} · ` : ''}${whenLabel(t.x)}</span></div>${kind === 'now' ? `<button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="doTask" data-r="${t.r.id}" data-i="${t.i}">Do it</button>` : kind === 'later' ? `<span class="tag" style="font-size:9px">In ${until(gTs(t.x.s))}</span>` : `<span class="tag no" style="font-size:9px">Missed</span>`}</div>`; };
   const care = `<span class="tsec">Due now</span>${now.length ? now.map(t => trow(t, 'now')).join('') : '<span class="tnone">Nothing due right now.</span>'}
     ${later.length ? `<span class="tsec">Later</span>${later.map(t => trow(t, 'later')).join('')}` : ''}
-    ${missed.length ? `<span class="tsec">Missed</span>${missed.slice(-3).map(t => trow(t, 'missed')).join('')}` : ''}`;
+    ${missed.length ? `<span class="tsec">Missed</span>${missed.slice(-3).map(t => trow(t, 'missed')).join('')}` : ''}
+    <span class="tsec">Tractor jobs</span>${[1,2,3,4].filter(id => jobLevels(id).length).map(id => { const L = jobLevels(id).find(l => S.tractor.best[id][l - 1] < 3) || jobLevels(id).at(-1); return `<div class="row trow">${img('tractor',22,22)}<div class="col sp" style="gap:2px"><span class="t10">${JOBS[id].name}</span><span style="font:400 9px var(--ui);opacity:.75">Level ${L} of 3 · ${starHTML(S.tractor.best[id][L - 1])}</span></div><button class="btn sm" style="font-size:11px;padding:4px 14px" data-act="tractorFarm" data-farm="${id}">Drive</button></div>`; }).join('') || `<span class="tnone">A farm's tractor job opens after ${LV_ROUNDS[0]} reviews of that farm.</span>`}`;
   const rows = [1,2,3,4].map(id => {
     const f = FARMS[id - 1], last = S.rv[id].last, key = 'task' + id;
     scenes[key] = last ? {...last.sc} : {...reviewFor(id)};
@@ -1413,6 +1445,349 @@ function holdStart(){
   holdRaf = requestAnimationFrame(step);
 }
 function holdStop(){ const C = ui.care; if (!C || !C.holding) return; C.holding = false; cancelAnimationFrame(holdRaf); stage.querySelector('.carephoto .pslot')?.classList.remove('wet'); }
+
+/* ---------- tractor jobs: one short drive over one field, a different job on each farm ----------
+   The field is a grid of 2.5 px cells. The tool marks cells as it passes; coverage, overlap and stars are counted from the grid.
+   Steering: tap where to drive (hold to keep steering), arrow keys / WASD on desktop, or autopilot along planned rows. */
+const FW = 580, FH = 370, CELL = 2.5, GW = Math.ceil(FW / CELL), GH = Math.ceil(FH / CELL), CV_X = 12, CV_Y = 16;
+const LV_ROUNDS = [2, 4, 6], SENS = ['house','tank','pond'], BUF = 24, FUEL_COINS = 15;
+const JOBS = {
+  1:{key:'plough', name:"Plough Mark's top field", short:'Plough the top field', tool:'Disc plough', toolW:22, back:16, soil:'#c9a56c', ask:'My top field needs ploughing before the rains.',
+    lesson:"Plough across the slope, so rain can't wash the soil away.", checks:[['hitch','Hitch the disc plough','eq-tractor']], care:[], slope:true,
+    levels:[
+      {field:[[140,100,300,170]], obs:[], slack:1.8, hint:1},
+      {field:[[90,70,380,230]], obs:[{x:240,y:140,r:10,k:'rock'},{x:410,y:235,r:10,k:'rock'},{x:330,y:270,r:12,k:'stump'}], slack:1.45},
+      {field:[[90,60,380,120],[90,180,210,110]], obs:[{x:200,y:105,r:10,k:'rock'},{x:400,y:140,r:10,k:'rock'},{x:170,y:250,r:12,k:'stump'}], slack:1.3, time:90, twist:'Rain is coming: finish in 90 seconds.'}]},
+  2:{key:'furrow', name:"Dig furrows for June's dry field", short:'Dig furrows to the dry field', tool:'Ridger', toolW:12, back:16, soil:'#dcbd84', ask:'Water from the channel never reaches my dry field.',
+    lesson:'Water only flows downhill: each furrow must start at the channel and run down the field.', checks:[['hitch','Hitch the ridger','eq-tractor']], care:['water'], slope:true,
+    always:[{x:62,y:98,r:22,k:'tank'},{rect:[492,150,64,50],k:'house'}],
+    levels:[
+      {field:[[170,110,290,220]], strips:[230,290,350,410], obs:[], slack:1.8, hint:1},
+      {field:[[170,110,290,220]], strips:[200,245,290,335,380,425], obs:[{x:357.5,y:292,r:11,k:'mound'}], slack:1.45},
+      {field:[[170,110,290,220]], strips:[190,230,270,310,400,440], obs:[{x:355,y:250,r:14,k:'mound'}], slack:1.3, time:60, twist:"June's turn on the channel ends in 60 seconds."}]},
+  3:{key:'plant', name:"Plant Brian's maize rows", short:'Plant the maize rows', tool:'Planter (seed and fertilizer)', toolW:24, back:16, soil:'#9a6a3f', ask:'My maize came up short and pale. Let us plant it right this time.',
+    lesson:'Straight, even rows are easier to weed and spray, and fertilizer at planting feeds pale maize.', checks:[['hitch','Hitch the planter','eq-tractor'],['seed','Load seed and fertilizer','in-fertilizer']], care:[],
+    levels:[
+      {field:[[150,100,290,170]], obs:[], slack:1.8, hint:1},
+      {field:[[90,70,380,220]], obs:[{x:200,y:242,r:12,k:'stump'},{x:420,y:122,r:12,k:'stump'}], wet:[300,185,70,40], slack:1.45},
+      {field:[[80,70,250,240],[330,70,170,150]], obs:[{x:420,y:180,r:12,k:'stump'}], wet:[175,250,60,35], slack:1.3, time:75, twist:'The planting window closes in 75 seconds.'}]},
+  4:{key:'spray', name:"Spray Vincent's beans", short:'Spray the beans', tool:'Boom sprayer', toolW:46, back:12, soil:'#6e5236', ask:'The insects are back on my beans.',
+    lesson:'Leave a strip unsprayed beside water and houses, mind the wind, and always wear the safety kit.', checks:[['gloves','Gloves','in-nets'],['mask','Face mask','in-nets'],['boots','Boots','in-nets'],['tank','Fill the spray tank','in-insecticides']], care:['spray'], spray:true,
+    levels:[
+      {field:[[130,110,300,170]], obs:[{rect:[470,20,64,50],k:'house'},{x:520,y:300,r:22,k:'tank'}], wind:0, slack:1.8, hint:1},
+      {field:[[100,95,370,230]], obs:[{rect:[480,15,64,50],k:'house'},{x:530,y:300,r:22,k:'tank'},{rect:[20,150,50,110],k:'pond'}], wind:10, slack:1.45},
+      {field:[[100,95,370,120],[100,215,250,110]], obs:[{rect:[480,15,64,50],k:'house'},{x:530,y:300,r:22,k:'tank'},{rect:[20,150,50,110],k:'pond'}], wind:18, slack:1.3, twist:'Strong wind today: it pushes the spray east.'}]},
+};
+const OBS_NAME = {rock:'a rock', stump:'a tree stump', mound:'the high spot', house:'the house', tank:'the water tank', pond:'the pond'};
+const inRects = (rs, x, y) => rs.some(r => x >= r[0] && x < r[0] + r[2] && y >= r[1] && y < r[1] + r[3]);
+const dRect = (r, x, y) => Math.hypot(Math.max(r[0] - x, 0, x - r[0] - r[2]), Math.max(r[1] - y, 0, y - r[1] - r[3]));
+const dObs = (o, x, y) => o.rect ? dRect(o.rect, x, y) : Math.hypot(x - o.x, y - o.y) - o.r;
+const wrapA = a => Math.atan2(Math.sin(a), Math.cos(a));
+const starStr = n => '★'.repeat(n) + '☆'.repeat(3 - n);
+const starHTML = n => `<span class="stars" aria-label="${n} of 3 stars">${[0,1,2].map(i => `<i class="${i < n ? 'on' : ''}">★</i>`).join('')}</span>`;
+const jobOpen = (id, L) => !!JOBS[id] && (S.tractor.all || (S.onboarded && S.rv[id].n >= LV_ROUNDS[L - 1] && (L === 1 || S.tractor.best[id][L - 2] >= 1)));
+const jobLevels = id => [1,2,3].filter(L => jobOpen(id, L));
+const jobLock = (id, L) => S.rv[id].n < LV_ROUNDS[L - 1] ? `After ${LV_ROUNDS[L - 1]} reviews` : `1 star on Level ${L - 1}`;
+
+/* Autopilot route: serpentine rows across the field (or down each furrow line), around obstacles and spray buffers. */
+function planRoute(def, lv){
+  const tw = def.toolW, wps = [], xs = lv.field.flatMap(r => [r[0], r[0] + r[2]]), ys = lv.field.flatMap(r => [r[1], r[1] + r[3]]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  if (lv.strips){
+    // Each furrow runs from above the channel edge to below the field, so the ridger (behind the tractor) digs the whole line.
+    lv.strips.forEach((sx, i) => { const a = [sx, y0 - 10 - def.back], b = [sx, y1 + 6 + def.back]; if (i % 2 === 0) wps.push(a, [sx, y1 - 2], b); else wps.push(b, [sx, y0 + 2], a); });
+    return wps;
+  }
+  const clear = (x, y) => {
+    if (!inRects(lv.field, x, y)) return false;
+    for (const o of lv.obs) if (dObs(o, x, y) < tw / 2 + 10) return false;
+    if (def.spray) for (const o of lv.obs) if (SENS.includes(o.k)) for (const s of [-tw / 2, 0, tw / 2]) if (dObs(o, x + (lv.wind || 0), y + s) < BUF + 3) return false;
+    return true;
+  };
+  let dir = 1;
+  for (let y = y0 + tw * .46; y < y1 - tw * .15; y += tw * .92){
+    const segs = []; let st = null;
+    for (let x = x0; x <= x1; x += 4){ const ok = clear(x, y); if (ok && st === null) st = x; if ((!ok || x + 4 > x1) && st !== null){ segs.push([st, ok ? x : x - 4]); st = null; } }
+    if (!segs.length) continue;
+    const order = dir > 0 ? segs : segs.slice().reverse().map(s => [s[1], s[0]]);
+    order.forEach((s, i) => {
+      if (i === 0) wps.push([s[0] - dir * 22, y]);
+      else {
+        const px = wps.at(-1)[0], ob = lv.obs.find(o => !o.rect && Math.abs(o.y - y) < o.r + tw / 2 + 12 && (o.x - px) * dir > 0 && (o.x - s[0]) * dir < 0);
+        if (ob){ const yd = ob.y >= y ? ob.y - ob.r - tw / 2 - 14 : ob.y + ob.r + tw / 2 + 14; wps.push([ob.x - dir * (ob.r + 18), yd], [ob.x + dir * (ob.r + 18), yd]); }
+      }
+      wps.push([s[0], y], [s[1], y]);
+    });
+    wps.push([order.at(-1)[1] + dir * 22, y]);
+    dir = -dir;
+  }
+  // Headland turning points must leave the tractor room: pull them back towards the field when something is in the way.
+  const room = p => lv.obs.every(o => dObs(o, p[0], p[1]) > 28);
+  wps.forEach((p, i) => { if (room(p)) return; const fx = Math.max(x0, Math.min(x1, p[0])), sx = Math.sign(fx - p[0]) || 0; for (let t = 4; t <= 30 && !room(p); t += 4) p[0] += sx * 4; if (!room(p)) wps[i] = [fx, p[1]]; });
+  return wps.map(p => [Math.max(14, Math.min(FW - 14, p[0])), Math.max(14, Math.min(FH - 14, p[1]))]);
+}
+
+function openJob(id, L){
+  const open = jobLevels(id);
+  if (!open.length){ toast(`${owner(id)}'s tractor job opens after ${LV_ROUNDS[0]} reviews of the farm.`); return; }
+  if (!L || !open.includes(L)) L = open.find(l => S.tractor.best[id][l - 1] < 3) || open.at(-1);
+  const def = JOBS[id], base = def.levels[L - 1], lv = {...base, obs:[...(def.always || []), ...base.obs]};
+  const wps = planRoute(def, lv); let len = 40;
+  for (let i = 1; i < wps.length; i++) len += Math.hypot(wps[i][0] - wps[i - 1][0], wps[i][1] - wps[i - 1][1]);
+  ui.job = {farm:id, L, def, lv, wps, burn:100 / (len * lv.slack), phase:'card', checks:[], fast:false, auto:false, keys:{}};
+  jobReset(ui.job); ui.overlay = null; ui.walk = null; hist = []; view = 'tractor';
+  track('tractor_open', {farm:id, level:L}); render();
+}
+function jobReset(J){
+  const n = GW * GH, lv = J.lv; J.cnt = new Uint8Array(n); J.last = new Float32Array(n).fill(-9); J.tgt = new Uint8Array(n); J.fld = new Uint8Array(n); J.dr = new Uint8Array(n); J.nT = 0;
+  for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++){
+    const x = gx * CELL + CELL / 2, y = gy * CELL + CELL / 2, i = gy * GW + gx;
+    if (!inRects(lv.field, x, y) || lv.obs.some(o => dObs(o, x, y) < 0)) continue;
+    J.fld[i] = 1;
+    // Spraying: the strip beside the house, tank and water must be left unsprayed, so it isn't part of the job.
+    if (J.def.spray && lv.obs.some(o => SENS.includes(o.k) && dObs(o, x, y) < BUF + 4)) continue;
+    if (!lv.strips || lv.strips.some(sx => Math.abs(x - sx) <= 5)){ J.tgt[i] = 1; J.nT++; }
+  }
+  const w0 = J.wps[0];
+  Object.assign(J, {x:Math.max(16, w0[0] - 40), y:w0[1], h:0, v:0, target:null, hold:false, wi:0, fuel:100, t:0, hits:0, hitCd:0, covT:0, ovT:0, waste:0, acr:0, drift:0, res:null, wOrder:null, wN:0, statT:0, k:0, bgc:null, wkc:null});
+}
+
+/* ---------- drawing ---------- */
+function jobLayers(J, k){
+  const mk = () => { const c = document.createElement('canvas'); c.width = Math.round(FW * k); c.height = Math.round(FH * k); const x = c.getContext('2d'); x.setTransform(k, 0, 0, k, 0, 0); return [c, x]; };
+  const [bgc, b] = mk(), [wkc] = mk(); J.bgc = bgc; J.wkc = wkc; J.k = k;
+  const def = J.def, lv = J.lv; let s = J.farm * 131 + J.L * 17; const R = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
+  b.fillStyle = '#86ad4e'; b.fillRect(0, 0, FW, FH);
+  for (let i = 0; i < 420; i++){ b.fillStyle = R() > .5 ? 'rgba(40,80,20,.16)' : 'rgba(255,255,210,.12)'; b.beginPath(); b.ellipse(R() * FW, R() * FH, 1.4, 1.1, 0, 0, 7); b.fill(); }
+  if (def.key === 'furrow'){ b.fillStyle = '#3f8fc8'; b.fillRect(62, 92, 420, 12); b.fillStyle = 'rgba(255,255,255,.35)'; for (let x = 70; x < 480; x += 26) b.fillRect(x, 96, 12, 1.5); }
+  lv.field.forEach(r => { b.fillStyle = def.soil; b.fillRect(r[0], r[1], r[2], r[3]); });
+  b.save(); b.beginPath(); lv.field.forEach(r => b.rect(r[0], r[1], r[2], r[3])); b.clip();
+  if (def.key === 'plough'){ b.strokeStyle = 'rgba(120,90,40,.5)'; b.lineWidth = 1; for (let i = 0; i < 520; i++){ const x = R() * FW, y = R() * FH; b.beginPath(); b.moveTo(x, y); b.lineTo(x + 1, y - 4); b.stroke(); } }
+  if (def.key === 'furrow'){ b.strokeStyle = 'rgba(120,80,40,.45)'; b.lineWidth = .8; for (let i = 0; i < 70; i++){ let x = R() * FW, y = R() * FH; b.beginPath(); b.moveTo(x, y); for (let j = 0; j < 4; j++){ x += (R() - .5) * 18; y += (R() - .5) * 10; b.lineTo(x, y); } b.stroke(); } }
+  if (def.key === 'plant'){ for (let i = 0; i < 500; i++){ b.fillStyle = R() > .5 ? 'rgba(0,0,0,.14)' : 'rgba(255,230,180,.12)'; b.fillRect(R() * FW, R() * FH, 1.6, 1.6); } }
+  if (def.key === 'spray'){ for (let y = 0; y < FH; y += 10) for (let x = (y / 10 % 2) * 5; x < FW; x += 10){ b.fillStyle = R() > .5 ? '#4f8f34' : '#5fa33d'; b.beginPath(); b.ellipse(x + 3, y + 3, 3.4, 2.8, 0, 0, 7); b.fill(); } }
+  if (lv.wet){ const [cx, cy, rx, ry] = lv.wet; b.fillStyle = '#5a4634'; b.beginPath(); b.ellipse(cx, cy, rx, ry, 0, 0, 7); b.fill(); b.fillStyle = 'rgba(140,190,220,.55)'; for (let i = 0; i < 6; i++){ b.beginPath(); b.ellipse(cx + (R() - .5) * rx, cy + (R() - .5) * ry, 6 + R() * 6, 2 + R() * 2, 0, 0, 7); b.fill(); } }
+  if (lv.strips){ b.strokeStyle = 'rgba(255,255,255,.55)'; b.lineWidth = 1.2; b.setLineDash([4, 6]); lv.strips.forEach(sx => { b.beginPath(); b.moveTo(sx, lv.field[0][1]); b.lineTo(sx, lv.field[0][1] + lv.field[0][3]); b.stroke(); }); b.setLineDash([]); }
+  b.restore();
+  b.strokeStyle = 'rgba(80,50,20,.55)'; b.lineWidth = 1.5; lv.field.forEach(r => b.strokeRect(r[0], r[1], r[2], r[3]));
+  // obstacles
+  lv.obs.forEach(o => {
+    if (o.k === 'house'){ const [x, y, w, h] = o.rect; b.fillStyle = '#c98f56'; b.fillRect(x, y, w, h); b.fillStyle = '#8c3f24'; b.fillRect(x - 3, y - 3, w + 6, h * .55); b.fillStyle = '#6b2f1a'; b.fillRect(x - 3, y + h * .5 - 4, w + 6, 3); }
+    else if (o.k === 'pond'){ const [x, y, w, h] = o.rect; b.fillStyle = '#3f8fc8'; b.beginPath(); b.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, 7); b.fill(); b.fillStyle = 'rgba(255,255,255,.35)'; b.fillRect(x + 12, y + h * .4, 16, 2); }
+    else if (o.k === 'tank'){ b.fillStyle = '#6d6f70'; b.beginPath(); b.arc(o.x, o.y, o.r, 0, 7); b.fill(); b.fillStyle = '#4f9fd4'; b.beginPath(); b.arc(o.x, o.y, o.r - 4, 0, 7); b.fill(); }
+    else if (o.k === 'rock'){ b.fillStyle = '#8b8f92'; b.beginPath(); b.ellipse(o.x, o.y, o.r, o.r * .8, .3, 0, 7); b.fill(); b.fillStyle = 'rgba(255,255,255,.3)'; b.beginPath(); b.ellipse(o.x - 3, o.y - 3, o.r * .4, o.r * .25, .3, 0, 7); b.fill(); }
+    else if (o.k === 'stump'){ b.fillStyle = '#7a5232'; b.beginPath(); b.arc(o.x, o.y, o.r, 0, 7); b.fill(); b.strokeStyle = '#c99a62'; b.lineWidth = 1.2; b.beginPath(); b.arc(o.x, o.y, o.r * .6, 0, 7); b.stroke(); b.beginPath(); b.arc(o.x, o.y, o.r * .25, 0, 7); b.stroke(); }
+    else if (o.k === 'mound'){ const g = b.createRadialGradient(o.x - 3, o.y - 3, 2, o.x, o.y, o.r + 4); g.addColorStop(0, '#e9cf98'); g.addColorStop(1, '#a8834c'); b.fillStyle = g; b.beginPath(); b.arc(o.x, o.y, o.r + 3, 0, 7); b.fill(); }
+  });
+  // spray buffer zones
+  if (def.spray){ b.strokeStyle = '#ff8a1f'; b.lineWidth = 2; b.setLineDash([5, 4]); lv.obs.filter(o => SENS.includes(o.k)).forEach(o => { b.beginPath(); if (o.rect){ const [x, y, w, h] = o.rect; b.roundRect(x - BUF, y - BUF, w + 2 * BUF, h + 2 * BUF, BUF); } else b.arc(o.x, o.y, o.r + BUF, 0, 7); b.stroke(); }); b.setLineDash([]); }
+  // signs: downhill and wind
+  b.font = '600 10px Poppins, sans-serif'; b.textAlign = 'center';
+  const arrow = (x, y, dx, dy, label) => { b.strokeStyle = '#fff'; b.fillStyle = '#fff'; b.lineWidth = 2.4; b.beginPath(); b.moveTo(x, y); b.lineTo(x + dx, y + dy); b.stroke(); const a = Math.atan2(dy, dx); b.beginPath(); b.moveTo(x + dx, y + dy); b.lineTo(x + dx - 8 * Math.cos(a - .5), y + dy - 8 * Math.sin(a - .5)); b.lineTo(x + dx - 8 * Math.cos(a + .5), y + dy - 8 * Math.sin(a + .5)); b.closePath(); b.fill(); b.fillStyle = 'rgba(0,0,0,.55)'; b.fillRect(x + dx / 2 - 28, y + dy / 2 + (dy ? -6 : -20), 56, 13); b.fillStyle = '#fff'; b.fillText(label, x + dx / 2, y + dy / 2 + (dy ? 4 : -10)); };
+  if (def.slope) arrow(FW - 26, 150, 0, 70, 'Downhill');
+  if (lv.wind) arrow(FW / 2 - 30, 26, 30 + lv.wind * 2, 0, `Wind ${lv.wind > 12 ? 'strong' : 'light'}`);
+  // worked layer from the grid (after a resize)
+  for (let i = 0; i < GW * GH; i++){ if (J.cnt[i]) jobCell(J, i); if (J.dr[i]) jobCell(J, i, 'drift'); }
+}
+function jobCell(J, i, kind){
+  const x = (i % GW) * CELL, y = Math.floor(i / GW) * CELL, c = J.wkc.getContext('2d'), key = J.def.key;
+  c.setTransform(J.k, 0, 0, J.k, 0, 0);
+  if (kind === 'drift'){ c.fillStyle = 'rgba(255,128,32,.6)'; c.fillRect(x, y, CELL, CELL); return; }
+  if (key === 'plough'){ c.fillStyle = Math.floor(i / GW) % 4 < 2 ? '#6b4426' : '#5b381e'; c.fillRect(x, y, CELL, CELL); }
+  else if (key === 'furrow'){ c.fillStyle = '#6e4a2b'; c.fillRect(x, y, CELL, CELL); }
+  else if (key === 'plant'){ c.fillStyle = '#5f3c22'; c.fillRect(x, y, CELL, CELL); if ((i % GW) % 4 === 0 && Math.floor(i / GW) % 5 === 2){ c.fillStyle = '#e9d79a'; c.fillRect(x, y, 2, 2); } }
+  else { c.fillStyle = 'rgba(190,230,255,.55)'; c.fillRect(x, y, CELL, CELL); }
+}
+function drawTractor(c, J){
+  const d = J.def, tw = d.toolW; c.save(); c.translate(J.x, J.y); c.rotate(J.h); c.scale(1.15, 1.15);
+  c.strokeStyle = '#444'; c.lineWidth = 2; c.beginPath(); c.moveTo(-8, 0); c.lineTo(-d.back / 1.15 + 3, 0); c.stroke();
+  if (d.spray){ c.fillStyle = '#5a5e62'; c.fillRect(-d.back / 1.15 - 1.5, -tw / 2.3, 3, tw / 1.15); if (J.phase === 'drive' && J.v > 4 && inRects(J.lv.field, J.x - Math.cos(J.h) * d.back, J.y - Math.sin(J.h) * d.back)){ c.fillStyle = 'rgba(200,235,255,.5)'; c.fillRect(-d.back / 1.15 - 6, -tw / 2.3, 5, tw / 1.15); } }
+  else { c.fillStyle = '#6b6f73'; c.fillRect(-d.back / 1.15 - 3, -tw / 2.3, 6, tw / 1.15); c.fillStyle = '#4a4e52'; for (let o = -tw / 2.3 + 2; o < tw / 2.3; o += 5) c.fillRect(-d.back / 1.15 - 4, o, 2, 2.5); }
+  c.fillStyle = '#1f1f1f'; c.fillRect(-10, -13, 11, 5); c.fillRect(-10, 8, 11, 5); c.fillRect(6, -10, 7, 3.5); c.fillRect(6, 6.5, 7, 3.5);
+  c.fillStyle = '#3e8e3a'; c.beginPath(); c.roundRect(-9, -7, 23, 14, 3); c.fill();
+  c.fillStyle = '#56ad4f'; c.beginPath(); c.roundRect(4, -5, 10, 10, 2); c.fill();
+  c.fillStyle = '#26323d'; c.fillRect(-8, -6, 10, 12); c.fillStyle = 'rgba(160,210,240,.7)'; c.fillRect(-1, -5, 2.5, 10);
+  c.restore();
+}
+function jobDraw(){
+  const J = ui.job, cv = $('#tcv'); if (!J || !cv) return;
+  const k = Math.min(3, (window.devicePixelRatio || 1) * Math.max(1, (parseFloat(stage.style.getPropertyValue('--s')) || 1) * 1.15));
+  if (cv.width !== Math.round(FW * k)){ cv.width = Math.round(FW * k); cv.height = Math.round(FH * k); }
+  if (!J.bgc || Math.abs(J.k - k) > .01) jobLayers(J, k);
+  const c = cv.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.drawImage(J.bgc, 0, 0); c.drawImage(J.wkc, 0, 0); c.setTransform(k, 0, 0, k, 0, 0);
+  if (J.wOrder){ c.fillStyle = '#3f8fc8'; for (let n = 0; n < J.wN; n++){ const i = J.wOrder[n]; c.fillRect((i % GW) * CELL, Math.floor(i / GW) * CELL, CELL, CELL); } }
+  if ((J.lv.hint || J.auto) && J.phase !== 'done'){ c.strokeStyle = J.auto ? 'rgba(255,255,255,.75)' : 'rgba(255,255,255,.5)'; c.lineWidth = 1.3; c.setLineDash([3, 5]); c.beginPath(); J.wps.forEach((p, i) => i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.stroke(); c.setLineDash([]); }
+  if (J.target && !J.auto && J.phase === 'drive'){ c.strokeStyle = '#fff'; c.lineWidth = 2; c.beginPath(); c.arc(J.target[0], J.target[1], 7, 0, 7); c.stroke(); c.fillStyle = 'rgba(255,255,255,.6)'; c.beginPath(); c.arc(J.target[0], J.target[1], 2.5, 0, 7); c.fill(); }
+  drawTractor(c, J);
+}
+
+/* ---------- driving ---------- */
+let jobRaf = 0, jobLast = 0;
+function jobLoop(ts){
+  const J = ui.job; if (!J || J.phase !== 'drive' || view !== 'tractor'){ jobRaf = 0; return; }
+  const dt = Math.min(.05, (ts - (jobLast || ts)) / 1000); jobLast = ts;
+  if (dt > 0) jobStep(J, dt);
+  jobDraw(); J.statT += dt; if (J.statT > .12){ J.statT = 0; jobStats(J); }
+  jobRaf = J.phase === 'drive' ? requestAnimationFrame(jobLoop) : 0;
+}
+function jobStep(J, dt){
+  J.t += dt; J.hitCd = Math.max(0, J.hitCd - dt);
+  if (J.lv.time && J.t >= J.lv.time) return jobFinish('time');
+  const base = J.auto ? 90 : J.fast ? 135 : 80, W = 3, k = J.keys;
+  let want = 0, rot = 0;
+  if (!J.auto && (k.up || k.left || k.right || k.down)){ J.target = null; rot = ((k.right ? 1 : 0) - (k.left ? 1 : 0)) * W * dt; want = k.up ? base : 0; }
+  else {
+    if (J.auto){
+      // Autopilot follows each leg of the route: it aims a little ahead on the line, so rows and furrows stay straight.
+      if (J.wi >= J.wps.length) return jobFinish('auto');
+      const B = J.wps[J.wi], A = J.wi ? J.wps[J.wi - 1] : J.a0, vx = B[0] - A[0], vy = B[1] - A[1], L = Math.hypot(vx, vy) || 1;
+      const along = Math.max(0, Math.min(L, ((J.x - A[0]) * vx + (J.y - A[1]) * vy) / L)), la = Math.min(L, along + 14);
+      if (Math.hypot(B[0] - J.x, B[1] - J.y) < 7){ J.wi++; return; }
+      J.target = [A[0] + vx / L * la, A[1] + vy / L * la];
+    }
+    if (J.target){
+      const dx = J.target[0] - J.x, dy = J.target[1] - J.y, dist = Math.hypot(dx, dy), diff = wrapA(Math.atan2(dy, dx) - J.h);
+      if (dist < 7 && !J.hold && !J.auto) J.target = null;
+      else {
+        rot = Math.max(-W * dt, Math.min(W * dt, diff));
+        // Sharp turn close to the target: creep while turning, so the tractor never circles a point it can't reach.
+        const sharp = Math.abs(diff) > 1.2;
+        want = J.hold && dist < 10 ? 0 : sharp ? (dist < 22 ? 12 : base * .3) : base * (Math.abs(diff) > .6 ? .6 : 1);
+      }
+    }
+  }
+  J.h = wrapA(J.h + rot);
+  J.v += Math.max(-260 * dt, Math.min(180 * dt, want - J.v));
+  let f = 1; const w = J.lv.wet; if (w && ((J.x - w[0]) / w[2]) ** 2 + ((J.y - w[1]) / w[3]) ** 2 < 1) f = .45;
+  const dist = J.v * f * dt, n = Math.max(1, Math.ceil(dist / 2)), c = Math.cos(J.h), s = Math.sin(J.h);
+  for (let i = 0; i < n; i++){
+    const nx = Math.max(10, Math.min(FW - 10, J.x + c * dist / n)), ny = Math.max(10, Math.min(FH - 10, J.y + s * dist / n));
+    const hit = J.lv.obs.find(o => dObs(o, nx, ny) < 9);
+    if (hit){
+      J.v = 0;
+      if (J.hitCd <= 0){ J.hits++; J.hitCd = 1.2; toast(`You hit ${OBS_NAME[hit.k]}! Steer around it.`); track('tractor_hit', {farm:J.farm, level:J.L, what:hit.k}); }
+      const a = Math.atan2(J.y - (hit.rect ? hit.rect[1] + hit.rect[3] / 2 : hit.y), J.x - (hit.rect ? hit.rect[0] + hit.rect[2] / 2 : hit.x)); J.x += Math.cos(a) * 3; J.y += Math.sin(a) * 3;
+      if (J.auto){ J.wi++; J.target = null; } else if (!J.hold) J.target = null;
+      break;
+    }
+    J.x = nx; J.y = ny; jobMark(J);
+  }
+  J.fuel -= dist * J.burn * (J.fast && !J.auto ? 1.12 : 1);
+  if (J.fuel <= 0){ J.fuel = 0; return jobFinish('fuel'); }
+}
+function jobMark(J){
+  const d = J.def, c = Math.cos(J.h), s = Math.sin(J.h), tx = J.x - c * d.back, ty = J.y - s * d.back;
+  if (!inRects(J.lv.field, tx, ty)) return;
+  const wind = d.spray ? (J.lv.wind || 0) : 0, half = d.toolW / 2, across = Math.abs(c) > .7;
+  for (let o = -half; o <= half; o += 2){
+    const px = tx - s * o + wind, py = ty + c * o;
+    if (px < 0 || py < 0 || px >= FW || py >= FH) continue;
+    const i = Math.floor(py / CELL) * GW + Math.floor(px / CELL);
+    if (d.spray && J.lv.obs.some(q => SENS.includes(q.k) && dObs(q, px, py) < BUF)){ if (!J.dr[i]){ J.dr[i] = 1; J.drift++; jobCell(J, i, 'drift'); } continue; }
+    if (!J.fld[i]) continue;
+    if (J.t - J.last[i] > .9){
+      const first = !J.cnt[i]; if (J.cnt[i] < 255) J.cnt[i]++;
+      if (J.tgt[i]){ if (first){ J.covT++; if (across) J.acr++; } else if (J.cnt[i] === 2) J.ovT++; } else if (first) J.waste++;
+      if (first) jobCell(J, i);
+    }
+    J.last[i] = J.t;
+  }
+}
+function jobStats(J){
+  const set = (id, v) => { const e = $(id); if (e) e.textContent = v; }, bar = (id, p) => { const e = $(id); if (e) e.style.width = Math.max(0, Math.min(100, p)) + '%'; };
+  const cov = J.covT / J.nT * 100; set('#tCov', Math.round(cov) + '%'); bar('#tCovB', cov);
+  set('#tOv', Math.round((J.ovT + (J.def.key === 'furrow' ? J.waste * .25 : 0)) / Math.max(1, J.covT) * 100) + '%');
+  set('#tFuel', Math.round(J.fuel) + ' L'); bar('#tFuelB', J.fuel);
+  set('#tHits', J.hits + (J.drift ? ` · drift ${J.drift}` : ''));
+  if (J.lv.time) set('#tTime', Math.max(0, Math.ceil(J.lv.time - J.t)) + 's');
+  if (J.def.key === 'plough') set('#tAcr', J.covT ? Math.round(J.acr / J.covT * 100) + '%' : '–');
+}
+function jobPointer(e, down){
+  const J = ui.job; if (!J || J.phase !== 'drive' || J.auto) return;
+  const [sx, sy] = toStage(e);
+  J.target = [Math.max(12, Math.min(FW - 12, sx - CV_X)), Math.max(12, Math.min(FH - 12, sy - CV_Y))];
+  if (down){ J.hold = true; if (!J.moved){ J.moved = true; track('tractor_first_move', {farm:J.farm, level:J.L, sec:Math.round(J.t)}); } }
+}
+/* Water flows from the channel down through the dug furrows (down and sideways, never uphill). */
+function jobWater(J){
+  const n = GW * GH, wet = new Uint8Array(n), q = [], top = Math.min(...J.lv.field.map(r => r[1]));
+  for (let i = 0; i < n; i++) if (J.cnt[i] && J.fld[i] && Math.floor(i / GW) * CELL + CELL / 2 < top + 8){ wet[i] = 1; q.push(i); }
+  for (let h = 0; h < q.length; h++){ const i = q[h], gx = i % GW; [gx > 0 ? i - 1 : -1, gx < GW - 1 ? i + 1 : -1, i + GW].forEach(j => { if (j >= 0 && j < n && !wet[j] && J.cnt[j] && J.fld[j]){ wet[j] = 1; q.push(j); } }); }
+  J.wOrder = q; J.wN = 0; return q.filter(i => J.tgt[i]).length;
+}
+function creditCare(farm, acts){
+  const t = dueNow().find(t => t.r.farm === farm && acts.includes(t.x.act)); if (!t) return '';
+  t.x.st = 'done'; t.r.streak = 0; earn(20, 0, 0); boostScore(farm, 3);
+  logAdd(ACTS[t.x.act].icon, `${actLine(t.x.act, t.r)}: done with the tractor. +20 coins.`);
+  if (t.r.steps.every(y => y.st !== 'todo')) finishRoutine(t.r);
+  return `${ACTS[t.x.act].name} task done too (+20 coins)`;
+}
+function jobFinish(reason){
+  const J = ui.job; if (!J || J.phase !== 'drive') return;
+  J.phase = 'done'; J.keys = {}; J.hold = false;
+  const furrow = J.def.key === 'furrow', cov = (furrow ? jobWater(J) : J.covT) / J.nT;
+  const over = (J.ovT + (furrow ? J.waste * .25 : 0)) / Math.max(1, J.covT), hits = J.hits + Math.floor(J.drift / 15), acr = J.covT ? J.acr / J.covT : 0;
+  let stars = 0;
+  if (cov >= .6 && hits <= 3) stars = 1;
+  if (stars && cov >= .8 && over <= .35 && hits <= 1) stars = 2;
+  if (stars === 2 && cov >= .92 && over <= .2 && hits === 0 && J.fuel > 0 && (J.def.key !== 'plough' || acr >= .7) && (!J.def.spray || J.drift === 0)) stars = 3;
+  // Autopilot keeps every job open to players who find steering hard; three stars need your own driving.
+  const capped = J.usedAuto && stars === 3; if (capped) stars = 2;
+  const best = S.tractor.best[J.farm][J.L - 1], coins = stars * 40, scoreUp = 5 * Math.max(0, stars - best), gems = stars === 3 && best < 3 ? 15 : 0;
+  if (stars){ earn(coins, gems, 0); boostScore(J.farm, scoreUp); S.tractor.best[J.farm][J.L - 1] = Math.max(best, stars); }
+  const care = stars ? creditCare(J.farm, J.def.care) : '';
+  J.res = {cov, over, hits, acr, stars, reason, coins, gems, scoreUp, care, capped, newBest:stars > best};
+  if (stars) logAdd('tractor', `${J.def.name}, level ${J.L}: ${stars} star${stars > 1 ? 's' : ''}. +${coins} coins.`);
+  track('tractor_done', {farm:J.farm, level:J.L, stars, reason, cov:Math.round(cov * 100), over:Math.round(over * 100), hits, drift:J.drift, sec:Math.round(J.t), auto:!!J.usedAuto});
+  save(); render();
+  if (furrow && J.wOrder.length){ const t0 = performance.now(), go = now => { if (ui.job !== J || view !== 'tractor') return; J.wN = Math.min(J.wOrder.length, Math.round((now - t0) / 1400 * J.wOrder.length)); jobDraw(); if (J.wN < J.wOrder.length) requestAnimationFrame(go); }; requestAnimationFrame(go); }
+}
+
+/* ---------- the tractor screen ---------- */
+const tStat = (label, id, extra = '') => `<div class="tstat"><span>${label}</span><b id="${id}">–</b>${extra}</div>`;
+V.tractor = () => {
+  const J = ui.job; if (!J){ view = 'home'; return V.home(); }
+  const id = J.farm, def = J.def, lv = J.lv, o = owner(id), nm = esc(agentName()), best = S.tractor.best[id];
+  let side = '';
+  if (J.phase === 'card'){
+    side = `<div class="fsay">${farmerFace(id, 30)}<div class="fbub tsm"><b>${o}:</b> ${def.ask}</div></div>
+      <div class="lvls">${[1,2,3].map(L => { const op = jobOpen(id, L); return `<button class="lvl ${L === J.L ? 'on' : ''}" data-act="jobLevel" data-l="${L}" ${op ? '' : 'disabled'}><b>Level ${L}</b><span>${op ? starHTML(best[L - 1]) : jobLock(id, L)}</span></button>`; }).join('')}</div>
+      <div class="tinfo"><span>${img('eq-tractor',14,14)}${def.tool}</span><span>${img('bulb',14,14)}${lv.twist || (lv.hint ? 'A dotted line shows a good route.' : 'No route shown: plan your own.')}</span><span>${img('coin-sm',14,14)}Up to 120 coins and +15 farm score</span></div>
+      <div class="row" style="gap:6px"><button class="btn soft" style="padding:7px 12px" data-act="jobBack">Back</button><button class="btn sp" style="padding:7px" data-act="jobReady">Get ready</button></div>`;
+  } else if (J.phase === 'check'){
+    const items = [...def.checks, ['fuel', S.tractor.fuelFree ? 'Fill the fuel tank (free this time)' : `Fill the fuel tank · ${FUEL_COINS} coins`, 'fuel']], all = items.every(c => J.checks.includes(c[0]));
+    side = `<p class="rprompt tsm">${def.spray ? `Safety first, ${nm}. ` : ''}Before you drive:</p>
+      <div class="kit">${items.map(c => `<button class="call tcall ${J.checks.includes(c[0]) ? 'on' : ''}" data-act="jobCheck" data-k="${c[0]}" aria-pressed="${J.checks.includes(c[0])}">${img(c[2],20,20)}<b>${c[1]}</b>${J.checks.includes(c[0]) ? '<i class="ok">✓</i>' : ''}</button>`).join('')}</div>
+      <button class="btn ${all ? '' : 'ghost-soft'}" style="padding:8px" data-act="jobGo">${all ? 'Start the engine' : 'Tick everything first'}</button>`;
+  } else if (J.phase === 'drive'){
+    side = `<span class="credit tsm">${J.auto ? 'Autopilot is driving the rows (up to 2 stars). Tap Autopilot to take over.' : 'Tap where to drive. Hold to keep steering. Arrow keys work too.'}</span>
+      <div class="tstat"><span>Done</span><b id="tCov">0%</b><i class="tbar"><i id="tCovB"></i></i></div>
+      <div class="tstat"><span>Fuel</span><b id="tFuel">100 L</b><i class="tbar fuel"><i id="tFuelB" style="width:100%"></i></i></div>
+      ${tStat('Overlap', 'tOv')}${tStat(def.spray ? 'Hits · drift' : 'Hits', 'tHits')}${lv.time ? tStat('Time left', 'tTime') : ''}${def.key === 'plough' ? tStat('Across the slope', 'tAcr') : ''}
+      <div class="row" style="gap:6px"><button class="seg ${J.fast ? '' : 'on'}" data-act="jobSpeed" data-f="0">Slow</button><button class="seg ${J.fast ? 'on' : ''}" data-act="jobSpeed" data-f="1">Fast</button><button class="seg ${J.auto ? 'on' : ''}" data-act="jobAuto">Autopilot</button></div>
+      <button class="btn" style="padding:7px" data-act="jobFinish">Finish the job</button>`;
+  } else {
+    const r = J.res, said = r.stars === 3 ? `Perfect work, ${nm}!` : r.stars === 2 ? 'Good job. A few gaps, but it will do.' : r.stars === 1 ? "It's done. Next time, try to cover it all." : "That's not enough of the field. Let's try again.";
+    const why = r.reason === 'fuel' ? 'The fuel ran out.' : r.reason === 'time' ? 'Time ran out.' : '';
+    const nextOpen = J.L < 3 && jobOpen(id, J.L + 1);
+    side = `<div class="tstars">${starHTML(r.stars)}</div>
+      <div class="fsay">${farmerFace(id, 30)}<div class="fbub tsm"><b>${o}:</b> ${why ? why + ' ' : ''}${said}</div></div>
+      <div class="tinfo"><span>${def.key === 'furrow' ? 'Furrow lines watered' : 'Field done'}: <b>${Math.round(r.cov * 100)}%</b></span><span>Overlap: <b>${Math.round(r.over * 100)}%</b> · Hits: <b>${r.hits}</b>${def.spray ? ` · Drift: <b>${J.drift}</b>` : ''}</span>${def.key === 'plough' ? `<span>Across the slope: <b>${Math.round(r.acr * 100)}%</b></span>` : ''}${r.stars ? `<span>${img('coin-sm',14,14)}+${r.coins} coins${r.gems ? ` · ${img('gem',14,14)}+${r.gems}` : ''}${r.scoreUp ? ` · score +${r.scoreUp}` : ''}</span>` : ''}${r.care ? `<span>${img('checklist',14,14)}${r.care}</span>` : ''}${r.capped ? `<span>${img('tractor',14,14)}Autopilot jobs earn up to 2 stars. Drive it yourself for 3.</span>` : ''}</div>
+      <p class="lesson tsm">${img('bulb',16,16)}<span>${def.lesson}</span></p>
+      <div class="row" style="gap:6px"><button class="btn soft" style="padding:7px 10px" data-act="jobRetry">Try again</button>${nextOpen ? `<button class="btn sp" style="padding:7px" data-act="jobNext">Level ${J.L + 1}</button>` : `<button class="btn sp" style="padding:7px" data-act="jobBack">Done</button>`}</div>`;
+  }
+  return {view:`<canvas id="tcv" class="tcv" width="${FW}" height="${FH}" aria-label="${esc(def.name)}: the field from above"></canvas>
+    <div class="panel tside" style="left:604px;top:16px;width:258px"><div class="pin" style="padding:9px 12px 11px;display:flex;flex-direction:column;gap:8px">
+    <div class="ttl" style="justify-content:flex-start;font-size:13px">${img('tractor',24,24)}<span>${esc(def.short)}<i class="rtag dark">Level ${J.L}</i></span></div>${side}</div></div>`};
+};
+function tractorFarm(id){
+  if (!jobLevels(id).length){ toast(`${owner(id)}'s tractor job opens after ${LV_ROUNDS[0]} reviews of the farm.`); return; }
+  if (S.phase !== 'free') return;
+  const g = gateOf(id);
+  if (Math.hypot(S.pos[0] - g[0], S.pos[1] - g[1]) < 6 && (view === 'home' || view === 'map')) return openJob(id);
+  ui.goJob = id; startWalkTo(id, true, view === 'map');
+}
+const jobBadge = f => S.phase === 'free' && jobLevels(f.id).length ? `<button class="tbadge" style="left:${f.lbl[0] - 34}px;top:${f.lbl[1] + 2}px" data-act="tractorFarm" data-farm="${f.id}" aria-label="Tractor job at ${fname(f.id)}" title="Tractor job">${img('tractor',24,24)}</button>` : '';
 
 const rewardRow = r => `<span class="price" style="font-size:11px">${img('coin-sm',14,14)}+${r.c}</span><span class="price" style="font-size:11px">${img('gem',14,14)}+${r.g}</span><span class="price" style="font-size:11px">${img('water',14,14)}+${r.w}</span>`;
 function animateRecovery(){
@@ -1693,7 +2068,7 @@ V.route = () => {
       <span style="font:600 11px var(--ui)">Recommended Route</span><span style="font:400 8px var(--ui);opacity:.75;line-height:1.5">Move tractor from ${fname(S.sel || 1).replace(/:.*/, '').toLowerCase()} to farm 5 via optimal route</span>
       <div style="display:grid;place-items:center;height:57px">${img('tractor',53,53)}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['Fuel cost','fuel','18 L'],['Distance','distance','35 km'],['Est. time','clock','2h'],['Est. savings','coin-sm','400']].map(s => `<div style="border:1px solid rgba(107,64,43,.15);border-radius:4px;padding:4px 6px"><div style="font:500 8px var(--ui);opacity:.7">${s[0]}</div><div class="row" style="gap:4px;font:600 11px var(--ui);margin-top:2px">${img(s[1],14,14)}${s[2]}</div></div>`).join('')}</div>
-      <button class="btn wide" style="padding:5px" data-act="applyRoute">${S.routeApplied ? 'Route scheduled' : `Apply 40 ${img('gem',14,14)}`}</button></div></div>` + steps};
+      ${jobLevels(S.sel || 1).length ? `<button class="btn wide" style="padding:5px" data-act="tractorFarm" data-farm="${S.sel || 1}">Drive: ${JOBS[S.sel || 1].short}</button>` : `<button class="btn wide" style="padding:5px" data-act="applyRoute">${S.routeApplied ? 'Route scheduled' : `Apply 40 ${img('gem',14,14)}`}</button>`}</div></div>` + steps};
 };
 
 /* ---------- Settings & activity ---------- */
@@ -1704,7 +2079,7 @@ V.settings = () => ({view:backBtn(163,22) + `<div class="panel" style="left:218p
   <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="howTo">How a review works</button><button class="btn soft sp" style="padding:7px;font-size:12px" data-act="go" data-v="activity">Activity log</button></div>
   <div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="remindOn">${S.remind && 'Notification' in window && Notification.permission === 'granted' ? 'Reminders are on' : 'Turn on reminders'}</button><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="credits">Photo credits</button></div>
   <span class="credit" style="text-align:center">Reminders show while the game is open in a browser tab. Reminders with the game closed need a push service (not built yet).</span>
-  <div class="row" style="gap:6px"><span class="credit" style="white-space:nowrap">Playtest:</span><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="skipTime">+2 game hours</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockNow">Unlock new problems</button></div>
+  <div class="row" style="gap:6px"><span class="credit" style="white-space:nowrap">Playtest:</span><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="skipTime">+2 game hours</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockJobs">${S.tractor.all ? 'Tractor jobs open' : 'Unlock tractor jobs'}</button><button class="btn soft sp" style="padding:5px;font-size:9.5px" data-act="unlockNow">Unlock new problems</button></div>
   <div class="box" style="background:rgba(229,72,77,.06)">${ui.confirmReset
     ? `<p style="margin:0 0 8px;font:500 10px var(--ui)">This erases your character, farms and rewards on this device.</p><div class="row" style="gap:10px"><button class="btn soft sp" style="padding:6px;font-size:11px" data-act="cancelReset">Keep my progress</button><button class="btn sp" style="padding:6px;background:#d93a3f;border-color:#a8262b" data-act="doReset">Erase and restart</button></div>`
     : `<div class="row"><div class="col sp" style="gap:2px"><span class="t10">Restart game</span><span style="font:400 9px var(--ui);opacity:.7">Start again from character creation.</span></div><button class="btn soft" style="padding:6px 12px;font-size:11px" data-act="askReset">Restart</button></div>`}</div>
@@ -1750,7 +2125,7 @@ function render(){
   $('#overlay').innerHTML = S.phase === 'create' ? createOverlay() : ui.overlay === 'hook' ? hookOverlay() : ui.overlay === 'how' ? howOverlay() : ui.overlay === 'credits' ? creditsOverlay() : '';
   if (view === 'shop' && S.shopTab === 'loans' && S.loanTab === 'calc') calcOut();
   if (view === 'sell') sellOut();
-  paint(); save(); void firstSession;
+  paint(); if (view === 'tractor') jobDraw(); save(); void firstSession;
 }
 function go(v, replace){
   if (v === view) return render();
@@ -1778,14 +2153,14 @@ const ACT = {
   },
   /* walking */
   walkFarm: d => {
-    const id = +d.farm;
+    const id = +d.farm; ui.goJob = null;
     if (S.phase === 'walk2'){ if (id !== SECOND){ toast(`Start with ${owner(SECOND)}'s beans, ${agentName()}.`); return; } ui.walk.target = ui.walk.L; if (!ui.walk.moved){ ui.walk.moved = true; ui.walk.firstMove(); } return; }
     if (S.phase !== 'free') return;
     startWalkTo(id, true);
   },
   selFarm: d => { S.sel = S.sel === +d.farm ? null : +d.farm; render(); },
   mapFarm: d => {
-    const id = +d.farm; S.sel = id;
+    const id = +d.farm; S.sel = id; ui.goJob = null;
     if (S.phase !== 'free'){ render(); return; }
     startWalkTo(id, true, true);
   },
@@ -1844,6 +2219,32 @@ const ACT = {
   },
   skipTime: () => { S.clock0 -= 120 * MS_GMIN; careTick(); toast(`Skipped ahead. It is now ${gTime(gNow())}, day ${gDay(gNow())}.`); render(); },
   unlockNow: () => { S.unlockAt = Date.now(); careTick(); toast('Low nutrients and weeds are now in the reviews'); render(); },
+  /* tractor jobs */
+  tractorFarm: d => tractorFarm(+d.farm),
+  unlockJobs: () => { S.tractor.all = true; toast('Every tractor job is open for testing'); render(); },
+  jobLevel: d => { const J = ui.job; if (!J || !jobOpen(J.farm, +d.l)) return; openJob(J.farm, +d.l); },
+  jobReady: () => { ui.job.phase = 'check'; track('tractor_ready', {farm:ui.job.farm, level:ui.job.L}); render(); },
+  jobCheck: d => {
+    const J = ui.job; if (J.checks.includes(d.k)) return;
+    if (d.k === 'fuel' && !S.tractor.fuelFree && !spend('coins', FUEL_COINS)) return;
+    J.checks.push(d.k); render();
+  },
+  jobGo: () => {
+    const J = ui.job, need = [...J.def.checks.map(c => c[0]), 'fuel'];
+    if (!need.every(k => J.checks.includes(k))){ toast('Tick everything on the list before you drive'); return; }
+    S.tractor.fuelFree = false; J.phase = 'drive'; jobLast = 0; track('tractor_drive', {farm:J.farm, level:J.L}); render();
+    if (!jobRaf) jobRaf = requestAnimationFrame(jobLoop);
+  },
+  jobSpeed: d => { ui.job.fast = d.f === '1'; render(); },
+  jobAuto: () => {
+    const J = ui.job; J.auto = !J.auto; J.target = null; J.keys = {}; J.hold = false;
+    if (J.auto){ J.usedAuto = true; J.a0 = [J.x, J.y]; let bi = 0, bd = 1e9; J.wps.forEach((p, i) => { const dd = Math.hypot(p[0] - J.x, p[1] - J.y); if (dd < bd){ bd = dd; bi = i; } }); J.wi = bi; }
+    render();
+  },
+  jobFinish: () => jobFinish('player'),
+  jobRetry: () => openJob(ui.job.farm, ui.job.L),
+  jobNext: () => openJob(ui.job.farm, ui.job.L + 1),
+  jobBack: () => { const id = ui.job ? ui.job.farm : 1; ui.job = null; S.pos = gateOf(id); hist = []; view = 'home'; render(); },
   /* care */
   prescribe: d => {
     const R = ui.rv, op = R.opts.find(o => o[0] === d.k); R.tries++;
@@ -1951,7 +2352,11 @@ stage.addEventListener('click', e => {
   if (ui.dd && d.act !== 'dd' && d.act !== 'ddpick') ui.dd = null;
   (ACT[d.act] || (() => {}))(d);
 });
-stage.addEventListener('pointerdown', e => { if (e.target.closest('[data-walk]')) walkTap(e); if (e.target.closest('[data-hold]')){ e.preventDefault(); holdStart(); } });
+stage.addEventListener('pointerdown', e => { if (e.target.closest('[data-walk]')) walkTap(e); if (e.target.closest('[data-hold]')){ e.preventDefault(); holdStart(); } if (e.target.closest('#tcv')){ e.preventDefault(); jobPointer(e, true); } });
+stage.addEventListener('pointermove', e => { if (ui.job && ui.job.hold) jobPointer(e, false); });
+['pointerup','pointercancel'].forEach(t => stage.addEventListener(t, () => { if (ui.job) ui.job.hold = false; }));
+const JOB_KEYS = {ArrowUp:'up', w:'up', W:'up', ArrowDown:'down', s:'down', S:'down', ArrowLeft:'left', a:'left', A:'left', ArrowRight:'right', d:'right', D:'right'};
+['keydown','keyup'].forEach(t => document.addEventListener(t, e => { const J = ui.job, k = JOB_KEYS[e.key]; if (!k || !J || view !== 'tractor' || J.phase !== 'drive' || J.auto) return; e.preventDefault(); J.keys[k] = t === 'keydown'; if (t === 'keydown' && e.key.startsWith('Arrow') === false && e.shiftKey) J.fast = true; }));
 ['pointerup','pointercancel','pointerleave'].forEach(t => stage.addEventListener(t, holdStop));
 stage.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && e.target.closest('[data-hold]') && ui.care){ e.preventDefault(); ui.care.hold = Math.min(1, ui.care.hold + .34); if (ui.care.hold >= 1) completeStep(); else { const b = stage.querySelector('.holdbtn i'); if (b) b.style.width = ui.care.hold * 100 + '%'; } } });
 stage.addEventListener('input', e => {
@@ -1967,7 +2372,7 @@ document.addEventListener('keydown', e => {
   if (ui.rv && ui.rv.zoom) return ACT.unzoom();
   if (ui.overlay === 'how') return ACT.closeOverlay();
   if (ui.dd){ ui.dd = null; return render(); }
-  if (S.onboarded && view !== 'home' && view !== 'review') back();
+  if (S.onboarded && view !== 'home' && view !== 'review' && view !== 'tractor' && view !== 'care') back();
 });
 
 /* ---------- fit stage to window ---------- */
