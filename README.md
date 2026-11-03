@@ -44,26 +44,41 @@ If your first call is wrong, you walk to Brian's farm and try again, so no one i
 - **Five problems to spot:** needs water, pests and healthy fields from the start. Low nutrients and weeds are added from round 5 on any farm (or 2 hours after you start).
 - **Care routines on a game clock.** One game day is one real hour, with a morning and an evening window. Tasks are hands-on: hold to water or spray, tap off caterpillars, hoe out weeds, add CAN fertilizer and water it in, or mulch. Missed tasks set a field back, and three misses in a row bring the problem back.
 - **Tasks and reminders.** The Task screen lists what is due now, later and missed. Reminders appear in the game, and as browser notifications while the game is open in a background tab (turn them on in Settings).
-- **Tractor jobs.** Each farm has its own tractor job, opened after your 2nd review of that farm (see below).
+- **Tractor jobs.** Each farm has three tractor stages through the season (before planting, planting and harvest), opened after your 2nd review of that farm (see below).
 - **Grow the business.** Sell inputs, arrange loans, book training and upgrade storage from the bottom menu.
 
-## Tractor jobs
+## Tractor jobs: the farm season
 
-Each farm has a short tractor job where you drive across a field seen from above. Each job takes 20 to 90 seconds.
+Every farm has three tractor stages, played in order through the season: **before planting**, **planting** and **harvest**. Each stage needs a different implement, and how well you prepare and plant shows up later in the harvest.
 
-| Farm | Job | What it teaches |
-| --- | --- | --- |
-| Mark, maize | Plough the top field with a disc plough, around rocks and a stump | Plough across the slope, so rain can't wash the soil away |
-| June, maize | Dig furrows from the water channel down to her dry field, around a high spot | Water only flows downhill: each furrow must reach the channel. When you finish, water runs down the furrows you dug |
-| Brian, maize | Plant straight rows with a planter that drops seed and fertilizer, through a wet patch that slows you down | Even rows are easier to weed and spray, and fertilizer at planting feeds pale maize |
-| Vincent, beans | Spray the beans with a boom sprayer, in wind, without drifting into the dashed zones around the house, tank and pond | Leave a strip unsprayed beside water and houses, mind the wind, and wear the safety kit |
+| Farm | Before planting | Planting | Harvest |
+| --- | --- | --- | --- |
+| Mark, maize, 1 acre, on a slope | Disc plough: turn in old stalks, across the slope | Maize planter | Maize harvester |
+| June, maize, 2 acres, dry | Ridger: dig furrows from the water channel down the field (water then runs down the furrows you dug) | Maize planter | Maize harvester |
+| Brian, maize, 1.5 acres | Disc harrow: break the clods into a fine seedbed | Maize planter, around a wet patch that slows you down | Maize harvester |
+| Vincent, beans, 3 acres | Disc plough | Seed drill (beans need close rows) | Bean harvester |
 
-- **Getting there.** On the Home screen, the **Tractor** button above Map opens a job straight away: the nearest farm that still has stars to earn. It is dimmed until a farm's job is open (your 2nd review of that farm), and tapping it then explains why. A farm with an open job also shows a tractor button beside its label. Tap it and the agent walks to the farm and the job opens. Jobs are also listed on the Task screen, and the Support Farm screen (Map, then Support Farm) starts the selected farm's job.
-- **Levels.** Each job has three levels. Level 1 opens after your 2nd review of the farm and shows a suggested route. Level 2 opens after the 4th review (and 1 star on Level 1) and adds obstacles. Level 3 opens after the 6th review and adds a twist: a time limit, or stronger wind for spraying.
-- **Before you drive.** Tick the checklist: hitch the tool, fill the fuel tank, and for spraying put on the safety kit. Fuel costs 15 coins per job; the first fill is free.
-- **Driving.** Tap where to drive and hold to keep steering, or use the arrow keys / WASD. Slow turns tighter; Fast saves time but burns more fuel. Autopilot drives the rows for you.
-- **Scoring.** Stars (1 to 3) come from how much of the field you covered, how little you went over the same ground, hits on obstacles, fuel left, and for ploughing how much you ploughed across the slope. Autopilot jobs earn up to 2 stars; 3 stars needs your own driving. Each star is worth 40 coins, and a new best adds 5 farm score per star. A poor job never lowers the farm's score.
-- **Care credit.** June's furrows count as her due watering task, and Vincent's spraying as his due spray task.
+**Every job starts with a short onboarding:**
+
+1. **Briefing.** The farmer says what they need, with the task, the time limit, the field size and a warning about rocks and fallen trunks.
+2. **Choose a tractor.** Compact (35 hp: cheap, light on the soil, slow and weak with heavy implements), Standard (60 hp: an all-rounder) or Large (100 hp: fast and strong, but wide turns, more diesel and heavier on the soil).
+3. **Choose an implement** from eight: disc plough, disc harrow, ridger, maize planter, seed drill, boom sprayer, maize harvester and bean harvester. Nothing is pre-selected. You can pick the wrong one: it does a poor job (or none of it), and the summary explains what was needed.
+4. **Ready check.** Hitch the implement and fill up with diesel (15 coins; the first fill is free). A reminder of the controls.
+5. **Drive.** Every job has a time limit, and every field has rocks and fallen trunks to steer around. The sidebar shows how much is done, time left, fuel, overlap and hits, plus across the slope (ploughing and planting on a slope), along the rows and the grain tank (harvest). At harvest, unload at the trailer when the tank is full.
+6. **Summary.** An overall score out of 100 with 0 to 3 stars, and four parts:
+    - **Job done:** how much of the field got the right work, times how well the chosen implement does this job.
+    - **Efficiency:** work done for the time used, and how little ground was covered twice.
+    - **Climate:** diesel burned against the ideal for the work done (with the CO₂ in kg), minus soil packing from a heavy tractor, erosion from ploughing down the slope, and overlap.
+    - **Cost saving:** the money saved against doing the same work by hand, in Kenyan shillings, with the person-days of hand work it replaced. A bad job can cost more than doing it by hand.
+    - At harvest: bags gathered out of the farm's best possible, and their value.
+
+**Getting there.** On the Home screen, the **Tractor** button above Map opens a job straight away: the nearest farm that still has stars to earn. It is dimmed until a farm's first stage is open (after your 2nd review of that farm). A farm with an open stage also shows a tractor button beside its label: tap it and the agent walks to the farm. The Task screen lists each farm's next stage, and the Support Farm screen (Map, then Support Farm) starts the selected farm's next stage. Planting opens once you have tried the before-planting job, and harvest once you have tried planting, however well they went.
+
+**Driving.** Tap where to drive and hold to keep steering, or use the arrow keys / WASD. Slow turns tighter; Fast saves time but burns more diesel. Autopilot drives a planned route around the obstacles; autopilot jobs earn up to 2 stars.
+
+**Rewards.** Coins (1.5 per score point), +5 farm score per star above your best, and gems the first time a stage gets 3 stars. A poor job never lowers the farm's score. June's furrows also count as her due watering task.
+
+**Where the money figures come from.** Diesel is KSh 228 a litre (EPRA's Nairobi cap for 15 October to 14 November 2026, [Techish](https://tech-ish.com/2026/10/14/petrol-rises-to-kes-226-96-in-nairobi-and-kerosene-jumps-kes-28-49/)). Tractor ploughing is KSh 3,000 an acre and harrowing KSh 1,500 ([Beyond Forest, 2026](https://www.beyondforest.org/post/ploughing-cost-per-acre-in-kenya-2026-guide-virgin-vs-uncultivated-land-explained)). Hand ploughing takes about 24 person-days an acre at KSh 300 to 500 a day; the game uses KSh 400 ([FarmBiz Africa](https://farmbizafrica.com/tractors-services-increase-farmer-earnings-lower-production-costs/)). Maize yields 20 to 25 bags of 90 kg an acre at about KSh 4,500 a bag; the game uses 22 ([Graduate Farmer, 2025](https://graduatefarmer.co.ke/2025/05/06/how-to-grow-maize-in-kenya-step-by-step-for-maximum-profit/)). The rest are game estimates to check: hire rates for ridging (KSh 2,000), planting (KSh 2,000) and harvesting (KSh 3,000 to 3,500 an acre); hand-work days for harrowing (10), ridging (16), planting (6) and harvesting (10 to 12); diesel per acre for each implement; and beans at 7 bags an acre and KSh 9,000 a bag. CO₂ uses 2.68 kg per litre of diesel.
 
 ## How it is built
 
@@ -75,7 +90,7 @@ The game is a single `index.html` file with plain HTML, CSS and JavaScript. It h
 - **Roads.** The dirt roads on the home map are traced as a small graph of points, and the agent always takes the shortest route. Open the game with `?dev` to see the graph and print the coordinates of any tap.
 - **Game clock and care.** Care plans are lists of tasks with time windows on the game clock. A timer checks every second for tasks that are due, missed or complete.
 - **Saving.** Progress is saved in the browser's local storage on this device, under `wakala-save-v3`. Settings has a Restart button that clears it.
-- **Tractor jobs.** Each job is data (field shape, obstacles, tool width, wind, time limit). The field is a grid of 2.5 px cells: the tool marks cells as it passes, and coverage, overlap and stars are counted from the grid. Autopilot follows a planned route that goes around obstacles and spray buffer zones.
+- **Tractor jobs.** Each farm's field, obstacles and three stage jobs are data, and so are the tractors and implements. The field is a grid of 2.5 px cells: the implement marks cells as it passes, and every score is counted from the grid. Autopilot follows a planned route that steps around obstacles, and takes a clear path to and from the trailer at harvest. Open the game with `?dev` to get `wakalaDebug` in the console (live state, and `wakalaDebug.open(farm, stage)`).
 - **Event log.** Key moments, such as the first move, each review, each care task and each tractor job, are logged with timings. Type `wakalaEvents()` in the browser console to read them during a playtest.
 
 ## Project structure
@@ -110,7 +125,7 @@ python3 tools/playtest/fs.py wrong      # first session with a wrong call and th
 python3 tools/playtest/free.py          # road walking, tasks, spraying, misses, settings
 python3 tools/playtest/rounds.py        # all 7 rounds on each farm, back to back
 python3 tools/playtest/clicks.py        # click each farm on Home, Map and a hub map
-python3 tools/playtest/tractor.py 123   # every farm's tractor job on autopilot (levels 1, 2 and 3), then tap and key steering
+python3 tools/playtest/tractor.py 1234 x # every farm's three stages through the onboarding on autopilot; x adds a wrong implement, a time-out, tap and key steering and the Home button
 ```
 
 Screenshots are saved to `tools/playtest/out/`.
@@ -126,7 +141,7 @@ GitHub Pages publishes the `main` branch from the root folder. Every push to `ma
 - **Missing photos.** Low nutrients and dry bean leaves still use the drawn pictures.
 - **Reminders with the game closed** need a push service, which isn't built yet.
 - **Hub maps** (after a storage upgrade) have no traced roads, so the agent walks straight to each farm there.
-- **Tractor jobs.** The tractor art is drawn in code until a top-down tractor is designed in Figma. The star thresholds, fuel cost and time limits are first guesses for playtesting. The Farm 5 delivery job from the plan is not built.
+- **Tractor jobs.** The tractor and implement art is drawn in code until it is designed in Figma. The score weights, time limits and the money estimates listed above are first guesses for playtesting. Spraying is no longer a tractor job (it was Vincent's job before the season stages); the boom sprayer is still offered as an implement. The Farm 5 delivery job from the plan is not built.
 
 ## Credits
 
