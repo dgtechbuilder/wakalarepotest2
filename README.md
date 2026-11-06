@@ -1,6 +1,6 @@
 # Wakala Agent
 
-A browser game where you play a *wakala*, the Swahili word for an agent: someone who visits smallholder farms, reads what is wrong with a field, and helps the farmer fix it. It is a playable recreation of the **29 Oct Wakala Game** Figma design, extended with farm reviews, care routines, real farm photos and a game clock.
+A browser game where you play a *wakala*, the Swahili word for an agent: someone who visits smallholder farms, reads what is wrong with a field, and helps the farmer fix it. It is a playable recreation of the **29 Oct Wakala Game** Figma design, extended with farm reviews, care routines, real farm photos, a game clock and a tractor minigame that follows each farm through the season. See [Progress so far](#progress-so-far) for everything built to date.
 
 **Play it:** https://dgtechbuilder.github.io/wakalarepotest2/
 
@@ -22,6 +22,7 @@ Those skills are learned in the field, slowly, and the cost of a mistake is real
 - **Know the right fix, not just the problem.** After a correct diagnosis you choose the treatment. Wrong treatments cost coins and come with a one-line lesson, for example why a weed killer would also kill the maize.
 - **Follow through.** Care plans run over game days, and missed tasks set the field back. Recovery comes from steady work, not one visit.
 - **Work safely.** Spraying asks you to put on the safety kit first, every time.
+- **Pick the right machine and use it well.** Tractor jobs ask you to choose the tractor and the implement for each stage of the season, drive efficiently against the clock, and see what the job cost in diesel, CO₂ and shillings compared with doing it by hand.
 
 The game also models the business side of the agent's role from the Figma design: selling inputs, arranging loans, booking training and upgrading storage. Helping farms succeed raises their success score, which is the game's main goal.
 
@@ -133,6 +134,42 @@ Screenshots are saved to `tools/playtest/out/`.
 ## Deployment
 
 GitHub Pages publishes the `main` branch from the root folder. Every push to `main` goes live within about a minute, and there is no staging step. To review changes before players see them, work on a separate branch and merge it into `main` when it is approved.
+
+## Progress so far
+
+The game was built in short rounds of work, each reviewed and playtested before the next. Newest first:
+
+| Date | What changed |
+| --- | --- |
+| 4 Nov 2026 | **Tractor season.** Three tractor stages per farm (before planting, planting, harvest), each starting with a briefing and a manual choice of tractor and implement. Every job has a time limit, rocks and fallen trunks, a live sidebar, and a summary with job, efficiency, climate and cost-saving scores, including shillings saved against hand work. Harvest uses a grain tank and trailer, and earlier stages affect the harvest. |
+| 3 Nov 2026 | Walking three times faster. A **Tractor** button above Map on the Home screen. |
+| 3 Nov 2026 | First tractor jobs: one driving minigame per farm with three levels (replaced by the season stages on 4 Nov). |
+| 2 Nov 2026 | Removed the ready timer: walk to any farm at any time and check it. |
+| 2 Nov 2026 | README expanded with the Figma link, why the game matters, and how it is built. |
+| 2 Nov 2026 | Player characters replaced with the painted Girl and Boy art. |
+| 2 Nov 2026 | Click a farm to walk there and review it, from the Home screen, the Map and the upgraded hub maps. |
+| 2 Nov 2026 | Automated playtests, the standalone build script and a full README. |
+| 2 Nov 2026 | **Seven rounds per farm**, played back to back, with a farmer summary on arrival and a farmer remark on each picture. |
+| 2 Nov 2026 | Cropped the dry-maize photo to the stalks only. |
+| 2 Nov 2026 | **Roads, photos and care.** Walking along the traced roads, real Wikimedia Commons photos in reviews, care routines on a game clock with hands-on tasks, a Task screen, reminders, and low nutrients and weeds as new problems. |
+| 31 Oct 2026 | **First-session walkthrough:** create a character, walk to June's farm under a fog, review it by eye, retry at Brian's farm if the call is wrong. |
+| 31 Oct 2026 | Fixes from a product review: a meaningful farm-visit loop, and first-run, phone and dead-end issues. |
+| 30 Oct 2026 | The game built from the 29 Oct Figma design and hosted on GitHub Pages. |
+| 30 Oct 2026 | Repository created. |
+
+Two planning documents were written alongside the code in Claude Docs: the roads, real photos and farm care plan, and the tractor minigame plan. The tractor plan's levels were later replaced by the season stages described above.
+
+**Tested so far.** The automated playtests above pass on the current version: both first-session paths, free play, all 28 review rounds, farm clicks on every map, and all 12 tractor stages on autopilot (scores 62 to 84 out of 100). Manual tractor steering has been tested on a desktop-sized screen only.
+
+## Next steps
+
+- [ ] Agronomist review of the farm advice, product names and tractor lessons.
+- [ ] Check the money estimates marked above against local hire rates and wages.
+- [ ] Playtest tractor steering on phones.
+- [ ] Decide how care plans should work with back-to-back rounds (see Open questions).
+- [ ] Tractor and implement art from Figma.
+- [ ] Reminders while the game is closed (needs a push service).
+- [ ] The Farm 5 tractor delivery job.
 
 ## Open questions
 
